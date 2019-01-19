@@ -14,3 +14,4 @@ Cov_x = A
 
 C <- matrix(c(1,1,1,2), nrow = 2, ncol = 2)
 E_c = C%*%E_x
+Cov_c = C%*%Cov_x%*%t(C)
