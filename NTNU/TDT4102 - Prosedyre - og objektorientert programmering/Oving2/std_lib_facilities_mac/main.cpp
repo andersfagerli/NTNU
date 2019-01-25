@@ -19,6 +19,8 @@ vector<int> calculateAnnuity(double loan, int years, double percentage);
 void printPayments();
 
 int main(){
+    srand(int(time(nullptr)));
+    /*
     int choice;
     do {
         printMenu();
@@ -48,7 +50,11 @@ int main(){
             default:
                 std::cout << "Ikke en gyldig verdi" << std::endl;
         }
-    } while(choice != 0);
+    } while(choice != 0);*/
+    
+    
+    
+    
     
     return 0;
 }
@@ -134,11 +140,13 @@ void gangeTabell() {
     std::cout << "Høyde: ";
     std::cin >> høyde;
     
+    std::cout << right;
+    
     for (int i = 1; i <= høyde; i++) {
         for (int j = 1; j <= bredde; j++) {
             std::cout << i*j;
             if (j < bredde) {
-                std::cout << "\t"; //setw(4)
+                std::cout << "\t";
             }
         }
         std::cout << std::endl;
