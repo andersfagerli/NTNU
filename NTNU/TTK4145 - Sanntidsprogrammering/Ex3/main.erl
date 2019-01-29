@@ -2,12 +2,12 @@
 %129.241.231.44
 
 -module(main).
--export([main/0]).
+-export([main_udp/0]).
 
 -define(SEND_PORT,20000+2). %Server port for lab station 2
 -define(RECV_PORT,8790).
 
-main() ->
+main_udp() ->
   {ok,Socket} = gen_udp:open(?RECV_PORT, [binary, {active,false}]),
   %{ok,SendSocket} = gen_udp:open(?SEND_PORT, [binary, {active,false}]),
 
