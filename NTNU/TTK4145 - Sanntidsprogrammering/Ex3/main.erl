@@ -8,11 +8,11 @@
 -define(RECV_PORT,8790).
 
 main() ->
-  {ok,RecvSocket} = gen_udp:open(?RECV_PORT, [binary, {active,false}]),
-  {ok,SendSocket} = gen_udp:open(?SEND_PORT, [binary, {active,false}]),
+  {ok,Socket} = gen_udp:open(?RECV_PORT, [binary, {active,false}]),
+  %{ok,SendSocket} = gen_udp:open(?SEND_PORT, [binary, {active,false}]),
 
-  spawn(fun() -> receive_from_server(RecvSocket) end),
-  spawn(fun() -> send_to_server(SendSocket) end).
+  spawn(fun() -> receive_from_server(Socket) end),
+  spawn(fun() -> send_to_server(Socket) end).
 
 receive_from_server(Socket) ->
   gen_udp:recv(Socket,0),
