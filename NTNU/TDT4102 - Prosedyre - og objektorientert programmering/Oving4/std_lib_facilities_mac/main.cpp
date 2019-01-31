@@ -4,8 +4,14 @@
 void printMenu();
 void menu();
 
+using namespace std;
+
 int main(){
-    menu();
+    srand(int(time(nullptr)));
+    //menu();
+    constexpr int a = 5;
+    const int b = a;
+    std::cout << a << std::endl;
     
     return 0;
 }
@@ -25,6 +31,12 @@ void menu() {
             case 2:
                 testCallByReference();
                 break;
+            case 3:
+                testVectorSorting();
+                break;
+            case 4:
+                testString();
+                break;
             default:
                 break;
         }
@@ -36,4 +48,6 @@ void printMenu() {
     std::cout << "0: Avslutt\n";
     std::cout << "1: Test call-by-value\n";
     std::cout << "2: Test call-by-reference\n";
+    std::cout << "3: Test vector sorting\n";
+    std::cout << "4: Test string\n";
 }

@@ -13,6 +13,8 @@
 
 void testCallByValue();
 void testCallByReference();
+void testVectorSorting();
+void testString();
 
 
 #endif /* tests_hpp */
