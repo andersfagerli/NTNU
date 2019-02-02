@@ -1,5 +1,6 @@
 #include "std_lib_facilities.h"
 #include "tests.hpp"
+#include "mastermind.hpp"
 
 void printMenu();
 void menu();
@@ -8,16 +9,13 @@ using namespace std;
 
 int main(){
     srand(int(time(nullptr)));
-    //menu();
-    constexpr int a = 5;
-    const int b = a;
-    std::cout << a << std::endl;
+    menu();
     
     return 0;
 }
 
 void menu() {
-    int choice;
+    /*int choice;
     do {
         printMenu();
         std::cin >> choice;
@@ -37,10 +35,16 @@ void menu() {
             case 4:
                 testString();
                 break;
+            case 5:
+                playMastermind();
+                break;
             default:
                 break;
         }
-    } while (choice != 0);
+    } while (choice != 0);*/
+    
+    
+    
 }
 
 void printMenu() {
@@ -50,4 +54,5 @@ void printMenu() {
     std::cout << "2: Test call-by-reference\n";
     std::cout << "3: Test vector sorting\n";
     std::cout << "4: Test string\n";
+    std::cout << "5: Mastermind\n";
 }

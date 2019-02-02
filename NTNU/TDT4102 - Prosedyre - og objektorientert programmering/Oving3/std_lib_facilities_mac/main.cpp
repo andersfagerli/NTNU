@@ -6,10 +6,25 @@ void testDeviation(double compareOperand, double toOperand, double maxError, std
 int main() {
     srand(int(time(nullptr)));
     //playTargetPractice();
-    double a = atan(1)*4;
-    cout << a << endl;
+    
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void testDeviation(double compareOperand, double toOperand, double maxError, std::string name) {
     if (abs(compareOperand-toOperand) > maxError) {

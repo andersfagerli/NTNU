@@ -10,7 +10,9 @@
 #define mastermind_hpp
 
 #include "utilities.hpp"
+#include "masterVisual.hpp"
 
 void playMastermind();
-
+int checkCharactersAndPosition(string guess, string code);
+int checkCharacters(string guess, string code);
 #endif /* mastermind_hpp */
