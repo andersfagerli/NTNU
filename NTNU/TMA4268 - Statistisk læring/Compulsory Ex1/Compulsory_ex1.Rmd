@@ -1,0 +1,288 @@
+---
+subtitle: "TMA4268 Statistical Learning V2019"
+title: "Compulsory exercise 1: Group 2"
+author: "Anders Thallaug Fagerli, Rebecca Sandstø"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document
+  #pdf_document
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(results = "hold")
+knitr::opts_chunk$set(error=FALSE)
+knitr::opts_chunk$set(warning=FALSE)
+```
+
+# Problem 1: Multiple linear regression 
+
+```{r,echo=TRUE,eval=TRUE}
+library(GLMsData)
+data("lungcap")
+lungcap$Htcm=lungcap$Ht*2.54
+modelA = lm(log(FEV) ~ Age + Htcm + Gender + Smoke, data=lungcap)
+summary(modelA)
+```
+
+**Q1:** Write down the equation for the fitted modelA.
+$**Y** = **X**B
+
+**Q2:** 
+    
+* `Estimate` - in particular interpretation of `Intercept`
+* `Std.Error`
+* `Residual standard error`
+* `F-statistic`
+
+**Q3:** 
+
+**Q4:**
+
+```{r,eval=TRUE}
+library(ggplot2)
+# residuls vs fitted
+ggplot(modelA, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(se = FALSE, col = "red", size = 0.5, method = "loess") +
+  labs(x = "Fitted values", y = "Standardized residuals",
+       title = "Fitted values vs. Standardized residuals",
+       subtitle = deparse(modelA$call))
+
+# qq-plot of residuals
+ggplot(modelA, aes(sample = .stdresid)) +
+  stat_qq(pch = 19) + 
+  geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+  labs(x = "Theoretical quantiles", y = "Standardized residuals", 
+       title = "Normal Q-Q", subtitle = deparse(modelA$call))
+
+# normality test
+library(nortest) 
+ad.test(rstudent(modelA))
+```
+
+**Q5:** 
+
+```{r,eval=TRUE}
+modelB = lm(FEV ~ Age + Htcm + Gender + Smoke, data=lungcap)
+summary(modelB)
+```
+
+**Q6:** 
+
+```{r,eval=TRUE}
+# here you write your code if you have any
+```
+
+**Q7:** 
+
+```{r,eval=TRUE}
+# here you write your code
+```
+
+
+**Q8:**
+
+```{r,eval=TRUE}
+new = data.frame(Age=16, Htcm=170, Gender="M", Smoke=0)
+```
+
+# Problem 2: Classification 
+
+```{r}
+library(class)# for function knn
+library(caret)# for confusion matrices
+
+raw = read.csv("https://www.math.ntnu.no/emner/TMA4268/2019v/data/tennis.csv")
+M = na.omit(data.frame(y=as.factor(raw$Result),
+                       x1=raw$ACE.1-raw$UFE.1-raw$DBF.1, 
+                       x2=raw$ACE.2-raw$UFE.2-raw$DBF.2))
+set.seed(4268) # for reproducibility
+tr = sample.int(nrow(M),nrow(M)/2)
+trte=rep(1,nrow(M))
+trte[tr]=0
+Mdf=data.frame(M,"istest"=as.factor(trte))
+```
+
+**Q9:** 
+
+
+**Q10:** 
+
+```{r,eval=TRUE}
+# here you write your code
+```
+
+
+```{r, eval=FALSE}
+set.seed(0)
+ks = 1:30 # Choose K from 1 to 30.
+idx = createFolds(M[tr,1], k=5) # Divide the training data into 5 folds.
+# "Sapply" is a more efficient for-loop. 
+# We loop over each fold and each value in "ks"
+# and compute error rates for each combination.
+# All the error rates are stored in the matrix "cv", 
+# where folds are rows and values of $K$ are columns.
+cv = sapply(ks, function(k){ 
+  sapply(seq_along(idx), function(j) {
+    yhat = class::knn(train=M[tr[ -idx[[j]] ], -1],
+               cl=M[tr[ -idx[[j]] ], 1],
+               test=M[tr[ idx[[j]] ], -1], k = k)
+    mean(M[tr[ idx[[j]] ], 1] != yhat)
+  })
+})
+```
+
+
+**Q11:** 
+
+```{r, eval=FALSE}
+cv.e = # fill in
+cv.se = #fill in
+k.min = # fill in
+```
+
+**Q12:** 
+
+```{r,eval=FALSE}
+library(colorspace)
+co = rainbow_hcl(3)
+par(mar=c(4,4,1,1)+.1, mgp = c(3, 1, 0))
+plot(ks, cv.e, type="o", pch = 16, ylim = c(0, 0.7), col = co[2],
+     xlab = "Number of neighbors", ylab="Misclassification error")
+arrows(ks, cv.e-cv.se, ks, cv.e+cv.se, angle=90, length=.03, code=3, col=co[2])
+lines(ks, train.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[3])
+lines(ks, test.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[1])
+legend("topright", legend = c("Test", "5-fold CV", "Training"), lty = 1, col=co)
+```
+
+**Q13:** 
+
+```{r,eval=FALSE}
+k = tail(which(cv.e < cv.e[k.min] + cv.se[k.min]), 1)
+size = 100
+xnew = apply(M[tr,-1], 2, function(X) seq(min(X), max(X), length.out=size))
+grid = expand.grid(xnew[,1], xnew[,2])
+grid.yhat = knn(M[tr,-1], M[tr,1], k=k, test=grid)
+np = 300
+par(mar=rep(2,4), mgp = c(1, 1, 0))
+contour(xnew[,1], xnew[,2], z = matrix(grid.yhat, size), levels=.5, 
+        xlab=expression("x"[1]), ylab=expression("x"[2]), axes=FALSE,
+        main = paste0(k,"-nearest neighbors"), cex=1.2, labels="")
+points(grid, pch=".", cex=1, col=grid.yhat)
+points(M[1:np,-1], col=factor(M[1:np,1]), pch = 1, lwd = 1.5)
+legend("topleft", c("Player 1 wins", "Player 2 wins"), 
+       col=c("red", "black"), pch=1)
+box()
+```
+
+
+**Q14:** 
+
+```{r,eval=FALSE}
+K=# your choice from Q13
+  
+# knn with prob=TRUE outputs the probability of the winning class
+# therefore we have to do an extra step to get the probability of player 1 winning
+KNNclass=class::knn(train=M[tr,-1], cl=M[tr,1], test=M[-tr,-1], k = K,prob=TRUE)
+KNNprobwinning=attributes(KNNclass)$prob
+KNNprob= ifelse(KNNclass == "0", 1-KNNprobwinning, KNNprobwinning)
+# now KNNprob has probability that player 1 wins, for all matches in the test set
+
+library(pROC)
+# now you use predictor=KNNprob and response=M[-tr,1] 
+# in your call to the function roc in the pROC library
+```
+
+**Q15:**
+
+```{r,eval=TRUE}
+# here you write your code
+```
+
+
+# Problem 3: Bias-variance trade-off 
+
+Here you see how to write formulas with latex (needed below)
+$$
+\hat{\boldsymbol \beta}=({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf Y}
+$$
+
+**Q16:** 
+
+**Q17:** 
+
+**Q18:** 
+$$\text{E}[(Y_0-\hat{f}({\bf x}_0))^2]=[\text{E}(\hat{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\hat{f}({\bf x}_0) ) + \text{Var}(\varepsilon)$$
+
+Ridge estimator:
+$$
+\widetilde{\boldsymbol \beta}=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}
+$$
+
+**Q19:** 
+
+**Q20:** 
+
+**Q21:** 
+$$\text{E}[(Y_0-\widetilde{f}({\bf x}_0))^2]=[\text{E}(\widetilde{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\widetilde{f}({\bf x}_0) ) + \text{Var}(\varepsilon)$$
+
+
+```{r}
+values=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/BVtradeoffvalues.dd")
+X=values$X
+dim(X)
+x0=values$x0
+dim(x0)
+beta=values$beta
+dim(beta)
+sigma=values$sigma
+sigma
+```
+
+Hint: we perform matrix multiplication using `%*%`, transpose of a matrix `A` with `t(A)` and inverse with `solve(A)`. 
+
+**Q22:** 
+
+```{r,eval=FALSE}
+sqbias=function(lambda,X,x0,beta)
+{
+  p=dim(X)[2]
+  value= #HERE YOU FILL IN
+  return(value)
+}
+thislambda=seq(0,2,length=500)
+sqbiaslambda=rep(NA,length(thislambda))
+for (i in 1:length(thislambda)) sqbiaslambda[i]=sqbias(thislambda[i],X,x0,beta)
+plot(thislambda,sqbiaslambda,col=2,type="l")
+```
+
+**Q23:** 
+
+```{r,eval=FALSE}
+variance=function(lambda,X,x0,sigma)
+{
+  p=dim(X)[2]
+  inv=solve(t(X)%*%X+lambda*diag(p))
+  value=#HERE YOU FILL IN
+  return(value)
+}
+thislambda=seq(0,2,length=500)
+variancelambda=rep(NA,length(thislambda))
+for (i in 1:length(thislambda)) variancelambda[i]=variance(thislambda[i],X,x0,sigma)
+plot(thislambda,variancelambda,col=4,type="l")
+```
+
+
+**Q24:** 
+
+```{r,eval=FALSE}
+tot=sqbiaslambda+variancelambda+sigma^2
+which.min(tot)
+thislambda[which.min(tot)]
+plot(thislambda,tot,col=1,type="l",ylim=c(0,max(tot)))
+lines(thislambda, sqbiaslambda,col=2)
+lines(thislambda, variancelambda,col=4)
+lines(thislambda,rep(sigma^2,500),col="orange")
+abline(v=thislambda[which.min(tot)],col=3)
+```
