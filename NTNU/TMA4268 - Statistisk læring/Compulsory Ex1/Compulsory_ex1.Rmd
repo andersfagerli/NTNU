@@ -98,9 +98,9 @@ M = na.omit(data.frame(y=as.factor(raw$Result),
                        x1=raw$ACE.1-raw$UFE.1-raw$DBF.1, 
                        x2=raw$ACE.2-raw$UFE.2-raw$DBF.2))
 set.seed(4268) # for reproducibility
-tr = sample.int(nrow(M),nrow(M)/2)
-trte=rep(1,nrow(M))
-trte[tr]=0
+tr = sample.int(nrow(M),nrow(M)/2) # nrow(M)/2 distinct random values ranging from 1:nrow(M)
+trte=rep(1,nrow(M)) # (1 x nrow(M)) vector of 1's
+trte[tr]=0 # trte in random positions (set by tr) set to 0
 Mdf=data.frame(M,"istest"=as.factor(trte))
 ```
 
@@ -112,16 +112,19 @@ Mdf=data.frame(M,"istest"=as.factor(trte))
 ```{r,eval=TRUE}
 # here you write your code
 ks = 1:30
-yhat = sapply(ks, function(k) {
-  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-1], k = k)
+yhat.train = sapply(ks, function(k) {
+  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-1], k = k) #Oppgi test = M[tr,-1], altså test-set = training-set?
 })
-train.equal = I(yhat == M[,1])
-train.e = sum(train.equal[,1] == FALSE)/length(train.equal[,1])
-yhat = sapply(ks, function(k) {
-  class::knn(train = M[-tr,-1], cl = M[-tr,1],test = M[-1], k = k)
+train.equal = I(yhat.train == M[,1])
+train.e = apply(train.equal == FALSE, 2, sum) #Feil å bruke "== FALSE"?
+train.e = train.e/nrow(train.equal)
+
+yhat.test = sapply(ks, function(k) {
+  class::knn(train = M[-tr,-1], cl = M[-tr,1],test = M[-1], k = k) #Riktig måte for test-set??
 })
-test.equal = I(yhat == M[,1])
-test.e = sum(test.equal[,1] == FALSE)/length(test.equal[,1])
+test.equal = I(yhat.test == M[,1])
+test.e = apply(test.equal == FALSE, 2, sum)
+test.e = test.e/nrow(test.equal) 
 
 ```
 
