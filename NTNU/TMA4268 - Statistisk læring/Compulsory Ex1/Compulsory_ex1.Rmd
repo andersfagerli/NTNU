@@ -111,6 +111,18 @@ Mdf=data.frame(M,"istest"=as.factor(trte))
 
 ```{r,eval=TRUE}
 # here you write your code
+ks = 1:30
+yhat = sapply(ks, function(k) {
+  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-1], k = k)
+})
+train.equal = I(yhat == M[,1])
+train.e = sum(train.equal[,1] == FALSE)/length(train.equal[,1])
+yhat = sapply(ks, function(k) {
+  class::knn(train = M[-tr,-1], cl = M[-tr,1],test = M[-1], k = k)
+})
+test.equal = I(yhat == M[,1])
+test.e = sum(test.equal[,1] == FALSE)/length(test.equal[,1])
+
 ```
 
 
@@ -137,9 +149,12 @@ cv = sapply(ks, function(k){
 **Q11:** 
 
 ```{r, eval=FALSE}
-cv.e = # fill in
-cv.se = #fill in
-k.min = # fill in
+cv.e = numeric(30) # fill in
+for (i in 1:30) {
+  cv.e[i] <- mean(cv[,i])
+}
+cv.se = sd(cv)/sqrt(5) #fill in
+k.min = col(cv)[cv==min(cv)] # fill in
 ```
 
 **Q12:** 
