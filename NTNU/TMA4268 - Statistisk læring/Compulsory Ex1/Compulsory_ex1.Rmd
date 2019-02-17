@@ -111,20 +111,23 @@ Mdf=data.frame(M,"istest"=as.factor(trte))
 
 ```{r,eval=TRUE}
 # here you write your code
+
+### Training set
 ks = 1:30
 yhat.train = sapply(ks, function(k) {
-  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-1], k = k) #Oppgi test = M[tr,-1], altså test-set = training-set?
+  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[tr,-1], k = k) #Oppgi test = M[tr,-1], altså test-set = training-set?
 })
-train.equal = I(yhat.train == M[,1])
-train.e = apply(train.equal == FALSE, 2, sum) #Feil å bruke "== FALSE"?
-train.e = train.e/nrow(train.equal)
+train.equal = I(yhat.train == M[tr,1]) #Returns boolean matrix of correct/incorrect classifications
+train.e = apply(train.equal == FALSE, 2, sum)  #Apply summation over all coloumns, resulting in vector of total misclassifications for k = 1:30
+train.e = train.e/nrow(train.equal)# Misclassification rate
 
+### Test set
 yhat.test = sapply(ks, function(k) {
-  class::knn(train = M[-tr,-1], cl = M[-tr,1],test = M[-1], k = k) #Riktig måte for test-set??
+  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-tr,-1], k = k) #Riktig måte for test-set??
 })
-test.equal = I(yhat.test == M[,1])
-test.e = apply(test.equal == FALSE, 2, sum)
-test.e = test.e/nrow(test.equal) 
+test.equal = I(yhat.test == M[-tr,1]) #Returns boolean matrix of correct/incorrect classifications
+test.e = apply(test.equal == FALSE, 2, sum) # Apply summation over all coloumns, resulting in vector of total misclassifications for each k = 1:30
+test.e = test.e/nrow(test.equal) # Misclassification rate for each k
 
 ```
 
@@ -152,12 +155,13 @@ cv = sapply(ks, function(k){
 **Q11:** 
 
 ```{r, eval=FALSE}
-cv.e = numeric(30) # fill in
+cv.e = numeric(30)
+cv.se = numeric(30)
 for (i in 1:30) {
   cv.e[i] <- mean(cv[,i])
+  cv.se[i] <- sd(cv[,i])/sqrt(5)
 }
-cv.se = sd(cv)/sqrt(5) #fill in
-k.min = col(cv)[cv==min(cv)] # fill in
+k.min = col(cv)[cv==min(cv)]
 ```
 
 **Q12:** 
@@ -173,6 +177,8 @@ lines(ks, train.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[3])
 lines(ks, test.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[1])
 legend("topright", legend = c("Test", "5-fold CV", "Training"), lty = 1, col=co)
 ```
+
+Bias does in general increase with K, as the KNN-algorithm tends to overfit the data with low values of K, resulting in a low bias. The variance however decreases with K. Explain why, and justify from plot
 
 **Q13:** 
 
@@ -198,7 +204,7 @@ box()
 **Q14:** 
 
 ```{r,eval=FALSE}
-K=# your choice from Q13
+K=30# your choice from Q13
   
 # knn with prob=TRUE outputs the probability of the winning class
 # therefore we have to do an extra step to get the probability of player 1 winning
@@ -210,6 +216,9 @@ KNNprob= ifelse(KNNclass == "0", 1-KNNprobwinning, KNNprobwinning)
 library(pROC)
 # now you use predictor=KNNprob and response=M[-tr,1] 
 # in your call to the function roc in the pROC library
+tennis_roc = roc(response = M[-tr,1], predictor = KNNprob)
+auc = tennis_roc$auc
+ggroc(tennis_roc)+ggtitle("ROC")
 ```
 
 **Q15:**
