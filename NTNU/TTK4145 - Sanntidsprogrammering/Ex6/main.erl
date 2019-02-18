@@ -15,7 +15,7 @@ count(Num, Backup, Kill) ->
     Num>Kill ->
       exit("");
     true ->
-      io:fwrite("\n")
+      ok
   end,
   Backup ! {ok,Num},                   %Send (Num) to Backup-process
   io:fwrite("Number: ~p\n", [Num]),
