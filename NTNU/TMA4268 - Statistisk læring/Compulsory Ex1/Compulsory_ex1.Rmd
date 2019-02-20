@@ -1,11 +1,12 @@
 ---
-subtitle: "TMA4268 Statistical Learning V2019"
-title: "Compulsory exercise 1: Group 2"
+title: 'Compulsory exercise 1: Group 2'
 author: "Anders Thallaug Fagerli, Rebecca Sandstø"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: 
-  html_document
-  #pdf_document
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+subtitle: TMA4268 Statistical Learning V2019
 ---
   
 ```{r setup, include=FALSE}
@@ -26,16 +27,36 @@ summary(modelA)
 ```
 
 **Q1:** Write down the equation for the fitted modelA.
-$**Y** = **X**B
+
+In multiple linear regression, we have a reponse variable $\boldsymbol{Y}$ written as a function of the observations $\boldsymbol{X}$, regression parameters $\boldsymbol{\beta}$ and random errors $\boldsymbol{\epsilon}$, where ${\boldsymbol{Y}} = \boldsymbol{X\beta} + \boldsymbol{\epsilon}$. Taking the logarithm of our response, `modelA` can then be written as: 
+$$log(\text{FEV})=\beta_0+\beta_1\text{Age}+\beta_2\text{Htcm}+\beta_3\text{GenderM}+\beta_4\text{Smoke}+\epsilon $$
+
+We can then fit this model by estimating the parameters $\boldsymbol{\beta}$, so that $\hat{\boldsymbol{Y}}=\boldsymbol{X}\hat{\boldsymbol{\beta}}$. Using the estimated parameters from the `summary`, the fitted `modelA` can be written as: 
+$$\widehat{log(\text{FEV}})=-1.944+0.0234\cdot\text{Age}+0.0169\cdot\text{Htcm}+0.0293\cdot\text{GenderM}+0.0461\cdot\text{Smoke} $$
 
 **Q2:** 
     
-* `Estimate` - in particular interpretation of `Intercept`
-* `Std.Error`
-* `Residual standard error`
-* `F-statistic`
+* `Estimate`:
+The estimated regression coefficients, $\hat{\boldsymbol{\beta}}$. Assuming a normal linear regression model, these coefficients are found by either minimizing the residual sum of sqaures RSS or maximizing the likelihood function with respect to $\boldsymbol{\beta}$, resulting in the estimated vector of coefficients $\hat{\boldsymbol{\beta}}=(\bf X^{T}\bf X)^{-1}\bf X^{T}\bf Y$. The regression coefficients explain how the different covariates affect the response, as the response is linearly proportional to all coefficients. Ex. an increase in `Age` will tend to an increase in the response `FEV`, as the associated coefficient to `Age` is positive. In contrast, a person who smokes will tend to a decrease in the response `FEV`, as the associated coefficient to `Smoke` is negative. As the response is linearly proportional to a coeffiecient, an increase in a covariate from $x_j$ to $x_{j}+1$ will result in an increase in the response by $\hat{\beta_j}$ when all other covariates are held constant. Ex. an increase in `Age` from 15 to 16 will lead to an increase in $log(`FEV`)$ by 0.0234. The intercept $\hat{\beta_0}$ is not proportional to any covariate, meaning it is the response value when all covariates are set to zero. The intercept alone does not give any meaningful information in our case, as it reports a negative forced expiratory volume in litres. This means the regression model is only valid within an intervall of values for the covariates. Ex. `Age` should be within 3 and 19, as the data is collected from people aged 3 - 19.
+    
+* `Std.Error`:
+The standard error of each estimated coefficient, $\text{SD}(\hat{\beta_j})=\sqrt{\text{Var}(\hat{\beta_j})}$. This value quantifies the amount of variation in the estimated coefficients from the estimated values, and is found in the diagonal of the covariance matrix for $\hat{\beta}$, given by $\text{Cov}(\hat{\beta}) = \sigma^{2}(\bf X^{T}\bf X)^{-1}$. Unless the true value of the variance $\sigma^{2}$ in the random errors $\epsilon_{i}$ is known, this must be estimated. An unbiased estimator for $\sigma^{2}$ is $\hat{\sigma}^{2} = RSS/(n-p-1)$, where $n$ is the number of observations and $p$ is the number of covariates.
+
+* `Residual standard error`:
+The standard deviation of the residuals $d$, given by $RSE=\sqrt{RSS/(n-p-1)}$. A residual $d_i$ is an estimate of a random error $\epsilon_i$, by taking $d_i$ = $Y_{i}-\hat{Y_{i}}$ for some observation $i$.
+
+* `F-statistic`:
+Used to test if the regression is significant, meaning to test if any of the coefficients are different from zero. This can be expressed as the hypothesis
+$$H_{0} : \beta_{1}=\beta_{2}=\dots=\beta_{p}=0\quad vs.\quad H_{1} : \text{at least one different from zero}$$
+$F$-tests are used to perform the hypothesis test, using the `F-statistic`
+$$F=\frac{(TSS-RSS)/p}{RSS/(n-p-1)} \sim F_{p,n-p-1}$$
+If $F$ is greater than 1, we expect $H_0$ to be false, and the regression to be significant. The $p$-value can be calculated with the `F-statistic` by using the upper tail of the $F$-distribution, and the hypothesis can be concluded by setting an appropriate significance level $\alpha$. The small $p$-value calculated from our sample implies that a linear regression model fits the data well.
 
 **Q3:** 
+
+The proportion of variability is given by the coefficient of determination
+$$R^2=\frac{TSS - RSS}{TSS} = 0.8106$$
+This means 81% of the variance in $\boldsymbol{Y} = log(\text{FEV})$ is explained in our model, implying a good fit. The closer the coefficient is to 1, the better, as $R^2=1$ means all residuals are zero.
 
 **Q4:**
 
@@ -48,51 +69,100 @@ ggplot(modelA, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
   labs(x = "Fitted values", y = "Standardized residuals",
        title = "Fitted values vs. Standardized residuals",
        subtitle = deparse(modelA$call))
-
 # qq-plot of residuals
 ggplot(modelA, aes(sample = .stdresid)) +
   stat_qq(pch = 19) + 
   geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
   labs(x = "Theoretical quantiles", y = "Standardized residuals", 
        title = "Normal Q-Q", subtitle = deparse(modelA$call))
-
 # normality test
 library(nortest) 
 ad.test(rstudent(modelA))
+library(nortest)
+ad.test(rstudent(modelA))
 ```
+
+**Fitted values vs. Standardized residuals:** 
+This plot is used to test the assumption of a linear relationship between the covariates and the response by plotting residuals against fitted values of the model. For a linear relationship, we expect the average of the residuals to form a straight line across the fitted values. The assumption of a constant variance in the random errors can also be seen from the plot, where we expect a constant spread across all fitted values. From our plot, we can see that the residuals have a linear pattern and that the spread is seemily constant for all fitted values. This implies that our data fit the assumptions needed for a linear regression model.
+  
+**QQ-plot of standardized residuals**: 
+The QQ-plot shows whether the residuals are normally distributed or not, by comparing the distribution of the residuals against the normal distribution depicted by the straight line. The residuals form a small curve on top of the normal distribution with greater deviation at the tails, implying that they may not be normally distributed. This is further reinforced by the Anderson-Darling normality test, which rejects the hypothesis $H_0$ of normality when we apply a standard significance level of $\alpha=0.05$. This can be seen from the $p$-value of the test, which is far less than $\alpha$. 
 
 **Q5:** 
 
 ```{r,eval=TRUE}
 modelB = lm(FEV ~ Age + Htcm + Gender + Smoke, data=lungcap)
 summary(modelB)
+library(ggplot2)
+# residuls vs fitted Model B
+ggplot(modelB, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(se = FALSE, col = "red", size = 0.5, method = "loess") +
+  labs(x = "Fitted values", y = "Standardized residuals",
+       title = "Fitted values vs. Standardized residuals Model B",
+       subtitle = deparse(modelA$call))
+# qq-plot of residuals
+ggplot(modelB, aes(sample = .stdresid)) +
+  stat_qq(pch = 19) + 
+  geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+  labs(x = "Theoretical quantiles", y = "Standardized residuals", 
+       title = "Normal Q-Q Model B", subtitle = deparse(modelA$call))
+# normality test
+library(nortest) 
+ad.test(rstudent(modelB))
+library(nortest)
+ad.test(rstudent(modelB))
 ```
+
+For `modelB`, the standarized residuals vs. fitted values shows a non-linear relationship and non-constant spread. However, the QQ-plot shows a better fit to the normal distribution, but with some outliers at the tails. The Anderson-Darling normality test reports a slightly larger $p$-value than in `modelA`, indicating that the residuals in `modelB` are more normally distributed, although not enough to justify normality. The $R^2$-statistic for `modelA` is better than for `modelB`, but the interpretation of the model may be more difficult as we take the logarithm of the response.
+WHICH MODEL TO CHOOSE??
 
 **Q6:** 
+Because $\sigma^2$ is unknown, we can perform a $t$ -test. The $T_0$-statistic can be calculated by inserting the values for ${\hat\beta_{age}}$ and $\text{SD}(\hat\beta_{age})$, shown in the `summary`, and testing the hypothesis $H_0 : \beta_{age}=0$.
+$$T_0=\frac{{\hat\beta_{age}}-\text{E}({\hat\beta_{age}})}{\sqrt{\text{Var}(\hat\beta_{age})}} = \frac{{\hat\beta_{age}}-{\beta_{age}}}{\text{SD}(\hat\beta_{age})} = \frac{{\hat\beta_{age}}-0}{\text{SD}(\hat\beta_{age})} = 6.984$$
+The $p$-value can then be calculated by inserting the numerical value of $T_0$ and calculating the probability of observing what we have observed or something more extreme in direction of the alternative hypothesis. The $p$-value for this test can be obtained from the `summary`.
+$$P(|T|>t_0|{H_0} \space \text{true})=P(|T|>6.984)=7.1\cdot10^{-12}$$
 
-```{r,eval=TRUE}
-# here you write your code if you have any
-```
+We reject the null hypothesis for a critical region given by $P(|T|>k |H_0 \space \text{true}) = \alpha$. This probability is similar to the one used to calculate the $p$-value, where $\alpha$ is our significance level. It is then clear that we reject the null hypothesis for $\alpha \geqslant 7.1\cdot10^{-12}$.
 
 **Q7:** 
+We start constructing the intervall from the probability,
+$$P(-t_{\frac{\alpha}{2},v}\leqslant T\leqslant t_{\frac{\alpha}{2},v}) = 1-\alpha.$$
+Writing out $T$ in terms of ${\hat\beta_{age}}$, ${\beta_{age}}$,$\sqrt{\text{Var}(\hat\beta_{age})}$ and solving the inequalities for ${\beta_{age}}$, we can construct the intervall for a given significance $\alpha$.
+$$P({\hat\beta_{age}}-t_{\frac{\alpha}{2},v}\sqrt{\text{Var}({\hat\beta_{age}})} \leqslant \beta_{age} \leqslant {\hat\beta_{age}}+t_{\frac{\alpha}{2},v}\sqrt{\text{Var}({\hat\beta_{age}})})=1-\alpha$$
+Our $t$-distribution has $v = n-p-1 = 649$ degrees of freedom, approximating a normal distribution. Setting $\alpha = 0.01$ for a $(1-\alpha)\cdot100\% = 99\%$ CI, we get $t_{\frac{0.01}{2},649} \approx z_{0.005} = 2.576$. Inserting our estimate for ${\beta_{age}}$ and $\text{SD}(\hat\beta_{age})$, we get the interval,
 
+$$\beta_{age}\in[{\hat\beta_{age}}-2.576\cdot\text{SD}(\hat\beta_{age}),{\hat\beta_{age}}+2.576\cdot\text{SD}(\hat\beta_{age})] = [0.0147,0.0320]$$
+This intervall can be verified in R with
 ```{r,eval=TRUE}
-# here you write your code
+confint(object=modelA, level=0.99)
 ```
 
+The confidence intervall tells us that the true value of $\beta_{age}$ lies within $[0.0147,0.0320]$ in $95\%$ of the intervalls constructed if we were to make several intervalls. The $p$-value of the test in **Q6** tells us the probability of $\beta_{age} = 0$. Since $0$ is not a part of the $99\%$ CI, we know that the $p$-value for the test is lower than $\alpha=0.01$.
 
 **Q8:**
 
 ```{r,eval=TRUE}
 new = data.frame(Age=16, Htcm=170, Gender="M", Smoke=0)
+#best guess: 
+best_guess = summary(modelA)$coeff[1,1]+summary(modelA)$coeff[2,1]*16+summary(modelA)$coeff[3.1]*170+summary(modelA)$coeff[4,1]*1+summary(modelA)$coeff[5,1]*1
+best_guess
+#predicition interval
+pred.log=predict(modelA, new, interval = 'prediction') #using the default 95% prediction level
+pred.log
+pred=exp(pred.log)
+pred
 ```
+
+
+The prediction interval is very wide compared to the actual span in the data (0.7 to 5.7), and it contains all the values for other males his age. Therefore it does not tell us much, and we conclude that our model is not very good at prediction.
+
 
 # Problem 2: Classification 
 
 ```{r}
 library(class)# for function knn
 library(caret)# for confusion matrices
-
 raw = read.csv("https://www.math.ntnu.no/emner/TMA4268/2019v/data/tennis.csv")
 M = na.omit(data.frame(y=as.factor(raw$Result),
                        x1=raw$ACE.1-raw$UFE.1-raw$DBF.1, 
@@ -105,13 +175,13 @@ Mdf=data.frame(M,"istest"=as.factor(trte))
 ```
 
 **Q9:** 
-
-
+$$
+\hat{y}(x)=\hat{P}(Y=j|X=x)=\frac{1}{K}\sum_{i\in\mathcal{N_{'}}} I(y_{i}=j), \qquad j\in\{0,1\}
+$$
 **Q10:** 
 
 ```{r,eval=TRUE}
 # here you write your code
-
 ### Training set
 ks = 1:30
 yhat.train = sapply(ks, function(k) {
@@ -120,7 +190,6 @@ yhat.train = sapply(ks, function(k) {
 train.equal = I(yhat.train == M[tr,1]) #Returns boolean matrix of correct/incorrect classifications
 train.e = apply(train.equal == FALSE, 2, sum)  #Apply summation over all coloumns, resulting in vector of total misclassifications for k = 1:30
 train.e = train.e/nrow(train.equal)# Misclassification rate
-
 ### Test set
 yhat.test = sapply(ks, function(k) {
   class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-tr,-1], k = k) #Riktig måte for test-set??
@@ -128,7 +197,6 @@ yhat.test = sapply(ks, function(k) {
 test.equal = I(yhat.test == M[-tr,1]) #Returns boolean matrix of correct/incorrect classifications
 test.e = apply(test.equal == FALSE, 2, sum) # Apply summation over all coloumns, resulting in vector of total misclassifications for each k = 1:30
 test.e = test.e/nrow(test.equal) # Misclassification rate for each k
-
 ```
 
 
@@ -153,7 +221,6 @@ cv = sapply(ks, function(k){
 
 
 **Q11:** 
-
 ```{r, eval=FALSE}
 cv.e = numeric(30)
 cv.se = numeric(30)
@@ -178,9 +245,11 @@ lines(ks, test.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[1])
 legend("topright", legend = c("Test", "5-fold CV", "Training"), lty = 1, col=co)
 ```
 
-Bias does in general increase with K, as the KNN-algorithm tends to overfit the data with low values of K, resulting in a low bias. The variance however decreases with K. Explain why, and justify from plot
+Bias does in general increase with K, as the KNN-algorithm tends to overfit the data with low values of K, resulting in a low bias. The variance however decreases with K.
 
 **Q13:** 
+
+The proposed strategy uses the "one standard error rule". It chooses the simplest model (e.g.highest value of K) whose error is smaller than the the minimal error + its standard error. In our case: K=30. 
 
 ```{r,eval=FALSE}
 k = tail(which(cv.e < cv.e[k.min] + cv.se[k.min]), 1)
@@ -203,6 +272,8 @@ box()
 
 **Q14:** 
 
+Random guessing will produce the ROS as a straight line along the diagonal.. Along this line 50% of the guesses will have been right, and the rest wrong. With a 50/50 chance of guessing right this line will represent random guessing...  As the AUC is the area under the curve, it will in that case be 0.5. 
+
 ```{r,eval=FALSE}
 K=30# your choice from Q13
   
@@ -212,35 +283,90 @@ KNNclass=class::knn(train=M[tr,-1], cl=M[tr,1], test=M[-tr,-1], k = K,prob=TRUE)
 KNNprobwinning=attributes(KNNclass)$prob
 KNNprob= ifelse(KNNclass == "0", 1-KNNprobwinning, KNNprobwinning)
 # now KNNprob has probability that player 1 wins, for all matches in the test set
-
 library(pROC)
 # now you use predictor=KNNprob and response=M[-tr,1] 
 # in your call to the function roc in the pROC library
 tennis_roc = roc(response = M[-tr,1], predictor = KNNprob)
 auc = tennis_roc$auc
 ggroc(tennis_roc)+ggtitle("ROC")
+tennis_roc
+auc
 ```
 
 **Q15:**
 
 ```{r,eval=TRUE}
-# here you write your code
+y_tilde <- numeric()
+M.test=M[tr,-1]
+for (i in 1:dim(M.test)[1]) {
+  if (M.test[i,1] > M.test[i,2]) {
+    y_tilde[i] <- 1
+  } else { 
+  y_tilde[i] <- 0
+  }
+}
+#plot from Q13
+# #k = tail(which(cv.e < cv.e[k.min] + cv.se[k.min]), 1)
+# size = 100
+# xnew = apply(M[tr,-1], 2, function(X) seq(min(X), max(X), length.out=size))
+# grid = expand.grid(xnew[,1], xnew[,2])
+# #grid.yhat = knn(M[tr,-1], M[tr,1], k=k, test=grid)
+# np = 300
+# par(mar=rep(2,4), mgp = c(1, 1, 0))
+# contour(xnew[,1], xnew[,2], z = matrix(grid.yhat, size), levels=.5, 
+#         xlab=expression("x"[1]), ylab=expression("x"[2]), axes=FALSE,
+#         main = paste0(k,"-nearest neighbors"), cex=1.2, labels="")
+# points(grid, pch=".", cex=1, col=grid.yhat)
+# points(M[1:np,-1], col=factor(M[1:np,1]), pch = 1, lwd = 1.5)
+# 
+# segments(-88, -96, 15, 12) #desicion boundary
+# 
+# legend("topleft", c("Player 1 wins", "Player 2 wins"), 
+#        col=c("red", "black"), pch=1)
+# box()
+library(caret)
+library(e1071)
+ref = M[tr,1]
+#confusion matrix for KNN
+#confmat_KNN=(table(predicted classes KNN, ref))
+#confmat_KNN
+#misclass_KNN=(sum(confmat_KNN) - sum(diag(confmat_KNN)))/sum(confmat_KNN)
+#misclass_KNN
+#confusion matrix for argmax
+#confmat2=confusionMatrix(table(y_tilde, ref))
+#confmat2
+confmat_argmax=(table(y_tilde, ref))
+confmat_argmax
+misclass_argmax=(sum(confmat_argmax) - sum(diag(confmat_argmax)))/sum(confmat_argmax)
+misclass_argmax
 ```
 
+#We prefer classifier:.. with misclassification rate XX %
 
 # Problem 3: Bias-variance trade-off 
 
 Here you see how to write formulas with latex (needed below)
+
 $$
 \hat{\boldsymbol \beta}=({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf Y}
 $$
 
 **Q16:** 
+$$\text{E}(\boldsymbol \beta)=\text{E} [({\bf X}^T{\bf X})^{-1} {\bf X}^T{\bf Y}] = ({\bf X}^T{\bf X})^{-1}{\bf X}^T\text{E}(\bf{Y})=({\bf X}^T{\bf X})^{-1}({\bf X}^TX)\boldsymbol \beta=I{\boldsymbol \beta}={\boldsymbol \beta}$$
+
+
+$$\text{Cov}(\hat{\boldsymbol\beta})=\text{Cov}(({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf Y})=({\bf X}^T{\bf X})^{-1}{\bf X}^T \text{Cov}({\bf Y})[({\bf X}^T{\bf X})^{-1}{\bf X}^T]^T \\
+=\sigma^2({\bf X}^T{\bf X})^{-1}{\bf X}^T\bf{X}[({\bf X}^T{\bf X})^{-1}]^T=\sigma^2(\bf{X^TX})^{-1}=\sigma^2\bf{A}$$
 
 **Q17:** 
+$$\text{E}(\hat{f}({\bf x}_0))=\text{E}({\bf x}_0^T \hat{\boldsymbol\beta})={\bf x}_0^T \text{E}(\hat{\boldsymbol\beta})={\bf x}_0^T\boldsymbol\beta=f({\bf x}_0)$$
+$$\text{Var}(\hat{f}({\bf x}_0))=\text{Var}({\bf x}_0^T\boldsymbol{\hat\beta}))=\text{Var}(\hat\beta_0)+(x_{01}^2\text{Var}(\hat\beta_1))+...+(x_{0p}^2\text{Var}(\hat\beta_p))={\bf x}_0^T\circ{\bf x}_0^T\text{diag(Cov}(\boldsymbol{\hat\beta}))=\sigma^2\sum_{i=1}^{p+1} {\bf x}_{0i}^{T2}{\bf A}_{jj}
+$$ 
 
 **Q18:** 
-$$\text{E}[(Y_0-\hat{f}({\bf x}_0))^2]=[\text{E}(\hat{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\hat{f}({\bf x}_0) ) + \text{Var}(\varepsilon)$$
+$$\text{E}[(Y_0-\hat{f}({\bf x}_0))^2]=[\text{E}(\hat{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\hat{f}({\bf x}_0) ) + \text{Var}(\varepsilon)=\text{E}[(Y_0-\hat{f}({\bf x}_0))^2] \\ =\text{E}[(Y_0^2-2Y_o\hat{f}({\bf x}_0)+\hat{f}({\bf x}_0)^2]=\text{Var}(Y_0)+\text{E}(Y_0)^2-2 \text{E}(Y_0) \text{E}(\hat{f}({\bf x}_0))+\text{Var}(\hat{f}({\bf x}_0))+\text{E}(\hat{f}({\bf x}_0))^2
+\\ =\text{Var}(\varepsilon)+\text{Var}(\hat{f}({\bf x}_0))=\sigma^2\sum_{i=1}^{p+1} {\bf x}_{0i}^{T2}{\bf A}_{jj}+\text{Var}(\varepsilon)+0
+$$
 
 Ridge estimator:
 $$
@@ -248,12 +374,22 @@ $$
 $$
 
 **Q19:** 
+$$\text{E}(\widetilde{\boldsymbol \beta})=\text{E}(({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y})=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T\text{E}({\bf Y})=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X)}\boldsymbol\beta$$
 
+$$\text{Cov}(\widetilde{\boldsymbol \beta})=\text{Cov}(({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y})=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T\text{Cov}({\bf Y})[({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T]^T \\
+=\sigma^2({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1})=\sigma^2\bf C
+$$
 **Q20:** 
+$$\text{E}(\widetilde{f}({\bf x}_0))=\text{E}({\bf x}_0^T\widetilde\beta)={\bf x}_0^T\text{E}(\widetilde\beta)={\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta
+$$
 
+$$\text{Var}(\widetilde{f}({\bf x}_0))=\text{Var}({\bf x}_0^T\widetilde\beta)=\text{Var}(\widetilde\beta_0+x_{01}\widetilde\beta_1+...+x_{0p}\widetilde\beta_p)={\bf x}_0^T \circ{\bf x}_0^T\text{diag(Cov}(\boldsymbol{\widetilde\beta}))=\sigma^2\sum_{i=1}^{p+1} {\bf x}_i^{2}C_{ii}
+$$
 **Q21:** 
 $$\text{E}[(Y_0-\widetilde{f}({\bf x}_0))^2]=[\text{E}(\widetilde{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\widetilde{f}({\bf x}_0) ) + \text{Var}(\varepsilon)$$
-
+$$\text{E}[(Y_0-\hat{f}({\bf x}_0))^2]=\text{E}[(Y_0^2-2Y_o\widetilde{f}({\bf x}_0)+\widetilde{f}({\bf x}_0)^2]=\text{Var}(Y_0)+\text{E}(Y_0)^2-2 \text{E}(Y_0) \text{E}(\widetilde{f}({\bf x}_0))+\text{Var}(\widetilde{f}({\bf x}_0))+\text{E}(\widetilde{f}({\bf x}_0))^2 \\
+=\text{Var}(\varepsilon)+\text{Var}(\widetilde{f}({\bf x}_0))+[\text{E}(\widetilde{f}({\bf x}_0)-{f}({\bf x}_0)]^2 =\text{Var}(\varepsilon)+\sigma^2\sum_{i=1}^{p+1} {\bf x}_{0i}^{2}C_{ii}+[{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta-{\bf x}_0^T\boldsymbol\beta]^2
+$$
 
 ```{r}
 values=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/BVtradeoffvalues.dd")
@@ -271,11 +407,14 @@ Hint: we perform matrix multiplication using `%*%`, transpose of a matrix `A` wi
 
 **Q22:** 
 
+In general, increased lambda gives increased bias. 
+
 ```{r,eval=FALSE}
+#library(Metrics)
 sqbias=function(lambda,X,x0,beta)
 {
   p=dim(X)[2]
-  value= #HERE YOU FILL IN
+  value= (t(x0)%*%solve(t(X)%*%X+lambda*diag(p))%*%(t(X)%*%X)%*%beta-t(x0)%*%beta)^2
   return(value)
 }
 thislambda=seq(0,2,length=500)
@@ -286,12 +425,16 @@ plot(thislambda,sqbiaslambda,col=2,type="l")
 
 **Q23:** 
 
+As expected, the variance decreases when lambda increases. 
+
 ```{r,eval=FALSE}
 variance=function(lambda,X,x0,sigma)
 {
   p=dim(X)[2]
   inv=solve(t(X)%*%X+lambda*diag(p))
-  value=#HERE YOU FILL IN
+  var=diag(sigma*inv%*%t(X)%*%X%*%inv)
+  x_prod = t(x0)*t(x0)
+  value=x_prod[1,]%*%var
   return(value)
 }
 thislambda=seq(0,2,length=500)
@@ -303,6 +446,8 @@ plot(thislambda,variancelambda,col=4,type="l")
 
 **Q24:** 
 
+Optimal lambda is:
+
 ```{r,eval=FALSE}
 tot=sqbiaslambda+variancelambda+sigma^2
 which.min(tot)
@@ -312,4 +457,4 @@ lines(thislambda, sqbiaslambda,col=2)
 lines(thislambda, variancelambda,col=4)
 lines(thislambda,rep(sigma^2,500),col="orange")
 abline(v=thislambda[which.min(tot)],col=3)
-```
+````
