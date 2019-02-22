@@ -3,8 +3,8 @@ title: 'Compulsory exercise 1: Group 2'
 author: "Anders Thallaug Fagerli, Rebecca Sandstø"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 subtitle: TMA4268 Statistical Learning V2019
 ---
@@ -26,18 +26,19 @@ modelA = lm(log(FEV) ~ Age + Htcm + Gender + Smoke, data=lungcap)
 summary(modelA)
 ```
 
-**Q1:** Write down the equation for the fitted modelA.
+**Q1:**
 
 In multiple linear regression, we have a reponse variable $\boldsymbol{Y}$ written as a function of the observations $\boldsymbol{X}$, regression parameters $\boldsymbol{\beta}$ and random errors $\boldsymbol{\epsilon}$, where ${\boldsymbol{Y}} = \boldsymbol{X\beta} + \boldsymbol{\epsilon}$. Taking the logarithm of our response, `modelA` can then be written as: 
-$$log(\text{FEV})=\beta_0+\beta_1\text{Age}+\beta_2\text{Htcm}+\beta_3\text{GenderM}+\beta_4\text{Smoke}+\epsilon $$
+$$\text{log}(\text{FEV})=\beta_0+\beta_1\text{Age}+\beta_2\text{Htcm}+\beta_3\text{GenderM}+\beta_4\text{Smoke}+\epsilon $$
 
 We can then fit this model by estimating the parameters $\boldsymbol{\beta}$, so that $\hat{\boldsymbol{Y}}=\boldsymbol{X}\hat{\boldsymbol{\beta}}$. Using the estimated parameters from the `summary`, the fitted `modelA` can be written as: 
-$$\widehat{log(\text{FEV}})=-1.944+0.0234\cdot\text{Age}+0.0169\cdot\text{Htcm}+0.0293\cdot\text{GenderM}+0.0461\cdot\text{Smoke} $$
+$$\widehat{\text{log}(\text{FEV}})=-1.944+0.0234\cdot\text{Age}+0.0169\cdot\text{Htcm}+0.0293\cdot\text{GenderM}+0.0461\cdot\text{Smoke} $$
+
 
 **Q2:** 
     
 * `Estimate`:
-The estimated regression coefficients, $\hat{\boldsymbol{\beta}}$. Assuming a normal linear regression model, these coefficients are found by either minimizing the residual sum of sqaures RSS or maximizing the likelihood function with respect to $\boldsymbol{\beta}$, resulting in the estimated vector of coefficients $\hat{\boldsymbol{\beta}}=(\bf X^{T}\bf X)^{-1}\bf X^{T}\bf Y$. The regression coefficients explain how the different covariates affect the response, as the response is linearly proportional to all coefficients. Ex. an increase in `Age` will tend to an increase in the response `FEV`, as the associated coefficient to `Age` is positive. In contrast, a person who smokes will tend to a decrease in the response `FEV`, as the associated coefficient to `Smoke` is negative. As the response is linearly proportional to a coeffiecient, an increase in a covariate from $x_j$ to $x_{j}+1$ will result in an increase in the response by $\hat{\beta_j}$ when all other covariates are held constant. Ex. an increase in `Age` from 15 to 16 will lead to an increase in $log(`FEV`)$ by 0.0234. The intercept $\hat{\beta_0}$ is not proportional to any covariate, meaning it is the response value when all covariates are set to zero. The intercept alone does not give any meaningful information in our case, as it reports a negative forced expiratory volume in litres. This means the regression model is only valid within an intervall of values for the covariates. Ex. `Age` should be within 3 and 19, as the data is collected from people aged 3 - 19.
+The estimated regression coefficients, $\hat{\boldsymbol{\beta}}$. Assuming a normal linear regression model, these coefficients are found by either minimizing the residual sum of squares RSS or maximizing the likelihood function with respect to $\boldsymbol{\beta}$, resulting in the estimated vector of coefficients $\hat{\boldsymbol{\beta}}=(\bf X^{T}\bf X)^{-1}\bf X^{T}\bf Y$. The regression coefficients explain how the different covariates affect the response, as the response is linearly proportional to all coefficients. Ex. an increase in `Age` will tend to an increase in the response `FEV`, as the associated coefficient to `Age` is positive. In contrast, a person who smokes will tend to a decrease in the response `FEV`, as the associated coefficient to `Smoke` is negative. As the response is linearly proportional to a coeffiecient, an increase in a covariate from $x_j$ to $x_{j}+1$ will result in an increase in the response by $\hat{\beta_j}$ when all other covariates are held constant. Ex. an increase in `Age` from 15 to 16 will lead to an increase in $log(`FEV`)$ by 0.0234. The intercept $\hat{\beta_0}$ is not proportional to any covariate, meaning it is the response value when all covariates are set to zero. The intercept alone does not give any meaningful information in our case, as it reports a negative forced expiratory volume in litres. This means the regression model is only valid within an intervall of values for the covariates. Ex. `Age` should be within 3 and 19, as the data is collected from people aged 3 - 19.
     
 * `Std.Error`:
 The standard error of each estimated coefficient, $\text{SD}(\hat{\beta_j})=\sqrt{\text{Var}(\hat{\beta_j})}$. This value quantifies the amount of variation in the estimated coefficients from the estimated values, and is found in the diagonal of the covariance matrix for $\hat{\beta}$, given by $\text{Cov}(\hat{\beta}) = \sigma^{2}(\bf X^{T}\bf X)^{-1}$. Unless the true value of the variance $\sigma^{2}$ in the random errors $\epsilon_{i}$ is known, this must be estimated. An unbiased estimator for $\sigma^{2}$ is $\hat{\sigma}^{2} = RSS/(n-p-1)$, where $n$ is the number of observations and $p$ is the number of covariates.
@@ -56,7 +57,7 @@ If $F$ is greater than 1, we expect $H_0$ to be false, and the regression to be 
 
 The proportion of variability is given by the coefficient of determination
 $$R^2=\frac{TSS - RSS}{TSS} = 0.8106$$
-This means 81% of the variance in $\boldsymbol{Y} = log(\text{FEV})$ is explained in our model, implying a good fit. The closer the coefficient is to 1, the better, as $R^2=1$ means all residuals are zero.
+This means 81% of the variance in $\boldsymbol{Y} = \text{log}(\text{FEV})$ is explained in our model, implying a good fit. The closer the coefficient is to 1, the better, as $R^2=1$ means all residuals are zero.
 
 **Q4:**
 
@@ -117,6 +118,7 @@ ad.test(rstudent(modelB))
 For `modelB`, the standarized residuals vs. fitted values shows a non-linear relationship and non-constant spread. However, the QQ-plot shows a better fit to the normal distribution, but with some outliers at the tails. The Anderson-Darling normality test reports a slightly larger $p$-value than in `modelA`, indicating that the residuals in `modelB` are more normally distributed, although not enough to justify normality. The $R^2$-statistic for `modelA` is better than for `modelB`, but the interpretation of the model may be more difficult as we take the logarithm of the response. In total, both models violate some of the assumptions for multiple linear regression and may therefore not be favorable when making inference. If we were to choose a model, `modelA` might be better suited for inference since the residuals show a linear relationship with the fitted values and have a fairly constant spread.
 
 **Q6:** 
+
 Because $\sigma^2$ is unknown, we can perform a $t$ -test. The $T_0$-statistic can be calculated by inserting the values for ${\hat\beta_{age}}$ and $\text{SD}(\hat\beta_{age})$, shown in the `summary`, and testing the hypothesis $H_0 : \beta_{age}=0$.
 $$T_0=\frac{{\hat\beta_{age}}-\text{E}({\hat\beta_{age}})}{\sqrt{\text{Var}(\hat\beta_{age})}} = \frac{{\hat\beta_{age}}-{\beta_{age}}}{\text{SD}(\hat\beta_{age})} = \frac{{\hat\beta_{age}}-0}{\text{SD}(\hat\beta_{age})} = 6.984$$
 The $p$-value can then be calculated by inserting the numerical value of $T_0$ and calculating the probability of observing what we have observed or something more extreme in direction of the alternative hypothesis. The $p$-value for this test can be obtained from the `summary`.
@@ -125,6 +127,7 @@ $$P(|T|>t_0|{H_0} \space \text{true})=P(|T|>6.984)=7.1\cdot10^{-12}$$
 We reject the null hypothesis for a critical region given by $P(|T|>k |H_0 \space \text{true}) = \alpha$. This probability is similar to the one used to calculate the $p$-value, where $\alpha$ is our significance level. It is then clear that we reject the null hypothesis for $\alpha \geqslant 7.1\cdot10^{-12}$.
 
 **Q7:** 
+
 We start constructing the intervall from the probability,
 $$P(-t_{\frac{\alpha}{2},v}\leqslant T\leqslant t_{\frac{\alpha}{2},v}) = 1-\alpha.$$
 Writing out $T$ in terms of ${\hat\beta_{age}}$, ${\beta_{age}}$,$\sqrt{\text{Var}(\hat\beta_{age})}$ and solving the inequalities for ${\beta_{age}}$, we can construct the intervall for a given significance $\alpha$.
@@ -141,14 +144,14 @@ The confidence intervall tells us that the true value of $\beta_{age}$ lies with
 
 **Q8:**
 
-Our best guess can be found by inserting the new observation into the fitted model, which is done in the R code below. The best guess for his $log(\text{FEV})$ is found to be $1.324$. A prediction intervall can be constructed by using the $T$-statistic, where we assume the new response is independent of previous observations.
+Our best guess can be found by inserting the new observation into the fitted model, which is done in the R code below. The best guess for his $\text{log}(\text{FEV})$ is found to be $1.324$. A prediction intervall can be constructed by using the $T$-statistic, where we assume the new response is independent of previous observations.
 $$T =\frac{Y_0-\hat{Y_0}-\text{E}(Y_0-\hat{Y_0})}{\sqrt{\text{Var}(Y_0-\hat{Y_0})}}$$
 With
 $$\text{E}(Y_0-\hat{Y_0}) = \text{E}(Y_0)-\text{E}(\hat{Y_0})=\boldsymbol{x}_{0}^{T}\boldsymbol{\beta}-\boldsymbol{x}_{0}^{T}\text{E}(\boldsymbol{\hat\beta}) = \boldsymbol{x}_{0}^{T}\boldsymbol{\beta}-\boldsymbol{x}_{0}^{T}\boldsymbol{\beta} = 0$$
 $$\text{Var}(Y_0-\hat{Y_0})=\text{Var}(Y_0)+\text{Var}(\hat{Y_0})= \hat\sigma^2+\boldsymbol{x}_{0}^{T}\text{Var}(\boldsymbol{\hat{\beta}})\boldsymbol{x}_{0}=\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})$$
 The prediction intervall is set up by solving the inequality in $P(-t_{\frac{\alpha}{2},v}\leqslant T\leqslant t_{\frac{\alpha}{2},v}) = 1-\alpha$ for $Y_0$, resulting in
 $$Y_0\in[{\hat{Y_0}}-t_{\frac{\alpha}{2},v}\cdot\sqrt{\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})},{\hat{Y_0}}+t_{\frac{\alpha}{2},v}\cdot\sqrt{\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})}]$$
-Using the R code below, we find the $95\%$ prediction interval for $log(\text{FEV})$ to be $Y_0\in[1.036,1.611]$. This can be transformed to normal units by taking $e$ to the power of each limit. His $\text{FEV}$ is then predicted to be in the interval $Y_0\in[2.818, 5.010]$ in $95\%$ of the prediction intervals we construct. We can compare the interval with properties of the data to justify whether it is useful or not. The prediction interval is very wide compared to the actual span in the data (0.8 to 5.8), and it contains values ranging from the mean to the upper tail of the data. Therefore it does not tell us much, and we conclude that our model is not very good at prediction.
+Using the R code below, we find the $95\%$ prediction interval for $\text{log}(\text{FEV})$ to be $Y_0\in[1.036,1.611]$. This can be transformed to normal units by taking $e$ to the power of each limit. His $\text{FEV}$ is then predicted to be in the interval $Y_0\in[2.818, 5.010]$ in $95\%$ of the prediction intervals we construct. We can compare the interval with properties of the data to justify whether it is useful or not. The prediction interval is very wide compared to the actual span in the data $(0.8, 5.8)$, and it contains values ranging from the mean to the upper tail of the data. Therefore it does not tell us much, and we conclude that our model is not very good at prediction.
 ```{r,eval=TRUE}
 new = data.frame(Age=16, Htcm=170, Gender="M", Smoke=0)
 #best guess
@@ -208,15 +211,10 @@ test.e = test.e/nrow(test.equal)
 ```
 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 set.seed(0)
 ks = 1:30 # Choose K from 1 to 30.
 idx = createFolds(M[tr,1], k=5) # Divide the training data into 5 folds.
-# "Sapply" is a more efficient for-loop. 
-# We loop over each fold and each value in "ks"
-# and compute error rates for each combination.
-# All the error rates are stored in the matrix "cv", 
-# where folds are rows and values of $K$ are columns.
 cv = sapply(ks, function(k){ 
   sapply(seq_along(idx), function(j) {
     yhat = class::knn(train=M[tr[ -idx[[j]] ], -1],
@@ -228,8 +226,8 @@ cv = sapply(ks, function(k){
 ```
 
 
-**Q11:** 
-```{r, eval=FALSE}
+**Q11:**
+```{r, eval=TRUE}
 cv.e = numeric(30)
 cv.se = numeric(30)
 for (i in 1:30) {
@@ -239,9 +237,9 @@ for (i in 1:30) {
 k.min = col(cv)[cv==min(cv)]
 ```
 
-**Q12:** 
+**Q12:**
 
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 library(colorspace)
 co = rainbow_hcl(3)
 par(mar=c(4,4,1,1)+.1, mgp = c(3, 1, 0))
@@ -252,11 +250,12 @@ lines(ks, train.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[3])
 lines(ks, test.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[1])
 legend("topright", legend = c("Test", "5-fold CV", "Training"), lty = 1, col=co)
 ```
+
 From the plot above we can see how $K$ influences the misclassification rate, which is tied to the bias and variance of our classifier. As $K$ increases, the bias increases and variance decreases. A low value for K will result in a flexible classifier, as the algorithm only looks to one neighbour. A flexible classifier will have a low bias, but in return have a high variance. This can be seen from comparing the graphs for `Training` and `Test` above. We can see that a flexible classifier will fit the training set very well, but once it is introduced to new data it will misclassify a large proportion, a result of the high variance. The classifier looses its flexibility when $K$ increases, as it takes a larger majority vote. Choosing the right $K$ is thus a problem concerning the bias-variance trade-off.
 
-**Q13:** 
+**Q13:**
 
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 k = tail(which(cv.e < cv.e[k.min] + cv.se[k.min]), 1)
 size = 100
 xnew = apply(M[tr,-1], 2, function(X) seq(min(X), max(X), length.out=size))
@@ -276,9 +275,9 @@ box()
 
 The proposed strategy is the *one standard error rule*, which chooses the simplest model given that the model error is within a standard error of the parameter giving the minimal error. In this case, we choose the largest $K$ that satisfies the condition $\text{CV}(K) \leqslant \text{CV}(K_{min})+\text{SE}(K_{min})$, where $K_{min}$ gives the minimal error.
 
-**Q14:** 
+**Q14:**
 
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 K=30# your choice from Q13
 KNNclass=class::knn(train=M[tr,-1], cl=M[tr,1], test=M[-tr,-1], k = K,prob=TRUE)
 KNNprobwinning=attributes(KNNclass)$prob
@@ -319,16 +318,14 @@ box()
 
 ```{r,eval=TRUE}
 library(caret)
-#library(e1071)
 ref = M[-tr,1]
 y.hat = yhat.test[,30] #classifications for yhat with K=30
-#confusion matrix for argmax
 y.tilde <- numeric()
 M.test=M[-tr,-1]
 for (i in 1:dim(M.test)[1]) {
   if (M.test[i,1] > M.test[i,2]) {
     y.tilde[i] <- 1
-  } else { 
+  } else {
   y.tilde[i] <- 0
   }
 }
@@ -342,18 +339,19 @@ confmat.yhat
 misclass.argmax
 misclass.yhat
 ```
-We get the misclassification rates $\text{Ave}(I(y \neq \hat{y})) = 0.2563$ and $\text{Ave}(I(y \neq \widetilde{y})) = 0.2335$. As we prefer the classifier with the lowest misclassification error, we choose $\widetilde{y}(x)$. 
+
+We get the misclassification rates $\text{Ave}(I(y \neq \hat{y})) = 0.2563$ and $\text{Ave}(I(y \neq \widetilde{y})) = 0.2335$. As we prefer the classifier with the lowest misclassification error, we choose $\widetilde{y}(x)$.
 
 # Problem 3: Bias-variance trade-off 
 
-Here you see how to write formulas with latex (needed below)
-
+Least squares estimator:
 $$
 \hat{\boldsymbol \beta}=({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf Y}
 $$
 
-**Q16:** 
-$$
+**Q16:**
+
+
 \begin{align*}
 \text{E}(\hat{\boldsymbol{\beta}})
 =\text{E} [({\bf X}^T{\bf X})^{-1} {\bf X}^T{\bf Y}]
@@ -363,21 +361,21 @@ $$
 &={\boldsymbol \beta}
 \end{align*}
 
-$$
 
 
-$$
+
 \begin{align*}
 \text{Cov}(\hat{\boldsymbol\beta})
 =\text{Cov}[({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf Y}]
 &=({\bf X}^T{\bf X})^{-1}{\bf X}^T \text{Cov}({\bf Y})[({\bf X}^T{\bf X})^{-1}{\bf X}^T]^T \\
 &=\sigma^2({\bf X}^T{\bf X})^{-1}{\bf X}^T\bf{X}[({\bf X}^T{\bf X})^{-1}]^T \\
-&=\sigma^2(\bf{X^TX})^{-1} 
+&=\sigma^2(\bf{X^TX})^{-1}
 \end{align*}
-$$
 
-**Q17:** 
-$$
+
+**Q17:**
+
+
 \begin{align*}
 \text{E}(\hat{f}({\bf x}_0))
 =\text{E}({\bf x}_0^T \hat{\boldsymbol\beta})
@@ -386,18 +384,20 @@ $$
 &=f({\bf x}_0)
 \end{align*}
 
-$$
-$$
+
+
 \begin{align*}
 \text{Var}(\hat{f}({\bf x}_0))
 =\text{Var}({\bf x}_0^T\boldsymbol{\hat\beta})
 &={\bf x}_0^T\text{Cov}(\hat{\boldsymbol{\beta}}){\bf x}_0 \\
 &=\sigma^2{\bf x}_0^T(\bf{X^TX})^{-1}{\bf x}_0
 \end{align*}
-$$ 
 
-**Q18:** 
-$$
+
+
+**Q18:**
+
+
 \begin{align*}
 \text{E}[(Y_0-\hat{f}({\bf x}_0))^2]
 &=\text{E}[(Y_0^2-2Y_o\hat{f}({\bf x}_0)+\hat{f}({\bf x}_0)^2] \\
@@ -408,25 +408,26 @@ $$
 &=\sigma^2+\sigma^2{\bf x}_0^T(\bf{X^TX})^{-1}{\bf x}_0
 \end{align*}
 
-$$
+
 
 Ridge estimator:
 $$
 \widetilde{\boldsymbol \beta}=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}
 $$
 
-**Q19:** 
-$$
+**Q19:**
+
+
 \begin{align*}
   \text{E}(\widetilde{\boldsymbol \beta})
-  &=\text{E}(({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}) \\
+  &=\text{E}[({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}] \\
   &=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T\text{E}({\bf Y}) \\
   &=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X)}\boldsymbol\beta
 \end{align*}
 
-$$
 
-$$
+
+
 \begin{align*}
 \text{Cov}(\widetilde{\boldsymbol \beta})
 &=\text{Cov}[({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}] \\
@@ -436,9 +437,10 @@ $$
 &=\sigma^2({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}
 \end{align*}
 
-$$
-**Q20:** 
-$$
+
+**Q20:**
+
+
 \begin{align*}
 \text{E}(\widetilde{f}({\bf x}_0))
 =\text{E}({\bf x}_0^T\widetilde\beta)
@@ -446,25 +448,25 @@ $$
 &={\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta
 \end{align*}
 
-$$
 
-$$
+
+
 \begin{align*}
 \text{Var}(\widetilde{f}({\bf x}_0))
 =\text{Var}({\bf x}_0^T\widetilde\beta)
 &={\bf x}_0^T\text{Cov}(\tilde{\boldsymbol{\beta}}){\bf x}_0 \\
 &=\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf x}_0
 \end{align*}
-$$
-**Q21:** 
 
-$$
+**Q21:**
+
+
 \begin{align*}
   \text{E}[(Y_0-\widetilde{f}({\bf x}_0))^2]
   &=\text{Var}(\varepsilon)+\text{Var}(\widetilde{f}({\bf x }_0))+[\text{E}(\widetilde{f}({\bf x}_0)-{f}({\bf x}_0)]^2 \\ &=\sigma^2+\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}+[{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta-{\bf x}_0^T\boldsymbol\beta]^2
 \end{align*}
 
-$$
+
 
 ```{r}
 values=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/BVtradeoffvalues.dd")
@@ -478,10 +480,9 @@ sigma=values$sigma
 sigma
 ```
 
-**Q22:** 
+**Q22:**
 
 ```{r,eval=TRUE}
-#library(Metrics)
 sqbias=function(lambda,X,x0,beta)
 {
   p=dim(X)[2]
@@ -494,9 +495,9 @@ for (i in 1:length(thislambda)) sqbiaslambda[i]=sqbias(thislambda[i],X,x0,beta)
 plot(thislambda,sqbiaslambda,col=2,type="l")
 ```
 
-As we expect from a ridge regression, the bias increases with $\lambda$ as the flexibility of the fit decreases. We can see from the curve that bias as a function of $\lambda$ is not increasing for all $\lambda$. This specific result comes from the data used in the ridge regression, and is not something we can predict before plotting the curve. The general trend in these curves are as expected though, namely that the bias increases with $\lambda$.
+As we expect from a ridge regression, the bias increases with $\lambda$ as the flexibility of the fit decreases. We can see from the curve that bias as a function of $\lambda$ is not strictly increasing for all $\lambda$. This specific result comes from the data used in the ridge regression, and is not something we can predict before plotting the curve. The general trend in these curves are as expected though, namely that the bias increases with $\lambda$.
 
-**Q23:** 
+**Q23:**
 
 ```{r,eval=TRUE}
 variance=function(lambda,X,x0,sigma)
@@ -512,9 +513,10 @@ variancelambda=rep(NA,length(thislambda))
 for (i in 1:length(thislambda)) variancelambda[i]=variance(thislambda[i],X,x0,sigma)
 plot(thislambda,variancelambda,col=4,type="l")
 ```
+
 Since the flexibility of the fit decreases with $\lambda$, the variance decreases, and we can see that the curve confirms this for our data.
 
-**Q24:** 
+**Q24:**
 
 ```{r,eval=TRUE}
 tot=sqbiaslambda+variancelambda+sigma^2
@@ -528,7 +530,3 @@ abline(v=thislambda[which.min(tot)],col=3)
 ````
 
 As we can see from the graph the optimal $\lambda$ for this problem is $\lambda \approx 1$. This is neither the optimal choice for the bias or variance alone, meaning we make a trade-off between the two in order to get the minimum total mean squared error $MSE$.
-
-
-
-
