@@ -3,8 +3,8 @@ title: 'Compulsory exercise 1: Group 2'
 author: "Anders Thallaug Fagerli, Rebecca Sandstø"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 subtitle: TMA4268 Statistical Learning V2019
 ---
@@ -319,13 +319,9 @@ box()
 
 ```{r,eval=TRUE}
 library(caret)
-library(e1071)
+#library(e1071)
 ref = M[-tr,1]
-#confusion matrix for KNN
-#confmat_KNN=(table(predicted classes KNN, ref))
-#confmat_KNN
-#misclass_KNN=(sum(confmat_KNN) - sum(diag(confmat_KNN)))/sum(confmat_KNN)
-#misclass_KNN
+y.hat = yhat.test[,30] #classifications for yhat with K=30
 #confusion matrix for argmax
 y.tilde <- numeric()
 M.test=M[-tr,-1]
@@ -337,16 +333,16 @@ for (i in 1:dim(M.test)[1]) {
   }
 }
 
-confmat_argmax=(table(y.tilde, ref))
-confmat_yhat = table(yhat.test[,30],ref)
-confmat_argmax
-confmat_yhat
-misclass_argmax=(sum(confmat_argmax) - sum(diag(confmat_argmax)))/sum(confmat_argmax)
-misclass_yhat=(sum(confmat_yhat) - sum(diag(confmat_yhat)))/sum(confmat_yhat)
-misclass_argmax
+confmat.argmax=table(y.tilde, ref)
+confmat.yhat = table(y.hat,ref)
+misclass.argmax=(sum(confmat.argmax) - sum(diag(confmat.argmax)))/sum(confmat.argmax)
+misclass.yhat=(sum(confmat.yhat) - sum(diag(confmat.yhat)))/sum(confmat.yhat)
+confmat.argmax
+confmat.yhat
+misclass.argmax
+misclass.yhat
 ```
-
-We prefer classifier:.. with misclassification rate XX %
+We get the misclassification rates $\text{Ave}(I(y \neq \hat{y})) = 0.2563$ and $\text{Ave}(I(y \neq \widetilde{y})) = 0.2335$. As we prefer the classifier with the lowest misclassification error, we choose $\widetilde{y}(x)$. 
 
 # Problem 3: Bias-variance trade-off 
 
@@ -357,20 +353,61 @@ $$
 $$
 
 **Q16:** 
-$$\text{E}(\boldsymbol \beta)=\text{E} [({\bf X}^T{\bf X})^{-1} {\bf X}^T{\bf Y}] = ({\bf X}^T{\bf X})^{-1}{\bf X}^T\text{E}(\bf{Y})=({\bf X}^T{\bf X})^{-1}({\bf X}^TX)\boldsymbol \beta=I{\boldsymbol \beta}={\boldsymbol \beta}$$
+$$
+\begin{align*}
+\text{E}(\hat{\boldsymbol{\beta}})
+=\text{E} [({\bf X}^T{\bf X})^{-1} {\bf X}^T{\bf Y}]
+&=({\bf X}^T{\bf X})^{-1}{\bf X}^T\text{E}(\bf{Y}) \\
+&=({\bf X}^T{\bf X})^{-1}({\bf X}^{T}{\bf X})\boldsymbol \beta \\
+&=I{\boldsymbol \beta} \\
+&={\boldsymbol \beta}
+\end{align*}
+
+$$
 
 
-$$\text{Cov}(\hat{\boldsymbol\beta})=\text{Cov}(({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf Y})=({\bf X}^T{\bf X})^{-1}{\bf X}^T \text{Cov}({\bf Y})[({\bf X}^T{\bf X})^{-1}{\bf X}^T]^T \\
-=\sigma^2({\bf X}^T{\bf X})^{-1}{\bf X}^T\bf{X}[({\bf X}^T{\bf X})^{-1}]^T=\sigma^2(\bf{X^TX})^{-1}=\sigma^2\bf{A}$$
+$$
+\begin{align*}
+\text{Cov}(\hat{\boldsymbol\beta})
+=\text{Cov}[({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf Y}]
+&=({\bf X}^T{\bf X})^{-1}{\bf X}^T \text{Cov}({\bf Y})[({\bf X}^T{\bf X})^{-1}{\bf X}^T]^T \\
+&=\sigma^2({\bf X}^T{\bf X})^{-1}{\bf X}^T\bf{X}[({\bf X}^T{\bf X})^{-1}]^T \\
+&=\sigma^2(\bf{X^TX})^{-1} 
+\end{align*}
+$$
 
 **Q17:** 
-$$\text{E}(\hat{f}({\bf x}_0))=\text{E}({\bf x}_0^T \hat{\boldsymbol\beta})={\bf x}_0^T \text{E}(\hat{\boldsymbol\beta})={\bf x}_0^T\boldsymbol\beta=f({\bf x}_0)$$
-$$\text{Var}(\hat{f}({\bf x}_0))=\text{Var}({\bf x}_0^T\boldsymbol{\hat\beta}))=\text{Var}(\hat\beta_0)+(x_{01}^2\text{Var}(\hat\beta_1))+...+(x_{0p}^2\text{Var}(\hat\beta_p))={\bf x}_0^T\circ{\bf x}_0^T\text{diag(Cov}(\boldsymbol{\hat\beta}))=\sigma^2\sum_{i=1}^{p+1} {\bf x}_{0i}^{T2}{\bf A}_{jj}
+$$
+\begin{align*}
+\text{E}(\hat{f}({\bf x}_0))
+=\text{E}({\bf x}_0^T \hat{\boldsymbol\beta})
+&={\bf x}_0^T \text{E}(\hat{\boldsymbol\beta}) \\
+&={\bf x}_0^T\boldsymbol\beta \\
+&=f({\bf x}_0)
+\end{align*}
+
+$$
+$$
+\begin{align*}
+\text{Var}(\hat{f}({\bf x}_0))
+=\text{Var}({\bf x}_0^T\boldsymbol{\hat\beta})
+&={\bf x}_0^T\text{Cov}(\hat{\boldsymbol{\beta}}){\bf x}_0 \\
+&=\sigma^2{\bf x}_0^T(\bf{X^TX})^{-1}{\bf x}_0
+\end{align*}
 $$ 
 
 **Q18:** 
-$$\text{E}[(Y_0-\hat{f}({\bf x}_0))^2]=[\text{E}(\hat{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\hat{f}({\bf x}_0) ) + \text{Var}(\varepsilon)=\text{E}[(Y_0-\hat{f}({\bf x}_0))^2] \\ =\text{E}[(Y_0^2-2Y_o\hat{f}({\bf x}_0)+\hat{f}({\bf x}_0)^2]=\text{Var}(Y_0)+\text{E}(Y_0)^2-2 \text{E}(Y_0) \text{E}(\hat{f}({\bf x}_0))+\text{Var}(\hat{f}({\bf x}_0))+\text{E}(\hat{f}({\bf x}_0))^2
-\\ =\text{Var}(\varepsilon)+\text{Var}(\hat{f}({\bf x}_0))=\sigma^2\sum_{i=1}^{p+1} {\bf x}_{0i}^{T2}{\bf A}_{jj}+\text{Var}(\varepsilon)+0
+$$
+\begin{align*}
+\text{E}[(Y_0-\hat{f}({\bf x}_0))^2]
+&=\text{E}[(Y_0^2-2Y_o\hat{f}({\bf x}_0)+\hat{f}({\bf x}_0)^2] \\
+&=\text{E}(Y_0)^2-2 \text{E}[Y_0\hat{f}({\bf x}_0)]+\text{E}[\hat{f}({\bf x}_0)]^2\\
+&=\text{Var}(Y_0)+\text{E}(Y_0)^2-2 \text{E}(Y_0) \text{E}[\hat{f}({\bf x}_0)]+\text{Var}[\hat{f}({\bf x}_0)]+\text{E}[\hat{f}({\bf x}_0)]^2 \\
+&=\text{Var}(\varepsilon)+{f}({\bf x}_0)^2-2{f}({\bf x}_0){f}({\bf x}_0)+\text{Var}[\hat{f}({\bf x}_0)] +{f}({\bf x}_0)^2\\
+&=\text{Var}(\varepsilon)+\text{Var}[\hat{f}({\bf x}_0)] \\
+&=\sigma^2+\sigma^2{\bf x}_0^T(\bf{X^TX})^{-1}{\bf x}_0
+\end{align*}
+
 $$
 
 Ridge estimator:
@@ -379,21 +416,54 @@ $$
 $$
 
 **Q19:** 
-$$\text{E}(\widetilde{\boldsymbol \beta})=\text{E}(({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y})=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T\text{E}({\bf Y})=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X)}\boldsymbol\beta$$
+$$
+\begin{align*}
+  \text{E}(\widetilde{\boldsymbol \beta})
+  &=\text{E}(({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}) \\
+  &=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T\text{E}({\bf Y}) \\
+  &=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X)}\boldsymbol\beta
+\end{align*}
 
-$$\text{Cov}(\widetilde{\boldsymbol \beta})=\text{Cov}(({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y})=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T\text{Cov}({\bf Y})[({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T]^T \\
-=\sigma^2({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1})=\sigma^2\bf C
+$$
+
+$$
+\begin{align*}
+\text{Cov}(\widetilde{\boldsymbol \beta})
+&=\text{Cov}[({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}] \\
+&=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T\text{Cov}({\bf Y})[({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T]^T \\
+&=\sigma^2({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}[({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}]^T \\
+&=\sigma^2({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}[({\bf X}^T{\bf X}+\lambda {\bf I})^{T}]^{-1} \\
+&=\sigma^2({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}
+\end{align*}
+
 $$
 **Q20:** 
-$$\text{E}(\widetilde{f}({\bf x}_0))=\text{E}({\bf x}_0^T\widetilde\beta)={\bf x}_0^T\text{E}(\widetilde\beta)={\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta
+$$
+\begin{align*}
+\text{E}(\widetilde{f}({\bf x}_0))
+=\text{E}({\bf x}_0^T\widetilde\beta)
+&={\bf x}_0^T\text{E}(\widetilde\beta) \\
+&={\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta
+\end{align*}
+
 $$
 
-$$\text{Var}(\widetilde{f}({\bf x}_0))=\text{Var}({\bf x}_0^T\widetilde\beta)={\bf x}_0^T\text{Cov}(\tilde{\boldsymbol{\beta}}){\bf x}_0 =\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}){\bf x}_0
+$$
+\begin{align*}
+\text{Var}(\widetilde{f}({\bf x}_0))
+=\text{Var}({\bf x}_0^T\widetilde\beta)
+&={\bf x}_0^T\text{Cov}(\tilde{\boldsymbol{\beta}}){\bf x}_0 \\
+&=\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf x}_0
+\end{align*}
 $$
 **Q21:** 
-$$\text{E}[(Y_0-\widetilde{f}({\bf x}_0))^2]=[\text{E}(\widetilde{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\widetilde{f}({\bf x}_0) ) + \text{Var}(\varepsilon)$$
-$$\text{E}[(Y_0-\hat{f}({\bf x}_0))^2]=\text{E}[(Y_0^2-2Y_o\widetilde{f}({\bf x}_0)+\widetilde{f}({\bf x}_0)^2]=\text{Var}(Y_0)+\text{E}(Y_0)^2-2 \text{E}(Y_0) \text{E}(\widetilde{f}({\bf x}_0))+\text{Var}(\widetilde{f}({\bf x}_0))+\text{E}(\widetilde{f}({\bf x}_0))^2 \\
-=\text{Var}(\varepsilon)+\text{Var}(\widetilde{f}({\bf x}_0))+[\text{E}(\widetilde{f}({\bf x}_0)-{f}({\bf x}_0)]^2 =\text{Var}(\varepsilon)+\sigma^2\sum_{i=1}^{p+1} {\bf x}_{0i}^{2}C_{ii}+[{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta-{\bf x}_0^T\boldsymbol\beta]^2
+
+$$
+\begin{align*}
+  \text{E}[(Y_0-\widetilde{f}({\bf x}_0))^2]
+  &=\text{Var}(\varepsilon)+\text{Var}(\widetilde{f}({\bf x }_0))+[\text{E}(\widetilde{f}({\bf x}_0)-{f}({\bf x}_0)]^2 \\ &=\sigma^2+\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}+[{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta-{\bf x}_0^T\boldsymbol\beta]^2
+\end{align*}
+
 $$
 
 ```{r}
@@ -408,13 +478,9 @@ sigma=values$sigma
 sigma
 ```
 
-Hint: we perform matrix multiplication using `%*%`, transpose of a matrix `A` with `t(A)` and inverse with `solve(A)`. 
-
 **Q22:** 
 
-In general, increased lambda gives increased bias. 
-
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 #library(Metrics)
 sqbias=function(lambda,X,x0,beta)
 {
@@ -428,11 +494,11 @@ for (i in 1:length(thislambda)) sqbiaslambda[i]=sqbias(thislambda[i],X,x0,beta)
 plot(thislambda,sqbiaslambda,col=2,type="l")
 ```
 
+As we expect from a ridge regression, the bias increases with $\lambda$ as the flexibility of the fit decreases. We can see from the curve that bias as a function of $\lambda$ is not increasing for all $\lambda$. This specific result comes from the data used in the ridge regression, and is not something we can predict before plotting the curve. The general trend in these curves are as expected though, namely that the bias increases with $\lambda$.
+
 **Q23:** 
 
-As expected, the variance decreases when lambda increases. 
-
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 variance=function(lambda,X,x0,sigma)
 {
   p=dim(X)[2]
@@ -446,13 +512,11 @@ variancelambda=rep(NA,length(thislambda))
 for (i in 1:length(thislambda)) variancelambda[i]=variance(thislambda[i],X,x0,sigma)
 plot(thislambda,variancelambda,col=4,type="l")
 ```
-
+Since the flexibility of the fit decreases with $\lambda$, the variance decreases, and we can see that the curve confirms this for our data.
 
 **Q24:** 
 
-As we can see from the graph the optimal lambda for this problem is 1. 
-
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 tot=sqbiaslambda+variancelambda+sigma^2
 which.min(tot)
 thislambda[which.min(tot)]
@@ -462,3 +526,9 @@ lines(thislambda, variancelambda,col=4)
 lines(thislambda,rep(sigma^2,500),col="orange")
 abline(v=thislambda[which.min(tot)],col=3)
 ````
+
+As we can see from the graph the optimal $\lambda$ for this problem is $\lambda \approx 1$. This is neither the optimal choice for the bias or variance alone, meaning we make a trade-off between the two in order to get the minimum total mean squared error $MSE$.
+
+
+
+
