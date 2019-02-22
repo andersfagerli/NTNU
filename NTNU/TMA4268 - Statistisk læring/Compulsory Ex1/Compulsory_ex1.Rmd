@@ -38,7 +38,7 @@ $$\widehat{\text{log}(\text{FEV}})=-1.944+0.0234\cdot\text{Age}+0.0169\cdot\text
 **Q2:** 
     
 * `Estimate`:
-The estimated regression coefficients, $\hat{\boldsymbol{\beta}}$. Assuming a normal linear regression model, these coefficients are found by either minimizing the residual sum of squares RSS or maximizing the likelihood function with respect to $\boldsymbol{\beta}$, resulting in the estimated vector of coefficients $\hat{\boldsymbol{\beta}}=(\bf X^{T}\bf X)^{-1}\bf X^{T}\bf Y$. The regression coefficients explain how the different covariates affect the response, as the response is linearly proportional to all coefficients. Ex. an increase in `Age` will tend to an increase in the response `FEV`, as the associated coefficient to `Age` is positive. In contrast, a person who smokes will tend to a decrease in the response `FEV`, as the associated coefficient to `Smoke` is negative. As the response is linearly proportional to a coeffiecient, an increase in a covariate from $x_j$ to $x_{j}+1$ will result in an increase in the response by $\hat{\beta_j}$ when all other covariates are held constant. Ex. an increase in `Age` from 15 to 16 will lead to an increase in $log(`FEV`)$ by 0.0234. The intercept $\hat{\beta_0}$ is not proportional to any covariate, meaning it is the response value when all covariates are set to zero. The intercept alone does not give any meaningful information in our case, as it reports a negative forced expiratory volume in litres. This means the regression model is only valid within an intervall of values for the covariates. Ex. `Age` should be within 3 and 19, as the data is collected from people aged 3 - 19.
+The estimated regression coefficients, $\hat{\boldsymbol{\beta}}$. Assuming a normal linear regression model, these coefficients are found by either minimizing the residual sum of squares RSS or maximizing the likelihood function with respect to $\boldsymbol{\beta}$, resulting in the estimated vector of coefficients $\hat{\boldsymbol{\beta}}=(\bf X^{T}\bf X)^{-1}\bf X^{T}\bf Y$. The regression coefficients explain how the different covariates affect the response, as the response is linearly proportional to all coefficients. Ex. an increase in `Age` will tend to an increase in the response `FEV`, as the associated coefficient to `Age` is positive. In contrast, a person who smokes will tend to a decrease in the response `FEV`, as the associated coefficient to `Smoke` is negative. As the response is linearly proportional to a coeffiecient, an increase in a covariate from $x_j$ to $x_{j}+1$ will result in an increase in the response by $\hat{\beta_j}$ when all other covariates are held constant. Ex. an increase in `Age` from 15 to 16 will lead to an increase in $\text{log}(\text{FEV})$ by 0.0234. The intercept $\hat{\beta_0}$ is not proportional to any covariate, meaning it is the response value when all covariates are set to zero. The intercept alone does not give any meaningful information in our case, as it reports a negative forced expiratory volume in litres. This means the regression model is only valid within an intervall of values for the covariates. Ex. `Age` should be within 3 and 19, as the data is collected from people aged 3 - 19.
     
 * `Std.Error`:
 The standard error of each estimated coefficient, $\text{SD}(\hat{\beta_j})=\sqrt{\text{Var}(\hat{\beta_j})}$. This value quantifies the amount of variation in the estimated coefficients from the estimated values, and is found in the diagonal of the covariance matrix for $\hat{\beta}$, given by $\text{Cov}(\hat{\beta}) = \sigma^{2}(\bf X^{T}\bf X)^{-1}$. Unless the true value of the variance $\sigma^{2}$ in the random errors $\epsilon_{i}$ is known, this must be estimated. An unbiased estimator for $\sigma^{2}$ is $\hat{\sigma}^{2} = RSS/(n-p-1)$, where $n$ is the number of observations and $p$ is the number of covariates.
@@ -79,15 +79,13 @@ ggplot(modelA, aes(sample = .stdresid)) +
 # normality test
 library(nortest) 
 ad.test(rstudent(modelA))
-library(nortest)
-ad.test(rstudent(modelA))
 ```
 
 **Fitted values vs. Standardized residuals:** 
-This plot is used to test the assumption of a linear relationship between the covariates and the response by plotting residuals against fitted values of the model. For a linear relationship, we expect the average of the residuals to form a straight line across the fitted values. The assumption of a constant variance in the random errors can also be seen from the plot, where we expect a constant spread across all fitted values. From our plot, we can see that the residuals have a linear pattern and that the spread is seemily constant for all fitted values. This implies that our data fit the assumptions needed for a linear regression model.
+This plot is used to test the assumption of a linear relationship between the covariates and the response by plotting residuals against fitted values of the model. For a linear relationship, we expect the average of the residuals to form a straight line across the fitted values. The assumption of a constant variance in the random errors can also be seen from the plot, where we expect a constant spread across all fitted values. From our plot, we can see that the residuals have a linear pattern and that the spread is seemily constant for all fitted values. This implies that our data fit some of the assumptions needed for a linear regression model.
   
 **QQ-plot of standardized residuals**: 
-The QQ-plot shows whether the residuals are normally distributed or not, by comparing the distribution of the residuals against the normal distribution depicted by the straight line. The residuals form a small curve on top of the normal distribution with greater deviation at the tails, implying that they may not be normally distributed. This is further reinforced by the Anderson-Darling normality test, which rejects the hypothesis $H_0$ of normality when we apply a standard significance level of $\alpha=0.05$. This can be seen from the $p$-value of the test, which is far less than $\alpha$. 
+The QQ-plot shows whether the residuals are normally distributed or not, by comparing the distribution of the residuals against the normal distribution depicted by the straight line. The residuals form a small curve on top of the normal distribution with greater deviation at the tails, implying that they may not be normally distributed. This is further reinforced by the Anderson-Darling normality test, which rejects the hypothesis $H_0$ of normality when we apply a standard significance level of $\alpha=0.05$. This can be seen from the $p$-value of the test, which is far less than $\alpha$. The QQ-plot may indicate a violation of the assumption for normally distributed residuals, which again puts more uncertainty on our linear regression model.
 
 **Q5:** 
 
@@ -111,11 +109,9 @@ ggplot(modelB, aes(sample = .stdresid)) +
 # normality test
 library(nortest) 
 ad.test(rstudent(modelB))
-library(nortest)
-ad.test(rstudent(modelB))
 ```
 
-For `modelB`, the standarized residuals vs. fitted values shows a non-linear relationship and non-constant spread. However, the QQ-plot shows a better fit to the normal distribution, but with some outliers at the tails. The Anderson-Darling normality test reports a slightly larger $p$-value than in `modelA`, indicating that the residuals in `modelB` are more normally distributed, although not enough to justify normality. The $R^2$-statistic for `modelA` is better than for `modelB`, but the interpretation of the model may be more difficult as we take the logarithm of the response. In total, both models violate some of the assumptions for multiple linear regression and may therefore not be favorable when making inference. If we were to choose a model, `modelA` might be better suited for inference since the residuals show a linear relationship with the fitted values and have a fairly constant spread.
+For `modelB`, the standarized residuals vs. fitted values shows a non-linear relationship and non-constant spread. However, the QQ-plot shows a better fit to the normal distribution, but with some outliers at the tails. The Anderson-Darling normality test reports a slightly larger $p$-value than in `modelA`, indicating that the residuals in `modelB` are more normally distributed, although not enough to justify normality. The $R^2$-statistic for `modelA` is better than for `modelB`, but the interpretation of the model may be more difficult as we take the logarithm of the response. In total, both models violate some of the assumptions for multiple linear regression and may therefore not be favorable when making inference. If we were to choose a model, `modelA` might be better suited for inference since the residuals show a linear relationship with the fitted values and have a fairly constant spread. Ex. a CI will have less randomness for different values of the fitted data for `modelA` than for `modelB`. 
 
 **Q6:** 
 
@@ -128,28 +124,28 @@ We reject the null hypothesis for a critical region given by $P(|T|>k |H_0 \spac
 
 **Q7:** 
 
-We start constructing the intervall from the probability,
+We start constructing the interval from the probability,
 $$P(-t_{\frac{\alpha}{2},v}\leqslant T\leqslant t_{\frac{\alpha}{2},v}) = 1-\alpha.$$
 Writing out $T$ in terms of ${\hat\beta_{age}}$, ${\beta_{age}}$,$\sqrt{\text{Var}(\hat\beta_{age})}$ and solving the inequalities for ${\beta_{age}}$, we can construct the intervall for a given significance $\alpha$.
 $$P({\hat\beta_{age}}-t_{\frac{\alpha}{2},v}\sqrt{\text{Var}({\hat\beta_{age}})} \leqslant \beta_{age} \leqslant {\hat\beta_{age}}+t_{\frac{\alpha}{2},v}\sqrt{\text{Var}({\hat\beta_{age}})})=1-\alpha$$
 Our $t$-distribution has $v = n-p-1 = 649$ degrees of freedom, approximating a normal distribution. Setting $\alpha = 0.01$ for a $(1-\alpha)\cdot100\% = 99\%$ CI, we get $t_{\frac{0.01}{2},649} \approx z_{0.005} = 2.576$. Inserting our estimate for ${\beta_{age}}$ and $\text{SD}(\hat\beta_{age})$, we get the interval,
 
 $$\beta_{age}\in[{\hat\beta_{age}}-2.576\cdot\text{SD}(\hat\beta_{age}),{\hat\beta_{age}}+2.576\cdot\text{SD}(\hat\beta_{age})] = [0.0147,0.0320]$$
-This intervall can be verified in R with
+This interval can be verified in R with
 ```{r,eval=TRUE}
 confint(object=modelA, level=0.99)
 ```
 
-The confidence intervall tells us that the true value of $\beta_{age}$ lies within $[0.0147,0.0320]$ in $95\%$ of the intervalls constructed if we were to make several intervalls. The $p$-value of the test in **Q6** tells us the probability of $\beta_{age} = 0$. Since $0$ is not a part of the $99\%$ CI, we know that the $p$-value for the test is lower than $\alpha=0.01$.
+The confidence interval tells us that the true value of $\beta_{age}$ lies within $[0.0147,0.0320]$ in $95\%$ of the intervals constructed if we were to make several intervals. The $p$-value of the test in **Q6** tells us the probability of $\beta_{age} = 0$. Since $0$ is not a part of the $99\%$ CI, we know that the $p$-value for the test is lower than $\alpha=0.01$.
 
 **Q8:**
 
-Our best guess can be found by inserting the new observation into the fitted model, which is done in the R code below. The best guess for his $\text{log}(\text{FEV})$ is found to be $1.324$. A prediction intervall can be constructed by using the $T$-statistic, where we assume the new response is independent of previous observations.
+Our best guess can be found by inserting the new observation into the fitted model, which is done in the R code below. The best guess for his $\text{log}(\text{FEV})$ is found to be $1.324$. A prediction interval can be constructed by using the $T$-statistic, where we assume the new response is independent of previous observations.
 $$T =\frac{Y_0-\hat{Y_0}-\text{E}(Y_0-\hat{Y_0})}{\sqrt{\text{Var}(Y_0-\hat{Y_0})}}$$
 With
 $$\text{E}(Y_0-\hat{Y_0}) = \text{E}(Y_0)-\text{E}(\hat{Y_0})=\boldsymbol{x}_{0}^{T}\boldsymbol{\beta}-\boldsymbol{x}_{0}^{T}\text{E}(\boldsymbol{\hat\beta}) = \boldsymbol{x}_{0}^{T}\boldsymbol{\beta}-\boldsymbol{x}_{0}^{T}\boldsymbol{\beta} = 0$$
 $$\text{Var}(Y_0-\hat{Y_0})=\text{Var}(Y_0)+\text{Var}(\hat{Y_0})= \hat\sigma^2+\boldsymbol{x}_{0}^{T}\text{Var}(\boldsymbol{\hat{\beta}})\boldsymbol{x}_{0}=\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})$$
-The prediction intervall is set up by solving the inequality in $P(-t_{\frac{\alpha}{2},v}\leqslant T\leqslant t_{\frac{\alpha}{2},v}) = 1-\alpha$ for $Y_0$, resulting in
+The prediction interval is set up by solving the inequality in $P(-t_{\frac{\alpha}{2},v}\leqslant T\leqslant t_{\frac{\alpha}{2},v}) = 1-\alpha$ for $Y_0$, resulting in
 $$Y_0\in[{\hat{Y_0}}-t_{\frac{\alpha}{2},v}\cdot\sqrt{\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})},{\hat{Y_0}}+t_{\frac{\alpha}{2},v}\cdot\sqrt{\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})}]$$
 Using the R code below, we find the $95\%$ prediction interval for $\text{log}(\text{FEV})$ to be $Y_0\in[1.036,1.611]$. This can be transformed to normal units by taking $e$ to the power of each limit. His $\text{FEV}$ is then predicted to be in the interval $Y_0\in[2.818, 5.010]$ in $95\%$ of the prediction intervals we construct. We can compare the interval with properties of the data to justify whether it is useful or not. The prediction interval is very wide compared to the actual span in the data $(0.8, 5.8)$, and it contains values ranging from the mean to the upper tail of the data. Therefore it does not tell us much, and we conclude that our model is not very good at prediction.
 ```{r,eval=TRUE}
@@ -198,7 +194,7 @@ yhat.train = sapply(ks, function(k) {
   class::knn(train = M[tr,-1], cl = M[tr,1],test = M[tr,-1], k = k)
 })
 train.equal = I(yhat.train == M[tr,1]) #Returns boolean matrix of correct/incorrect classifications
-train.e = apply(train.equal == FALSE, 2, sum)  #Apply summation over all coloumns, resulting in vector of total misclassifications for k = 1:30
+train.e = apply(train.equal == FALSE, 2, sum)  #Apply summation over all coloumns
 train.e = train.e/nrow(train.equal)# Misclassification rate
 
 ### Test set
@@ -251,7 +247,7 @@ lines(ks, test.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[1])
 legend("topright", legend = c("Test", "5-fold CV", "Training"), lty = 1, col=co)
 ```
 
-From the plot above we can see how $K$ influences the misclassification rate, which is tied to the bias and variance of our classifier. As $K$ increases, the bias increases and variance decreases. A low value for K will result in a flexible classifier, as the algorithm only looks to one neighbour. A flexible classifier will have a low bias, but in return have a high variance. This can be seen from comparing the graphs for `Training` and `Test` above. We can see that a flexible classifier will fit the training set very well, but once it is introduced to new data it will misclassify a large proportion, a result of the high variance. The classifier looses its flexibility when $K$ increases, as it takes a larger majority vote. Choosing the right $K$ is thus a problem concerning the bias-variance trade-off.
+From the plot above we can see how $K$ influences the misclassification rate, which is tied to the bias and variance of our classifier. As $K$ increases, the bias increases and variance decreases. A low value for K will result in a flexible classifier, as the algorithm only looks to one neighbour. A flexible classifier will have a low bias, but in return have a high variance. This can be seen from comparing the graphs for `Training` and `Test` above. We can see that a flexible classifier will fit the training set very well, but once it is introduced to new data it will misclassify a large proportion, a result of the high variance. The classifier looses its flexibility when $K$ increases, as it takes a larger majority vote. Choosing the right $K$ is thus a problem of weighing bias against variance for the best trade-off..
 
 **Q13:**
 
@@ -290,7 +286,7 @@ ggroc(tennis.roc)
 auc
 ```
 
-The ROC is produced by calculating the sensitivity and specificity for all cut-offs on the probability of classifying to a certain class, where $p(x)=\hat{P}(Y=j|X=x)$ is the probability of classifying to $j$. If $p(x) \geqslant \text{cut-off}$, we classify to $j$ and plot the sensitivity and specificity. Repeating this procedure for all possible cut-offs in the range $(0,1)$, we can produce the ROC. The AUC is the area under the ROC, which is used as a measure how well a classifier classifies. Since sensitivity and specificity denotes correctly classifications, we want the AUC to be as close to 1 as possible. For our ROC the AUC is $0.8178$, which is fairly good. If we were to use a random guessing classifier, the probability of classifying to a class is drawn from a uniform distribution. This means the fraction of true positives we guess out of all positives is the cut-off we set. The rest of our guesses will be negative, meaning the fraction of true negatives out of all negatives will $1-\text{cut-off}$. For all cut-offs, the sensitivity will thus be $1-\text{specificity}$, resulting in a diagonal ROC. The area under the ROC will then be $0.5$.
+The ROC is produced by calculating the sensitivity and specificity for all cut-offs on the probability of classifying to a certain class, where $p(x)=\hat{P}(Y=j|X=x)$ is the probability of classifying to $j$. If $p(x) \geqslant \text{cut-off}$, we classify to $j$ and plot the sensitivity and specificity. Repeating this procedure for all possible cut-offs in the range $(0,1)$, we can produce the ROC. The AUC is the area under the ROC, which is used as a measure of how well a classifier classifies. Since sensitivity and specificity denotes correctly classifications, we want the AUC to be as close to 1 as possible. For our ROC the AUC is $0.8178$, which is fairly good. If we were to use a random guessing classifier, the probability of classifying to a class is drawn from a uniform distribution. This means the fraction of true positives we guess out of all positives is the cut-off we set. The rest of our guesses will be negative, meaning the fraction of true negatives out of all negatives will be $1-\text{cut-off}$. For all cut-offs, the sensitivity will thus be $1-\text{specificity}$, resulting in a diagonal ROC. The area under the ROC will then be $0.5$.
 
 **Q15:**
 
@@ -340,7 +336,7 @@ misclass.argmax
 misclass.yhat
 ```
 
-We get the misclassification rates $\text{Ave}(I(y \neq \hat{y})) = 0.2563$ and $\text{Ave}(I(y \neq \widetilde{y})) = 0.2335$. As we prefer the classifier with the lowest misclassification error, we choose $\widetilde{y}(x)$.
+We get the misclassification errors $\text{Ave}(I(y \neq \hat{y})) = 0.2563$ and $\text{Ave}(I(y \neq \widetilde{y})) = 0.2335$. As we prefer the classifier with the lowest misclassification error, we choose $\widetilde{y}(x)$.
 
 # Problem 3: Bias-variance trade-off 
 
@@ -394,14 +390,13 @@ $$
 \end{align*}
 
 
-
 **Q18:**
 
 
 \begin{align*}
 \text{E}[(Y_0-\hat{f}({\bf x}_0))^2]
-&=\text{E}[(Y_0^2-2Y_o\hat{f}({\bf x}_0)+\hat{f}({\bf x}_0)^2] \\
-&=\text{E}(Y_0)^2-2 \text{E}[Y_0\hat{f}({\bf x}_0)]+\text{E}[\hat{f}({\bf x}_0)]^2\\
+&=\text{E}[(Y_0^2-2Y_0\hat{f}({\bf x}_0)+\hat{f}({\bf x}_0)^2] \\
+&=\text{E}(Y_0^2)-2 \text{E}[Y_0\hat{f}({\bf x}_0)]+\text{E}[\hat{f}({\bf x}_0)^2]\\
 &=\text{Var}(Y_0)+\text{E}(Y_0)^2-2 \text{E}(Y_0) \text{E}[\hat{f}({\bf x}_0)]+\text{Var}[\hat{f}({\bf x}_0)]+\text{E}[\hat{f}({\bf x}_0)]^2 \\
 &=\text{Var}(\varepsilon)+{f}({\bf x}_0)^2-2{f}({\bf x}_0){f}({\bf x}_0)+\text{Var}[\hat{f}({\bf x}_0)] +{f}({\bf x}_0)^2\\
 &=\text{Var}(\varepsilon)+\text{Var}[\hat{f}({\bf x}_0)] \\
@@ -414,6 +409,7 @@ Ridge estimator:
 $$
 \widetilde{\boldsymbol \beta}=({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf Y}
 $$
+
 
 **Q19:**
 
@@ -438,12 +434,13 @@ $$
 \end{align*}
 
 
+
 **Q20:**
 
 
 \begin{align*}
 \text{E}(\widetilde{f}({\bf x}_0))
-=\text{E}({\bf x}_0^T\widetilde\beta)
+&=\text{E}({\bf x}_0^T\widetilde\beta) \\
 &={\bf x}_0^T\text{E}(\widetilde\beta) \\
 &={\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta
 \end{align*}
@@ -453,7 +450,7 @@ $$
 
 \begin{align*}
 \text{Var}(\widetilde{f}({\bf x}_0))
-=\text{Var}({\bf x}_0^T\widetilde\beta)
+&=\text{Var}({\bf x}_0^T\widetilde\beta) \\
 &={\bf x}_0^T\text{Cov}(\tilde{\boldsymbol{\beta}}){\bf x}_0 \\
 &=\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf x}_0
 \end{align*}
@@ -463,7 +460,7 @@ $$
 
 \begin{align*}
   \text{E}[(Y_0-\widetilde{f}({\bf x}_0))^2]
-  &=\text{Var}(\varepsilon)+\text{Var}(\widetilde{f}({\bf x }_0))+[\text{E}(\widetilde{f}({\bf x}_0)-{f}({\bf x}_0)]^2 \\ &=\sigma^2+\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}+[{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta-{\bf x}_0^T\boldsymbol\beta]^2
+  &=\text{Var}(\varepsilon)+\text{Var}(\widetilde{f}({\bf x }_0))+[\text{E}(\widetilde{f}({\bf x}_0)-{f}({\bf x}_0)]^2 \\ &=\sigma^2+\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf x}_0+[{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta-{\bf x}_0^T\boldsymbol\beta]^2
 \end{align*}
 
 
@@ -495,7 +492,7 @@ for (i in 1:length(thislambda)) sqbiaslambda[i]=sqbias(thislambda[i],X,x0,beta)
 plot(thislambda,sqbiaslambda,col=2,type="l")
 ```
 
-As we expect from a ridge regression, the bias increases with $\lambda$ as the flexibility of the fit decreases. We can see from the curve that bias as a function of $\lambda$ is not strictly increasing for all $\lambda$. This specific result comes from the data used in the ridge regression, and is not something we can predict before plotting the curve. The general trend in these curves are as expected though, namely that the bias increases with $\lambda$.
+As we expect from a ridge regression, the bias increases with $\lambda$ as the flexibility of the fit decreases. We can see from the curve that bias as a function of $\lambda$ is not strictly increasing for all $\lambda$. This specific result comes from the data used in the ridge regression, and is not something we can predict before plotting the curve. The general trend in these curves is as expected though, namely that the bias increases with $\lambda$.
 
 **Q23:**
 
@@ -504,7 +501,7 @@ variance=function(lambda,X,x0,sigma)
 {
   p=dim(X)[2]
   inv=solve(t(X)%*%X+lambda*diag(p))
-  var=sigma^2*inv%*%t(X)%*%X%*%t(inv)
+  var=sigma^2*inv%*%t(X)%*%X%*%inv
   value=t(x0)%*%var%*%x0
   return(value)
 }
