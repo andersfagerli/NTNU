@@ -114,8 +114,7 @@ library(nortest)
 ad.test(rstudent(modelB))
 ```
 
-For `modelB`, the standarized residuals vs. fitted values shows a non-linear relationship and non-constant spread. However, the QQ-plot shows a better fit to the normal distribution, but with some outliers at the tails. The Anderson-Darling normality test reports a slightly larger $p$-value than in `modelA`, indicating that the residuals in `modelB` are more normally distributed, although not enough to justify normality. The $R^2$-statistic for `modelA` is better than for `modelB`, but the interpretation of the model may be more difficult as we take the logarithm of the response.
-WHICH MODEL TO CHOOSE??
+For `modelB`, the standarized residuals vs. fitted values shows a non-linear relationship and non-constant spread. However, the QQ-plot shows a better fit to the normal distribution, but with some outliers at the tails. The Anderson-Darling normality test reports a slightly larger $p$-value than in `modelA`, indicating that the residuals in `modelB` are more normally distributed, although not enough to justify normality. The $R^2$-statistic for `modelA` is better than for `modelB`, but the interpretation of the model may be more difficult as we take the logarithm of the response. In total, both models violate some of the assumptions for multiple linear regression and may therefore not be favorable when making inference. If we were to choose a model, `modelA` might be better suited for inference since the residuals show a linear relationship with the fitted values and have a fairly constant spread.
 
 **Q6:** 
 Because $\sigma^2$ is unknown, we can perform a $t$ -test. The $T_0$-statistic can be calculated by inserting the values for ${\hat\beta_{age}}$ and $\text{SD}(\hat\beta_{age})$, shown in the `summary`, and testing the hypothesis $H_0 : \beta_{age}=0$.
@@ -142,21 +141,30 @@ The confidence intervall tells us that the true value of $\beta_{age}$ lies with
 
 **Q8:**
 
+Our best guess can be found by inserting the new observation into the fitted model, which is done in the R code below. The best guess for his $log(\text{FEV})$ is found to be $1.324$. A prediction intervall can be constructed by using the $T$-statistic, where we assume the new response is independent of previous observations.
+$$T =\frac{Y_0-\hat{Y_0}-\text{E}(Y_0-\hat{Y_0})}{\sqrt{\text{Var}(Y_0-\hat{Y_0})}}$$
+With
+$$\text{E}(Y_0-\hat{Y_0}) = \text{E}(Y_0)-\text{E}(\hat{Y_0})=\boldsymbol{x}_{0}^{T}\boldsymbol{\beta}-\boldsymbol{x}_{0}^{T}\text{E}(\boldsymbol{\hat\beta}) = \boldsymbol{x}_{0}^{T}\boldsymbol{\beta}-\boldsymbol{x}_{0}^{T}\boldsymbol{\beta} = 0$$
+$$\text{Var}(Y_0-\hat{Y_0})=\text{Var}(Y_0)+\text{Var}(\hat{Y_0})= \hat\sigma^2+\boldsymbol{x}_{0}^{T}\text{Var}(\boldsymbol{\hat{\beta}})\boldsymbol{x}_{0}=\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})$$
+The prediction intervall is set up by solving the inequality in $P(-t_{\frac{\alpha}{2},v}\leqslant T\leqslant t_{\frac{\alpha}{2},v}) = 1-\alpha$ for $Y_0$, resulting in
+$$Y_0\in[{\hat{Y_0}}-t_{\frac{\alpha}{2},v}\cdot\sqrt{\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})},{\hat{Y_0}}+t_{\frac{\alpha}{2},v}\cdot\sqrt{\hat\sigma^2(1+\boldsymbol{x}_{0}^{T}(\boldsymbol{X}^{T}\boldsymbol{X})^{-1}\boldsymbol{x}_{0})}]$$
+Using the R code below, we find the $95\%$ prediction interval for $log(\text{FEV})$ to be $Y_0\in[1.036,1.611]$. This can be transformed to normal units by taking $e$ to the power of each limit. His $\text{FEV}$ is then predicted to be in the interval $Y_0\in[2.818, 5.010]$ in $95\%$ of the prediction intervals we construct. We can compare the interval with properties of the data to justify whether it is useful or not. The prediction interval is very wide compared to the actual span in the data (0.8 to 5.8), and it contains values ranging from the mean to the upper tail of the data. Therefore it does not tell us much, and we conclude that our model is not very good at prediction.
 ```{r,eval=TRUE}
 new = data.frame(Age=16, Htcm=170, Gender="M", Smoke=0)
-#best guess: 
-best_guess = summary(modelA)$coeff[1,1]+summary(modelA)$coeff[2,1]*16+summary(modelA)$coeff[3.1]*170+summary(modelA)$coeff[4,1]*1+summary(modelA)$coeff[5,1]*1
+#best guess
+best_guess = summary(modelA)$coeff[1,1]+summary(modelA)$coeff[2,1]*new$Age+summary(modelA)$coeff[3.1]*new$Htcm+summary(modelA)$coeff[4,1]*1+summary(modelA)$coeff[5,1]*new$Smoke
 best_guess
-#predicition interval
+#prediction interval
 pred.log=predict(modelA, new, interval = 'prediction') #using the default 95% prediction level
 pred.log
 pred=exp(pred.log)
 pred
+#properties of the data
+mean(lungcap$FEV)
+median(lungcap$FEV) #used to check how well the mean represents the data
+min(lungcap$FEV)
+max(lungcap$FEV)
 ```
-
-
-The prediction interval is very wide compared to the actual span in the data (0.7 to 5.7), and it contains all the values for other males his age. Therefore it does not tell us much, and we conclude that our model is not very good at prediction.
-
 
 # Problem 2: Classification 
 
@@ -181,22 +189,22 @@ $$
 **Q10:** 
 
 ```{r,eval=TRUE}
-# here you write your code
 ### Training set
 ks = 1:30
 yhat.train = sapply(ks, function(k) {
-  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[tr,-1], k = k) #Oppgi test = M[tr,-1], altså test-set = training-set?
+  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[tr,-1], k = k)
 })
 train.equal = I(yhat.train == M[tr,1]) #Returns boolean matrix of correct/incorrect classifications
 train.e = apply(train.equal == FALSE, 2, sum)  #Apply summation over all coloumns, resulting in vector of total misclassifications for k = 1:30
 train.e = train.e/nrow(train.equal)# Misclassification rate
+
 ### Test set
 yhat.test = sapply(ks, function(k) {
-  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-tr,-1], k = k) #Riktig måte for test-set??
+  class::knn(train = M[tr,-1], cl = M[tr,1],test = M[-tr,-1], k = k)
 })
-test.equal = I(yhat.test == M[-tr,1]) #Returns boolean matrix of correct/incorrect classifications
-test.e = apply(test.equal == FALSE, 2, sum) # Apply summation over all coloumns, resulting in vector of total misclassifications for each k = 1:30
-test.e = test.e/nrow(test.equal) # Misclassification rate for each k
+test.equal = I(yhat.test == M[-tr,1])
+test.e = apply(test.equal == FALSE, 2, sum)
+test.e = test.e/nrow(test.equal)
 ```
 
 
@@ -244,104 +252,101 @@ lines(ks, train.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[3])
 lines(ks, test.e, type="o", pch = 16, ylim = c(0.5, 0.7), col = co[1])
 legend("topright", legend = c("Test", "5-fold CV", "Training"), lty = 1, col=co)
 ```
-
-Bias does in general increase with K, as the KNN-algorithm tends to overfit the data with low values of K, resulting in a low bias. The variance however decreases with K.
+From the plot above we can see how $K$ influences the misclassification rate, which is tied to the bias and variance of our classifier. As $K$ increases, the bias increases and variance decreases. A low value for K will result in a flexible classifier, as the algorithm only looks to one neighbour. A flexible classifier will have a low bias, but in return have a high variance. This can be seen from comparing the graphs for `Training` and `Test` above. We can see that a flexible classifier will fit the training set very well, but once it is introduced to new data it will misclassify a large proportion, a result of the high variance. The classifier looses its flexibility when $K$ increases, as it takes a larger majority vote. Choosing the right $K$ is thus a problem concerning the bias-variance trade-off.
 
 **Q13:** 
-
-The proposed strategy uses the "one standard error rule". It chooses the simplest model (e.g.highest value of K) whose error is smaller than the the minimal error + its standard error. In our case: K=30. 
 
 ```{r,eval=FALSE}
 k = tail(which(cv.e < cv.e[k.min] + cv.se[k.min]), 1)
 size = 100
 xnew = apply(M[tr,-1], 2, function(X) seq(min(X), max(X), length.out=size))
 grid = expand.grid(xnew[,1], xnew[,2])
-grid.yhat = knn(M[tr,-1], M[tr,1], k=k, test=grid)
+grid.yhat = class::knn(M[tr,-1], M[tr,1], k=k, test=grid)
 np = 300
 par(mar=rep(2,4), mgp = c(1, 1, 0))
-contour(xnew[,1], xnew[,2], z = matrix(grid.yhat, size), levels=.5, 
+contour(xnew[,1], xnew[,2], z = matrix(grid.yhat, size), levels=.5,
         xlab=expression("x"[1]), ylab=expression("x"[2]), axes=FALSE,
         main = paste0(k,"-nearest neighbors"), cex=1.2, labels="")
 points(grid, pch=".", cex=1, col=grid.yhat)
 points(M[1:np,-1], col=factor(M[1:np,1]), pch = 1, lwd = 1.5)
-legend("topleft", c("Player 1 wins", "Player 2 wins"), 
+legend("topleft", c("Player 1 wins", "Player 2 wins"),
        col=c("red", "black"), pch=1)
 box()
 ```
 
+The proposed strategy is the *one standard error rule*, which chooses the simplest model given that the model error is within a standard error of the parameter giving the minimal error. In this case, we choose the largest $K$ that satisfies the condition $\text{CV}(K) \leqslant \text{CV}(K_{min})+\text{SE}(K_{min})$, where $K_{min}$ gives the minimal error.
 
 **Q14:** 
 
-Random guessing will produce the ROS as a straight line along the diagonal.. Along this line 50% of the guesses will have been right, and the rest wrong. With a 50/50 chance of guessing right this line will represent random guessing...  As the AUC is the area under the curve, it will in that case be 0.5. 
-
 ```{r,eval=FALSE}
 K=30# your choice from Q13
-  
-# knn with prob=TRUE outputs the probability of the winning class
-# therefore we have to do an extra step to get the probability of player 1 winning
 KNNclass=class::knn(train=M[tr,-1], cl=M[tr,1], test=M[-tr,-1], k = K,prob=TRUE)
 KNNprobwinning=attributes(KNNclass)$prob
 KNNprob= ifelse(KNNclass == "0", 1-KNNprobwinning, KNNprobwinning)
 # now KNNprob has probability that player 1 wins, for all matches in the test set
 library(pROC)
-# now you use predictor=KNNprob and response=M[-tr,1] 
-# in your call to the function roc in the pROC library
-tennis_roc = roc(response = M[-tr,1], predictor = KNNprob)
-auc = tennis_roc$auc
-ggroc(tennis_roc)+ggtitle("ROC")
-tennis_roc
+tennis.roc = roc(response = M[-tr,1], predictor = KNNprob)
+auc = tennis.roc$auc
+ggroc(tennis.roc)
 auc
 ```
+
+The ROC is produced by calculating the sensitivity and specificity for all cut-offs on the probability of classifying to a certain class, where $p(x)=\hat{P}(Y=j|X=x)$ is the probability of classifying to $j$. If $p(x) \geqslant \text{cut-off}$, we classify to $j$ and plot the sensitivity and specificity. Repeating this procedure for all possible cut-offs in the range $(0,1)$, we can produce the ROC. The AUC is the area under the ROC, which is used as a measure how well a classifier classifies. Since sensitivity and specificity denotes correctly classifications, we want the AUC to be as close to 1 as possible. For our ROC the AUC is $0.8178$, which is fairly good. If we were to use a random guessing classifier, the probability of classifying to a class is drawn from a uniform distribution. This means the fraction of true positives we guess out of all positives is the cut-off we set. The rest of our guesses will be negative, meaning the fraction of true negatives out of all negatives will $1-\text{cut-off}$. For all cut-offs, the sensitivity will thus be $1-\text{specificity}$, resulting in a diagonal ROC. The area under the ROC will then be $0.5$.
 
 **Q15:**
 
 ```{r,eval=TRUE}
-y_tilde <- numeric()
-M.test=M[tr,-1]
-for (i in 1:dim(M.test)[1]) {
-  if (M.test[i,1] > M.test[i,2]) {
-    y_tilde[i] <- 1
-  } else { 
-  y_tilde[i] <- 0
-  }
-}
 #plot from Q13
-# #k = tail(which(cv.e < cv.e[k.min] + cv.se[k.min]), 1)
-# size = 100
-# xnew = apply(M[tr,-1], 2, function(X) seq(min(X), max(X), length.out=size))
-# grid = expand.grid(xnew[,1], xnew[,2])
-# #grid.yhat = knn(M[tr,-1], M[tr,1], k=k, test=grid)
-# np = 300
-# par(mar=rep(2,4), mgp = c(1, 1, 0))
-# contour(xnew[,1], xnew[,2], z = matrix(grid.yhat, size), levels=.5, 
-#         xlab=expression("x"[1]), ylab=expression("x"[2]), axes=FALSE,
-#         main = paste0(k,"-nearest neighbors"), cex=1.2, labels="")
-# points(grid, pch=".", cex=1, col=grid.yhat)
-# points(M[1:np,-1], col=factor(M[1:np,1]), pch = 1, lwd = 1.5)
-# 
-# segments(-88, -96, 15, 12) #desicion boundary
-# 
-# legend("topleft", c("Player 1 wins", "Player 2 wins"), 
-#        col=c("red", "black"), pch=1)
-# box()
+k = tail(which(cv.e < cv.e[k.min] + cv.se[k.min]), 1)
+size = 100
+xnew = apply(M[tr,-1], 2, function(X) seq(min(X), max(X), length.out=size))
+grid = expand.grid(xnew[,1], xnew[,2])
+grid.yhat = class::knn(M[tr,-1], M[tr,1], k=k, test=grid)
+np = 300
+par(mar=rep(2,4), mgp = c(1, 1, 0))
+contour(xnew[,1], xnew[,2], z = matrix(grid.yhat, size), levels=.5,
+         xlab=expression("x"[1]), ylab=expression("x"[2]), axes=FALSE,
+         main = paste0(k,"-nearest neighbors"), cex=1.2, labels="")
+points(grid, pch=".", cex=1, col=grid.yhat)
+points(M[1:np,-1], col=factor(M[1:np,1]), pch = 1, lwd = 1.5)
+legend("topleft", c("Player 1 wins", "Player 2 wins"),
+      col=c("red", "black"), pch=1)
+
+#produces decision boundry for y.tilde as the diagonal x2 = x1
+abline(0,1)
+box()
+```
+
+```{r,eval=TRUE}
 library(caret)
 library(e1071)
-ref = M[tr,1]
+ref = M[-tr,1]
 #confusion matrix for KNN
 #confmat_KNN=(table(predicted classes KNN, ref))
 #confmat_KNN
 #misclass_KNN=(sum(confmat_KNN) - sum(diag(confmat_KNN)))/sum(confmat_KNN)
 #misclass_KNN
 #confusion matrix for argmax
-#confmat2=confusionMatrix(table(y_tilde, ref))
-#confmat2
-confmat_argmax=(table(y_tilde, ref))
+y.tilde <- numeric()
+M.test=M[-tr,-1]
+for (i in 1:dim(M.test)[1]) {
+  if (M.test[i,1] > M.test[i,2]) {
+    y.tilde[i] <- 1
+  } else { 
+  y.tilde[i] <- 0
+  }
+}
+
+confmat_argmax=(table(y.tilde, ref))
+confmat_yhat = table(yhat.test[,30],ref)
 confmat_argmax
+confmat_yhat
 misclass_argmax=(sum(confmat_argmax) - sum(diag(confmat_argmax)))/sum(confmat_argmax)
+misclass_yhat=(sum(confmat_yhat) - sum(diag(confmat_yhat)))/sum(confmat_yhat)
 misclass_argmax
 ```
 
-#We prefer classifier:.. with misclassification rate XX %
+We prefer classifier:.. with misclassification rate XX %
 
 # Problem 3: Bias-variance trade-off 
 
@@ -383,7 +388,7 @@ $$
 $$\text{E}(\widetilde{f}({\bf x}_0))=\text{E}({\bf x}_0^T\widetilde\beta)={\bf x}_0^T\text{E}(\widetilde\beta)={\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}({\bf X}^T{\bf X})\boldsymbol\beta
 $$
 
-$$\text{Var}(\widetilde{f}({\bf x}_0))=\text{Var}({\bf x}_0^T\widetilde\beta)=\text{Var}(\widetilde\beta_0+x_{01}\widetilde\beta_1+...+x_{0p}\widetilde\beta_p)={\bf x}_0^T \circ{\bf x}_0^T\text{diag(Cov}(\boldsymbol{\widetilde\beta}))=\sigma^2\sum_{i=1}^{p+1} {\bf x}_i^{2}C_{ii}
+$$\text{Var}(\widetilde{f}({\bf x}_0))=\text{Var}({\bf x}_0^T\widetilde\beta)={\bf x}_0^T\text{Cov}(\tilde{\boldsymbol{\beta}}){\bf x}_0 =\sigma^2{\bf x}_0^T({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}{\bf X}^T{\bf X}({\bf X}^T{\bf X}+\lambda {\bf I})^{-1}){\bf x}_0
 $$
 **Q21:** 
 $$\text{E}[(Y_0-\widetilde{f}({\bf x}_0))^2]=[\text{E}(\widetilde{f}({\bf x}_0)-f({\bf x}_0)]^2+\text{Var}(\widetilde{f}({\bf x}_0) ) + \text{Var}(\varepsilon)$$
@@ -432,9 +437,8 @@ variance=function(lambda,X,x0,sigma)
 {
   p=dim(X)[2]
   inv=solve(t(X)%*%X+lambda*diag(p))
-  var=diag(sigma*inv%*%t(X)%*%X%*%inv)
-  x_prod = t(x0)*t(x0)
-  value=x_prod[1,]%*%var
+  var=sigma^2*inv%*%t(X)%*%X%*%t(inv)
+  value=t(x0)%*%var%*%x0
   return(value)
 }
 thislambda=seq(0,2,length=500)
@@ -446,7 +450,7 @@ plot(thislambda,variancelambda,col=4,type="l")
 
 **Q24:** 
 
-Optimal lambda is:
+As we can see from the graph the optimal lambda for this problem is 1. 
 
 ```{r,eval=FALSE}
 tot=sqbiaslambda+variancelambda+sigma^2
