@@ -21,6 +21,18 @@ procedure exercise7 is
             ------------------------------------------
             -- PART 3: Complete the exit protocol here
             ------------------------------------------
+            Should_Commit := True;
+            Finished_Gate_Open := True;
+
+            if Aborted then
+              Should_Commit := False;
+            end if;
+
+            if Finished'Count = 0 then
+              Finished_Gate_Open := False;
+              Aborted := False;
+            end if;
+
         end Finished;
 
         procedure Signal_Abort is
@@ -32,18 +44,26 @@ procedure exercise7 is
         begin
             return Should_Commit;
         end Commit;
-        
+
     end Transaction_Manager;
 
 
 
-    
+
     function Unreliable_Slow_Add (x : Integer) return Integer is
     Error_Rate : Constant := 0.15;  -- (between 0 and 1)
     begin
         -------------------------------------------
         -- PART 1: Create the transaction work here
         -------------------------------------------
+        if Random(Gen) < Error_Rate then
+          delay Duration(0.5);
+          raise Count_Failed;
+        else
+          delay Duration(4.0+Random(Gen));
+          return x + 10;
+        end if;
+
     end Unreliable_Slow_Add;
 
 
@@ -62,9 +82,17 @@ procedure exercise7 is
             Round_Num := Round_Num + 1;
 
             ---------------------------------------
-            -- PART 2: Do the transaction work here             
+            -- PART 2: Do the transaction work here
             ---------------------------------------
-            
+            begin
+              Num := Unreliable_Slow_Add(Num);
+            exception
+              when Count_Failed =>
+                Manager.Signal_Abort;
+            end;
+
+            Manager.Finished;
+
             if Manager.Commit = True then
                 Put_Line ("  Worker" & Integer'Image(Initial) & " comitting" & Integer'Image(Num));
             else
@@ -74,6 +102,7 @@ procedure exercise7 is
                 -------------------------------------------
                 -- PART 2: Roll back to previous value here
                 -------------------------------------------
+                Num := Prev;
             end if;
 
             Prev := Num;
@@ -91,4 +120,3 @@ procedure exercise7 is
 begin
     Reset(Gen); -- Seed the random number generator
 end exercise7;
-
