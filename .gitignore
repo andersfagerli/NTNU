@@ -3,3 +3,5 @@
 .Rdata
 *.beam
 *.html
+*.ali
+*.o
