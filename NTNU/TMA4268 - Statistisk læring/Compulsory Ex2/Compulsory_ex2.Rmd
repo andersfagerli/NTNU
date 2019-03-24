@@ -1,0 +1,369 @@
+---
+subtitle: "TMA4268 Statistical Learning V2019"
+title: "Compulsory exercise 2: Group 2"
+author: "Anders Fagerli, Rebecca Sandstø"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document
+  #pdf_document
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(error=FALSE)
+knitr::opts_chunk$set(warning=FALSE)
+knitr::opts_chunk$set(message=FALSE)
+knitr::opts_chunk$set(results="hold")
+```
+
+```{r,eval=FALSE,echo=TRUE}
+install.packages("knitr") #probably already installed
+install.packages("rmarkdown") #probably already installed
+install.packages("bestglm")# for subset selection with categorical variables
+install.packages("glmnet")# for lasso
+install.packages("tree") #tree
+install.packages("randomForest") #for random forest
+install.packages("ElemStatLearn") #dataset in Problem 2
+BiocManager::install(c("pheatmap")) #heatmap in Problem 2
+```
+
+```{r,eval=FALSE}
+install.packages("ggplot2")
+install.packages("GGally") # for ggpairs
+install.packages("caret") #for confusion matrices
+install.packages("pROC") #for ROC curves
+install.packages("e1071") # for support vector machines
+install.packages("nnet") # for feed forward neural networks
+```
+
+# Problem 1: Regression [6 points]
+
+```{r}
+all=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/diamond.dd")
+dtrain=all$dtrain
+dtest=all$dtest
+```
+***
+**Q1**: Would you choose `price` or `logprice` as response variable? Justify your choice. Next, plot your choice of response pairwise with `carat`, `logcarat`, `color`, `clarity` and `cut`. Comment.
+
+```{r,eval = TRUE}
+full = lm(price ~. -logprice -logcarat, data = dtrain)
+logfull = lm(logprice ~. -price -carat, data = dtrain)
+
+```
+
+To choose between `price` or `logprice`, we must see how they behave under the assumptions of multiple regression. This can be done by looking at the `F-statistic` and `Multiple R-squared` from the `summary`, and generating Q-Q plots and plots for the standardized residuals vs. the fitted values of the model. We have here denoted the model `full` as the the model with response variable `price`, and the model `logfull` as the model with response variable `logprice`. 
+
+KOMMENTAR: kan også se på boxcox(full,plotit=TRUE)
+
+```{r,eval = TRUE}
+summary(full)
+summary(logfull)
+```
+
+```{r,eval = TRUE, out.width=c('50%', '50%'), fig.show='hold'}
+library(ggplot2)
+ggplot(full, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(se = FALSE, col = "red", size = 0.5, method = "loess") +
+  labs(x = "Fitted values", y = "Standardized residuals",
+       title = "Fitted values vs. Standardized residuals full model",
+       subtitle = deparse(full$call))
+
+ggplot(full, aes(sample = .stdresid)) +
+  stat_qq(pch = 19) + 
+  geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+  labs(x = "Theoretical quantiles", y = "Standardized residuals", 
+       title = "Normal Q-Q full model", subtitle = deparse(full$call))
+
+```
+
+```{r,eval = TRUE, out.width=c('50%', '50%'), fig.show='hold'}
+library(ggplot2)
+ggplot(logfull, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(se = FALSE, col = "red", size = 0.5, method = "loess") +
+  labs(x = "Fitted values", y = "Standardized residuals",
+       title = "Fitted values vs. Standardized residuals logfull model",
+       subtitle = deparse(logfull$call))
+ggplot(logfull, aes(sample = .stdresid)) +
+  stat_qq(pch = 19) + 
+  geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+  labs(x = "Theoretical quantiles", y = "Standardized residuals", 
+       title = "Normal Q-Q logfull model", subtitle = deparse(logfull$call))
+```
+
+We see from the information in the `summary` and the plots that `logprice` is preferred when doing inference about the predicted price of a diamond. We see that the regression is significant for both models, although `logfull` has a higher `F-statistic` and may therefore be preferred. Both models explain the variability in the data well, but again, `logfull` has a higher `Multiple R-squared` and is therefore preferred. The biggest difference between the models are the violatons of the model assumptions for multiple regression, in particular the residuals, seen from the plots. The `full` model has residuals that greatly vary with the fitted values of the response, breaking the assumption of constant variance for the residuals. In addition, the residuals can not be said to come from a normal distribution, as they diverge greatly from the plotted normal distribution in the Q-Q plot. This can to some degree also be said about `logfull`, as we see the distribution of the residuals deviate at the tails in the Q-Q plot. On the other hand, the residuals seem to have a more constant spread plotted against the fitted values. In total, we therefore prefer `logprice` as the response variable.
+
+To plot the response `logprice` pairwise with the covariates `carat`, `logcarat`, `color`, `clarity` and `cut`, we can make a scatter plot.
+
+
+```{r,eval = TRUE}
+scatter_plot = dtrain[, c("logprice","carat", "logcarat", "color", "clarity", "cut")]
+pairs(scatter_plot)
+```
+
+KOMMENTAR: Veldig vanskelig å se hvordan color, clarity og cut påvirker, mulig å lage enkelte scatterplots for hver variabel? Får ikke til med "plot(x,y)" funksjonen ..
+***
+Use the local regression model $\texttt{logprice} = \beta_0 + \beta_1 \texttt{carat}+ \beta_2 \texttt{carat}^2$ weighted by the tricube kernel $K_{i0}$.
+
+***
+**Q2:** What is the predicted price of a diamond weighting 1 carat. Use the closest 20% of the observations.
+
+```{r,eval = TRUE}
+polyfit = lm(logprice ~ poly(logcarat,2), data = dtrain)
+```
+
+KOMMENTAR: Hva vil tricube kernel si? Relasjon til support vector machines? Skal vi bruke polynomial regression?
+
+***
+**Q3:** What choice of $\beta_1$, $\beta_2$ and $K_{i0}$ would result in KNN-regression?
+
+***
+**Q4:** Describe how you can perform model selection in regression with AIC as criterion.
+
+Model selection can be done by best subset model selection, which aims to produce a subset of the model that performs best according to some model choice criteria. The method goes through every possible combination of covariates $p \choose j$ for $j = 1,2, \ _\cdots \ ,p$, and chooses a model for each $j$ that has the lowest $SSR$. The resulting $p+1$ models (intercept included) are then evaluated with a chosen model choice criteria, e.g AIC.
+
+$$
+AIC = \frac{1}{n\hat{\sigma}^2}(RSS+2d\hat{\sigma}^2)
+$$
+The AIC is computed for each of the $p+1$ models, and the model with lowest score is deemed as the best model. $d$ is here the number of predictors, otherwise known as the $p+1$ covariates (intercept included). We can then see how the AIC penalizes larger models.  
+
+***
+**Q5:** What are the main differences between using AIC for model selection and using cross-validation (with mean squared test error MSE)?
+
+Using AIC for model selection we may get a reduced model with fewer covariates, in contrast to using cross-validation which only gives variations of the full model. The data is also divided into different sections (folds) when doing cross-validation, whereas in model selection with AIC (or other criteria) the whole training set is used for selecting the model.
+
+***
+**Q6:** See the code below for performing model selection with `bestglm()` based on AIC. What kind of contrast is used to represent `cut`, `color` and `clarity`? Write down the final best model and explain what you can interpret from the model.
+
+```{r,eval=TRUE}
+library(bestglm)
+ds=as.data.frame(within(dtrain,{
+  y=logprice    # setting reponse
+  logprice=NULL # not include as covariate
+  price=NULL    # not include as covariate
+  carat=NULL    # not include as covariate
+  }))
+fit=bestglm(Xy=ds, IC="AIC")$BestModel
+summary(fit)
+```
+
+KOMMENTAR: Contrast?? Treatment?
+
+We see from the `summary` of `fit` that the best model includes the covariates `logcarat`, `cut`, `color`, `clarity` and `xx`.
+
+KOMMENTAR: What can we interpret from the model??
+
+***
+**Q7:** Calculate and report the MSE of the test set using the best model (on the scale of `logprice`).  
+
+```{r,eval=TRUE}
+bss_prediction = predict.lm(fit, dtest)
+bss_testMSE = mean((dtest$logprice - bss_prediction)^2)
+```
+
+Using the R code above, the test MSE for best subset selection is calculated to $\text{MSE}_{test} = `r I(bss_testMSE)`$. 
+
+***
+**Q8:** Build a model matrix for the covariates `~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1`. What is the dimension of this matrix?
+
+```{r,eval=TRUE}
+model_matrix = model.matrix(logprice ~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1, data = dtrain)
+dim = dim(model_matrix)
+```
+
+The model matrix for the above covariates has dimensions $(`r I(dim[1])` \times `r I(dim[2])`)$.
+
+***
+**Q9:** Fit a lasso regression to the diamond data with `logprice` as the response and the model matrix given in Q8. How did you find the value to be used for the regularization parameter?
+
+```{r,eval=TRUE}
+library(glmnet)
+cv.out = cv.glmnet(model_matrix, dtrain$logprice, alpha=1)
+lambda_min = cv.out$lambda.min #Can also choose lamda.1se for one standard error rule
+lasso <- glmnet(model_matrix, dtrain$logprice, alpha=1, lambda = lambda_min)
+lasso_coeff = coef(lasso)
+lasso_coeff
+```
+
+Fitting a lasso regression is done with `glmnet` by setting `alpha`$=1$. Here we have found the optimal regularization parameter $\lambda = `r I(lambda_min)`$ by cross-validation on the training set, which is then used to fit the lasso regression. We can see by the print-out above how the lasso shrinks some of the estimated coefficients towards zero, where the ones that are shrunk the most are least significant in the regression.
+
+***
+**Q10:** Calculate and report the MSE of the test set (on the scale of `logprice`).
+
+```{r,eval=TRUE}
+model_matrix_test = model.matrix(logprice ~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1, data = dtest)
+lasso_prediction = predict(lasso,s=lambda_min,newx=model_matrix_test)
+lasso_testMSE = mean((dtest$logprice - lasso_prediction)^2)
+```
+
+Using the R code above, the test MSE for lasso regression is calculated to $\text{MSE}_{test} = `r I(lasso_testMSE)`$.
+
+***
+**Q11:** A regression tree to model is built using a _greedy_ approach. What does that mean? Explain the strategy used for constructing a regression tree.
+
+A greedy approach will take locally optimal choices in order to approximate a globally optimal solution. For a regression tree we want to construct a tree that minimizes the $RSS$ of the training set, but we must then compute the $RSS$ for each possible partition of the predictor space. A more computationally feasible strategy is using the greedy algorithm _recursive binary splitting_. Here we split the predictor space in two for each predictor and minimize the $RSS$ for the binary split, resulting in two branches for each predictor. This means taking a locally optimal choice, namely the binary split that minimizes the $RSS$ for a specific predictor, without concerning ourselves with the overall $RSS$. In order for a greedy approach to approximate the global optimum, the problem at hand should have an optimal substructure, meaning the global optimum contains the local optimums of each sub-problem.
+
+***
+**Q12:** Is a regression tree a suitable method to handle both numerical and categorical covariates? Elaborate.
+
+A tree based method may be suitable as long as we can split the predictor space into sensible regions. In a binary split, the splitting condition may take on a true or false value. E.g for a numerical covariate, the splitting condition may be if the covariate is less than a certain value. Similarly for a categorical covariate (e.g `cut` for our model), we may split on the condition that the covariate takes on one or several of the categorical values or not. Here we may have interactions, e.g the condition that the `cut` of a diamond is <`Very good` or `Premium`> or not. This way, a regression tree may be suitable for both numerical and categorical covariates.  
+
+***
+**Q13:** Fit a (full) regression tree to the diamond data with `logprice` as the response (and the same covariates as for c and d), and plot the result. Comment briefly on you findings.
+
+```{r,eval=TRUE}
+library(tree)
+regtree = tree(logprice ~logcarat+cut+color+clarity+depth+table+xx+yy+zz-1, data = dtrain)
+plot(regtree, type="uniform")
+text(regtree)
+```
+
+
+***
+**Q14:** Calculate and report the MSE of the test set (on the scale of `logprice`).  
+
+```{r,eval=TRUE}
+tree_prediction = predict(regtree, newdata = dtest)
+tree_testMSE = mean((dtest$logprice-tree_prediction)^2)
+```
+
+Using the R code above, the test MSE for a tree-based regression is calculated to $\text{MSE}_{test} = `r I(tree_testMSE)`$.
+
+***
+**Q15:** Explain the motivation behind bagging, and how bagging differs from random forest? What is the role of bootstrapping?  
+
+Bagging is used to lower the variance of a predictor by taking an average of each bootstrap sample prediction. This is especially useful for predictors that have high variance in the first place, e.g decision trees. Bootstrapping is here used to generate $B$ trees from the $n$ observations of our sample. Bagging will perform poorly when there is a strong predictor in the dataset, since most of the trees generated will have similar splits for the first nodes. The trees then become correlated, and an average will not enhance the variance much. A solution to this is random forests. The motivation behind random forests is similar to bagging; we want to reduce the variance of our predictor. This is done by taking bootstrap samples of our observations and generating trees with a random subset of the predictors as split for each node. This is a contrast to bagging, where all predictors are considered for each split. The end result is a number of different trees (forest), and we can take a majority vote for classification problems and a mean for regression problems when using the forest on a dataset.
+
+***
+**Q16:** What are the parameter(s) to be set in random forest, and what are the rules for setting these?
+
+A parameter to be set in a random forest is the subset $m$ of all predictors $p$ being used in each split. This is constrained to be less than the number of predictors, so $m < p$ for each tree in the forest. Otherwise, the method would be identical to bagging. For regression trees a popular choice for $m$ is $p/3$, while for classification trees a popular choice is $\sqrt{p}$. The number of trees $B$ that our forest consists of should be large, in order to reduce the variability of the method.
+
+***
+**Q17:** Boosting is a popular method. What is the main difference between random forest and boosting?
+
+In boosting, a single tree is grown sequentially from several previously fitted trees. A big difference from a random forest is that there is no use of bootstrapping when boosting, the whole dataset is used when fitting trees sequentially.
+
+***
+**Q18:** Fit a random forest to the diamond data with `logprice` as the response (and the same covariates as before). Comment on your choice of parameter (as decribed in Q16).
+
+```{r,eval=TRUE}
+library(randomForest)
+rf = randomForest(logprice ~logcarat+cut+color+clarity+depth+table+xx+yy+zz-1, data=dtrain, mtry=3, ntree = 500, importance=TRUE)
+```
+
+We have 9 predictors (covariates) in our model, and following the typical choice of $p/3$ for each subset in a regression tree we get 3 predictors for each subset. This ensures that most of the trees aren't correlated. The number of trees in the forest is chosen to a fairly high number to ensure a lower variability from the resulting prediction.  
+
+***
+**Q19:** Make a variable importance plot and comment on the plot. Calculate and report the MSE of the test set (on the scale of `logprice`).
+
+```{r,eval=TRUE}
+rf_prediction = predict(rf, newdata = dtest)
+rf_testMSE = mean((dtest$logprice-rf_prediction)^2)
+varImpPlot(rf)
+```
+
+The plot for node impurity ranks the predictors based on the decrease in RSS due to a split for a predictor, where predictors resulting in a large decrease in RSS are ranked as important.
+
+Using the R code above, the test MSE for a the random forest is calculated to $\text{MSE}_{test} = `r I(rf_testMSE)`$.
+
+***
+**Q20:** Finally, compare the results from c (subset selection), d (lasso), e (tree) and f (random forest): Which method has given the best performance on the test set and which method has given you the best insight into the relationship between the price and the covariates?
+
+```{r table2, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tab <- " 
+| Method                | MSE                 |
+|-----------------------|---------------------|
+| Best subset selection | 0.00360             |
+| Lasso                 | 0.00364             |
+| Tree                  | 0.01715             |
+| Random forest         | 0.00281             |
+"
+cat(tab)
+```
+
+
+
+
+# Problem 2: Unsupervised learning [3 points]
+***
+**Q21:** What is the definition of a principal component score, and how is the score related to the eigenvectors of the matrix ${\hat {\bf R}}$. 
+
+***
+**Q22:** Explain what is given in the plot with title "First eigenvector". Why are there only $n=64$ eigenvectors and $n=64$ principal component scores?
+
+***
+**Q23:** How many principal components are needed to explain 80% of the total variance in ${\bf Z}$? Why is `sum(pca$sdev^2)=p`?  
+
+***
+**Q24**: Study the PC1 vs PC2 plot, and comment on the groupings observed. What can you say about the placement of the `K262`, `MCF7` and `UNKNOWN` samples? Produce the same plot for two other pairs of PCs and comment on your observations.
+
+
+```{r}
+library(ElemStatLearn)
+X=t(nci) #n times p matrix
+table(rownames(X))
+ngroups=length(table(rownames(X)))
+cols=rainbow(ngroups)
+cols[c(4,5,7,8,14)] = "black"
+pch.vec = rep(4,14)
+pch.vec[c(4,5,7,8,14)] = 15:19
+
+colsvsnames=cbind(cols,sort(unique(rownames(X))))
+colsamples=cols[match(rownames(X),colsvsnames[,2])] 
+pchvsnames=cbind(pch.vec,sort(unique(rownames(X))))
+pchsamples=pch.vec[match(rownames(X),pchvsnames[,2])]
+
+Z=scale(X)
+
+pca=prcomp(Z)
+plot(pca$x[,1],pca$x[,2],xlab="PC1",ylab="PC2",pch=pchsamples,col=colsamples)
+legend("bottomright",legend = colsvsnames[,2],cex=0.55,col=cols,pch = pch.vec)
+
+plot(1:dim(X)[2],pca$rotation[,1],type="l",xlab="genes",ylab="weight",main="First eigenvector")
+```
+
+***
+**Q25:**: Explain what it means to use Euclidean distance and average linkage for hierarchical clustering. 
+
+***
+**Q26:**: Perform hierarchical clustering with Euclidean distance and average linkage on the scaled gene expression in `Z`. Observe where our samples labelled as K562, MCF7 and `UNKNOWN` are placed in the dendrogram. Which conclusions can you draw from this?
+
+***
+**Q27:**: Study the R-code and plot below. Here we have performed hierarchical clustering based on thefirst 64 principal component instead of the gene expression data in `Z`. What is the difference between using all the gene expression data and using the first 64 principal components in the clustering? We have plotted the dendrogram together with a heatmap of the data. Explain what is shown in the heatmap. What is given on the horizontal axis, vertical axis, value in the pixel grid?
+
+```{r}
+library(pheatmap)
+npcs=64 
+pheatmap(pca$x[,1:npcs],scale="none",cluster_col=FALSE,cluster_row=TRUE,clustering_distance_rows = "euclidean",clustering_method="average",fontsize_row=5,fontsize_col=5)
+```
+
+# Problem 3: Flying solo with diabetes data [6 points]
+
+```{r}
+flying=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/flying.dd")
+ctrain=flying$ctrain
+ctest=flying$ctest
+```
+***
+**Q28:** Start by getting to know the _training data_, by producing summaries and plots. Write a few sentences about what you observe and include your top 3 informative plots and/or outputs.
+
+***
+**Q29:** Use different methods to analyse the data. In particular use 
+
+* one method from Module 4: Classification
+* one method from Module 8: Trees (and forests)
+* one method from Module 9: Support vector machines and, finally
+* one method from Module 11: Neural networks
+
+For each method you 
+
+* clearly write out the model and model assumptions for the method
+* explain how any tuning parameters are chosen or model selection is performed
+* report (any) insight into the interpretation of the fitted model
+* evaluate the model using the test data, and report misclassifiation rate (cut-off 0.5 on probability) and plot ROC-curves and give the AUC (for method where class probabilities are given).
+
+***
+**Q30:** Conclude with choosing a winning method, and explain why you mean that this is the winning method.
