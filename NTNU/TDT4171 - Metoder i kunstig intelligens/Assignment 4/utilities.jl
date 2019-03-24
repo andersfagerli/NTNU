@@ -43,15 +43,19 @@ function Importance(attributes, examples, set_random)
 
         max = 0
         A = 0
+        gain = 0
 
         for a = 1:length(attributes)
             gain = B(p/(p+n)) - Remainder(a, examples)
-            if (gain > max)
+            #println("Gain: ", gain)
+            if (gain >= max)
                 max = gain
                 A = a
             end
         end
-
+        #println("Attributes: ", attributes)
+        #println("Examples: ", examples)
+        #println("A:", A, " with gain: ", gain)
         return A
     end
 end
@@ -73,14 +77,23 @@ function Remainder(A, examples)
                 end
             end
         end
-        remainder += (p_k+n_k)/(p+n) * B(p_k/(p_k+n_k))
+        if (p_k > 0 || n_k > 0)
+            #println("p_k: ", p_k)
+            #println("n_k: ", n_k)
+            #println(B(p_k/(p_k+n_k)))
+            remainder += (p_k+n_k)/(p+n) * B(p_k/(p_k+n_k))
+        end
     end
-
+    #println(remainder)
     return remainder
 end
 
 function B(q)
-    return -(q*log(2,q) + (1-q)*log(2,1-q))
+    if (q == 0 || q == 1)
+        return 0
+    else
+        return -(q*log(2,q) + (1-q)*log(2,1-q))
+    end
 end
 
 function Positives(examples)
