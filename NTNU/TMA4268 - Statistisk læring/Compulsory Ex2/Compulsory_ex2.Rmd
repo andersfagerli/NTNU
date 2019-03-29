@@ -114,7 +114,7 @@ Use the local regression model $\texttt{logprice} = \beta_0 + \beta_1 \texttt{ca
 polyfit = lm(logprice ~ poly(logcarat,2), data = dtrain)
 ```
 
-KOMMENTAR: Hva vil tricube kernel si? Relasjon til support vector machines? Skal vi bruke polynomial regression?
+KOMMENTAR: Bruk funksjonen loess, den bruker tricube kernel som default. Se Module 7 - local regression
 
 ***
 **Q3:** What choice of $\beta_1$, $\beta_2$ and $K_{i0}$ would result in KNN-regression?
@@ -149,11 +149,7 @@ fit=bestglm(Xy=ds, IC="AIC")$BestModel
 summary(fit)
 ```
 
-KOMMENTAR: Contrast?? Treatment?
-
-We see from the `summary` of `fit` that the best model includes the covariates `logcarat`, `cut`, `color`, `clarity` and `xx`.
-
-KOMMENTAR: What can we interpret from the model??
+We see from the `summary` how `cut`, `color` and `clarity` are represented in the model. As these are categorical covariates, each level may influence the response differently. This can be seen from the estimates of each level, where e.g an ideal `cut` affects the `logprice` more than a good `cut`. We also see from the `summary` of `fit` that the best model includes the covariates `logcarat`, `cut`, `color`, `clarity` and `xx`. We can from the new model interpret which covariates and levels are significant in the regression, and from the estimates how they affect the response. 
 
 ***
 **Q7:** Calculate and report the MSE of the test set using the best model (on the scale of `logprice`).  
