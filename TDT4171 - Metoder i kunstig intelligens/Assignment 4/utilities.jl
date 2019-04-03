@@ -20,7 +20,7 @@ function Plurality(examples)
     elseif (classOne < classTwo)
         return Node(2)
     else
-        return Node(rand([1 2], 1))
+        return Node(rand([1 2], 1)[1])
     end
 end
 
@@ -35,17 +35,15 @@ function SameClassification(examples)
 end
 
 function Importance(attributes, examples, set_random)
-    if set_random
-        return rand(1:length(attributes),1)[1]
+    if set_random==true
+        return attributes[rand(1:length(attributes),1)[1]]
     else
         p = Positives(examples)
         n = Negatives(examples)
 
         max = 0
         A = 0
-        gain = 0
-
-        for a = 1:length(attributes)
+        for a in attributes
             gain = B(p/(p+n)) - Remainder(a, examples)
             #println("Gain: ", gain)
             if (gain >= max)
@@ -53,9 +51,6 @@ function Importance(attributes, examples, set_random)
                 A = a
             end
         end
-        #println("Attributes: ", attributes)
-        #println("Examples: ", examples)
-        #println("A:", A, " with gain: ", gain)
         return A
     end
 end
@@ -77,14 +72,8 @@ function Remainder(A, examples)
                 end
             end
         end
-        if (p_k > 0 || n_k > 0)
-            #println("p_k: ", p_k)
-            #println("n_k: ", n_k)
-            #println(B(p_k/(p_k+n_k)))
-            remainder += (p_k+n_k)/(p+n) * B(p_k/(p_k+n_k))
-        end
+        remainder += (p_k+n_k)/(p+n) * B(p_k/(p_k+n_k))
     end
-    #println(remainder)
     return remainder
 end
 
@@ -99,7 +88,7 @@ end
 function Positives(examples)
     p = 0
     for class in examples[:,end]
-        if (class == 1.0)
+        if (class == 1)
             p = p + 1
         end
     end
@@ -109,7 +98,7 @@ end
 function Negatives(examples)
     n = 0
     for class in examples[:,end]
-        if (class == 2.0)
+        if (class == 2)
             n = n + 1
         end
     end
@@ -122,9 +111,33 @@ function ReadFile(filename)
 end
 
 function TraverseTree(A)
-    for node in A.children
-        list = [children.attribute for children in node.children]
-        println("id: $(node.attribute), children: $list")
+    if length(A.children) == 0
+        return "[" * string(A.attribute) * "]"
+    else
+        temp = "[" * string(A.attribute) * " "
     end
 
+    for i = 1:length(A.children)
+        temp *= TraverseTree(A.children[i])
+    end
+    return temp * "]"
+end
+
+function Classifier(A, data)
+    node = A
+    while length(node.children) > 0
+        node = node.children[data[node.attribute]]
+    end
+    return node.attribute
+end
+
+function TestClassifier(A, data)
+    correct = 0
+    total = length(data[:,end])
+    for i = 1:total
+        if (data[i,end] == Classifier(A,data[i,:]))
+            correct += 1
+        end
+    end
+    return correct/total
 end
