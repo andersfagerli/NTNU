@@ -16,11 +16,8 @@ function DecisionTreeLearning(examples, attributes, parent_examples, set_random)
     else
         A = Importance(attributes,examples,set_random)
         tree = Node(A)
-        #println(examples)
-        #println(attributes)
-        #println(A)
-        splice!(attributes, A) #Remove element at index A
-        for v_k in [1 2]
+        splice!(attributes, find(x->x==A,attributes)[1]) #Remove element A
+        for v_k = 1:2
             exs = Matrix(0,length(examples[1,:]))
             for i = 1:length(examples[:,end])
                 if (examples[i,A] == v_k)
@@ -39,22 +36,19 @@ function main()
     test_examples = ReadFile("test.txt")
     attributes = [1,2,3,4,5,6,7]
 
+    randTree = DecisionTreeLearning(training_examples,attributes, [], true)
+    printout2 = TraverseTree(randTree)
+
+    attributes = [1,2,3,4,5,6,7]
     tree = DecisionTreeLearning(training_examples, attributes, [], false)
-    #randTree = DecisionTreeLearning(training_examples,attributes, [], true)
-    println("Root: ", tree.attribute)
-    println("Children: ", tree.children[1].attribute, tree.children[2].attribute)
-    tree = tree.children[2]
-    println("Root: ", tree.attribute)
-    println("Children: ", tree.children[1].attribute, tree.children[2].attribute)
-    tree = tree.children[1]
-    println("Root: ", tree.attribute)
-    println("Children: ", tree.children[1].attribute, tree.children[2].attribute)
-    tree = tree.children[1]
-    println("Root: ", tree.attribute)
-    println("Children: ", tree.children[1].attribute, tree.children[2].attribute)
-    tree = tree.children[1]
-    println("Root: ", tree.attribute)
-    println("Children: ", tree.children[1].attribute, tree.children[2].attribute)
+    printout1 = TraverseTree(tree)
+
+    println(TestClassifier(tree, test_examples))
+    println(TestClassifier(randTree, test_examples))
+
+    println(printout1)
+    println(printout2)
+
 end
 
 main()
