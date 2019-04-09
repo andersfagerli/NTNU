@@ -299,22 +299,25 @@ cat(tab)
 The principal component scores are the $z_{1i}, ..., z_{ni}$ elements in the principal component vectors, where
 $z_{in} = \phi_{11}x_{i1}+\phi_{21}x_{i1}+...+\phi_{p1}x_{ip}$
 
-
-The direction of the first principal component is given by the first eigenvector of the covariance matrix. The first eigenvector is the one with the largest eigenvalue. 
+The direction of the first principal component is given by the first eigenvector(${\bf \phi$}) of the covariance matrix. The first eigenvector is the one with the largest eigenvalue. 
 
 ***
 **Q22:** Explain what is given in the plot with title "First eigenvector". Why are there only $n=64$ eigenvectors and $n=64$ principal component scores?
 
-In the plot we see the weights that the genes are given in the first eigenvector. 
+In the plot we see the weights that the different genes are given in the first eigenvector ${\bf\phi_1}$. 
 
+Where ${\bf \phi_1}=[\phi_{11}, \phi_{13},...,\phi_{1p}]$ and $\phi_{1i}$ are the different weights.
 
-
+The Rank of a matrix centered by columns is $\leq(n-1,p)$, which gives our $\bf Z$ a rank 63. Then the sample covariance matrix should also have rank 63, which gives us a maximum of 63 principal components. ????
 
 ***
 **Q23:** How many principal components are needed to explain 80% of the total variance in ${\bf Z}$? Why is `sum(pca$sdev^2)=p`?  
 
-In the summary we can see that from the summary that we need 32 PCA´s for the cumulative proportion of variance explained to be 80%.  
+We can read from the summary that we need 32 PCA´s for the cumulative proportion of variance explained to be 80%.  
 
+The PCA analysis gives 64 principal components that in total explain all the variability in the data. This means that the sum of the variance in the PCA equals the total variance of the data, sum(pca.sdev^2) =$\sigma_{tot}^2$. 
+We know that the column standard deviations for $\bf Z$ are 1, which gives column variance equal 1. To get the total variance in the data we sum the variance for each column. 
+In our case: $\sigma_{tot}^2=6830\cdot 1=6830=p$
 ***
 **Q24**: Study the PC1 vs PC2 plot, and comment on the groupings observed. What can you say about the placement of the `K262`, `MCF7` and `UNKNOWN` samples? Produce the same plot for two other pairs of PCs and comment on your observations.
 
@@ -342,19 +345,21 @@ plot(1:dim(X)[2],pca$rotation[,1],type="l",xlab="genes",ylab="weight",main="Firs
 summary(pca)
 ```
 
-We observe that several groupings have been made. The leukimia cells are grouped together with the K562 cells, which intuitively makes sense. The MC57 cells are spread out together with the other breast cancer cells. This might mean that the two first principal component don't hold much relevant information for these cells. 
-The UNKNOWN sample is placed close to the origin, especially for PC1. (KAN VI SI NOE MER OM DETTE?)
+For the PC1/PC2 plot we observe that several groupings of the same cell types have been made. The leukimia cells are grouped together with the K562 cells, which intuitively makes sense. The MC57 cells are spread out together with the other breast cancer cells. This might mean that the two first principal component don't hold much relevant information for these cells. 
+The UNKNOWN sample is placed quite close to the origin, together with many other different cancer tumors. This might mean that these pricinpal components do not hold enough useful information about these tumors to clearly tell them apart. 
 
-In the PC3/PC4 plot we see some of the same grouping, eg. leukimia and colon. The breast cancer cells are still spread out and the UNKNOWN sample is still quite close to the origin. The MC57 are not present in this plot, telling 
+In the PC3/PC4 plot we see some of the same groupings, eg. leukimia and colon. The breast cancer cells are still spread out and the UNKNOWN sample is still quite close to the origin. The MC57 are not present in this plot, telling us ?? 
 
 ***
 **Q25:**: Explain what it means to use Euclidean distance and average linkage for hierarchical clustering. 
 
-In hierarchical clustering Euclidean distance refers to distance in X1/X2-plot (?hvordan formulere dette?) and it measures the dissimilarity. This means that obervations of similar magnitude will be clustered together.
+In hierarchical clustering we define a measure of dissimilarity, often the euclidean distance. The euclidean distance refers to the distance beetween pairs of observations: 
+$$||a-b||_2=\sqrt{\sum_i(a_i-b_i)^2}$$
 
-Linkage describes the concept of dissimilarity beetween groups of observations. In average linking the distance between two clusters, a and b, is defined by the average distance beetween the points in the two clusters. 
-$L(a,b)=\frac{1}{n_an_b}\sum_{i=1}^{n_a}\sum_{j=1}^{n_b}D(x_{ai},x_{bj})$
+The use of euclidean distance will cluster observations of similar magnitude together.
 
+Linkage describes the concept of dissimilarity beetween groups of observations. In average linking the dissimilarity between two clusters, A and B, is given by the mean intercluster dissmilarity. All pairwise dissimilarities (in our case euclidean distances) between the observations in cluster A and B are computed, and the average is used. 
+$L(A,B)=\frac{1}{n_An_B}\sum_{i=1}^{n_A}\sum_{j=1}^{n_B}D(x_{Ai},x_{Bj})$
 
 ***
 **Q26:**: Perform hierarchical clustering with Euclidean distance and average linkage on the scaled gene expression in `Z`. Observe where our samples labelled as K562, MCF7 and `UNKNOWN` are placed in the dendrogram. Which conclusions can you draw from this?¨
@@ -362,23 +367,13 @@ $L(a,b)=\frac{1}{n_an_b}\sum_{i=1}^{n_a}\sum_{j=1}^{n_b}D(x_{ai},x_{bj})$
 ```{r,eval = TRUE}
 library(dendextend)
 hc = hclust(dist(Z[,-1]), method = "average")
-#skal det evt være Z? Eller nci/nci[,-1]?
 plot(hc, xlab = "", sub = "")
 str(hc)
-
-#cluster assignment
-#cut.hc=cutree(hc, 100)
-#cut.hc
-#plot(cut.hc)
-
-#prunesize=fullcv$size[which.min(fullcv$dev)]
-#prunedendo=prune(hc, l) 
-#plot(prunedendo)
 ```
 
-The mentioned values end up low in the dendogram, whcih means?.. 
+The K562 samples are placed close to the other Leukimia samples, and the MC57s close to other breast cancer samples. Their clusters are placed low in the dendogram, which tells us they were one of the first clusters to be made and that the samples have clear similarities beetween each other. 
 
-
+The UNKNOWN sample is placed close to several different cancer types, which indicates that there is a group of cancers that have similar characteristics and that are difficult to tell apart based on the gene activity. This is supported by the plots from Q24, which also scatter these cancer types close to each other.
 ***
 **Q27:**: Study the R-code and plot below. Here we have performed hierarchical clustering based on thefirst 64 principal component instead of the gene expression data in `Z`. What is the difference between using all the gene expression data and using the first 64 principal components in the clustering? We have plotted the dendrogram together with a heatmap of the data. Explain what is shown in the heatmap. What is given on the horizontal axis, vertical axis, value in the pixel grid?
 
@@ -387,6 +382,12 @@ library(pheatmap)
 npcs=64 
 pheatmap(pca$x[,1:npcs],scale="none",cluster_col=FALSE,cluster_row=TRUE,clustering_distance_rows = "euclidean",clustering_method="average",fontsize_row=5,fontsize_col=5)
 ```
+From "the curse of dimensonality", we have that the use of Euclidean distance in high dimensional spaces might be problematic. By reducing the dimensions in the problem from $p$ to 64 the use of this distance metric might/will make more sense. But we still have quite many dimensions?
+
+Using the principal components enables us to make a heatmap of reasonable size and reduces the computation time for clustering.  Using the forst 64 principal components means using all of them, and by doing this we preserve all the variance in the data. 
+
+The horisontal axis list the principal components. The vertical axis, left side, shows the dendogram for the clustering. Vertical axis, right side, are the observed cancer types. As the vertical axis "sorts" the cancer tumors based on similarity, we can quickly see what cancer tumors had similar gene activity. 
+The colors in the pixel grid represent the changes in the expression of the cancer tumor. E.g. the leukimia tumors are given similar scores in PC1, and we can see that they must activate many of the same genes. In PC2 the same tumors are given more "neutral" colours, which tells is they are harder to tell apart from other cancer tumors baced on the variance captured in PC2. 
 
 ---
 output:
@@ -664,8 +665,9 @@ misclass_svm
 
 Probabilities for each class not given, therefore no ROC. STEMMER DETTE? 
 The misclassification rate is 29%. 
+
+ARTIFICIAL NEURAL NETWORKS
 ```{r,eval = TRUE} 
-#NEURAL NETWORKS
 library(caret)
 library(nnet)
 #bruk av keras er utenfor pensum 
