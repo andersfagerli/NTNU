@@ -1,12 +1,17 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 subtitle: "TMA4268 Statistical Learning V2019"
 title: "Compulsory exercise 2: Group 2"
 author: "Anders Fagerli, Rebecca Sandstø"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: 
+output:
   html_document
   #pdf_document
 ---
-  
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(error=FALSE)
@@ -15,7 +20,7 @@ knitr::opts_chunk$set(message=FALSE)
 knitr::opts_chunk$set(results="hold")
 ```
 
-```{r,eval=FALSE,echo=TRUE}
+```{r,eval=FALSE,echo=FALSE}
 install.packages("knitr") #probably already installed
 install.packages("rmarkdown") #probably already installed
 install.packages("bestglm")# for subset selection with categorical variables
@@ -26,7 +31,7 @@ install.packages("ElemStatLearn") #dataset in Problem 2
 BiocManager::install(c("pheatmap")) #heatmap in Problem 2
 ```
 
-```{r,eval=FALSE}
+```{r,eval=FALSE,echo=FALSE}
 install.packages("ggplot2")
 install.packages("GGally") # for ggpairs
 install.packages("caret") #for confusion matrices
@@ -50,16 +55,14 @@ full = lm(price ~. -logprice -logcarat, data = dtrain)
 logfull = lm(logprice ~. -price -carat, data = dtrain)
 ```
 
-To choose between `price` or `logprice`, we must see how they behave under the assumptions of multiple regression. This can be done by looking at the `F-statistic` and `Multiple R-squared` from the `summary`, and generating Q-Q plots and plots for the standardized residuals vs. the fitted values of the model. We have here denoted the model `full` as the the model with response variable `price`, and the model `logfull` as the model with response variable `logprice`. 
-
-KOMMENTAR: kan også se på boxcox(full,plotit=TRUE)
+To choose between `price` or `logprice`, we must see how they behave under the assumptions of multiple regression. This can be done by looking at the `F-statistic` and `Multiple R-squared` from the `summary`, and generating Q-Q plots and plots for the standardized residuals vs. the fitted values of the model. We have here denoted the model `full` as the the model with response variable `price`, and the model `logfull` as the model with response variable `logprice`.
 
 ```{r,eval = TRUE}
 summary(full)
 summary(logfull)
 ```
 
-```{r,eval = TRUE, out.width=c('50%', '50%'), fig.show='hold'}
+```{r,eval = TRUE, echo=FALSE, out.width=c('50%', '50%'), fig.show='hold'}
 library(ggplot2)
 ggplot(full, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -68,13 +71,13 @@ ggplot(full, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
        title = "Fitted values vs. Standardized residuals full model",
        subtitle = deparse(full$call))
 ggplot(full, aes(sample = .stdresid)) +
-  stat_qq(pch = 19) + 
+  stat_qq(pch = 19) +
   geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
-  labs(x = "Theoretical quantiles", y = "Standardized residuals", 
+  labs(x = "Theoretical quantiles", y = "Standardized residuals",
        title = "Normal Q-Q full model", subtitle = deparse(full$call))
 ```
 
-```{r,eval = TRUE, out.width=c('50%', '50%'), fig.show='hold'}
+```{r,eval = TRUE, echo=FALSE, out.width=c('50%', '50%'), fig.show='hold'}
 library(ggplot2)
 ggplot(logfull, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -83,42 +86,34 @@ ggplot(logfull, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
        title = "Fitted values vs. Standardized residuals logfull model",
        subtitle = deparse(logfull$call))
 ggplot(logfull, aes(sample = .stdresid)) +
-  stat_qq(pch = 19) + 
+  stat_qq(pch = 19) +
   geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
-  labs(x = "Theoretical quantiles", y = "Standardized residuals", 
+  labs(x = "Theoretical quantiles", y = "Standardized residuals",
        title = "Normal Q-Q logfull model", subtitle = deparse(logfull$call))
 ```
 
 We see from the information in the `summary` and the plots that `logprice` is preferred when doing inference about the predicted price of a diamond. We see that the regression is significant for both models, although `logfull` has a higher `F-statistic` and may therefore be preferred. Both models explain the variability in the data well, but again, `logfull` has a higher `Multiple R-squared` and is therefore preferred. The biggest difference between the models are the violatons of the model assumptions for multiple regression, in particular the residuals, seen from the plots. The `full` model has residuals that greatly vary with the fitted values of the response, breaking the assumption of constant variance for the residuals. In addition, the residuals can not be said to come from a normal distribution, as they diverge greatly from the plotted normal distribution in the Q-Q plot. This can to some degree also be said about `logfull`, as we see the distribution of the residuals deviate at the tails in the Q-Q plot. On the other hand, the residuals seem to have a more constant spread plotted against the fitted values. In total, we therefore prefer `logprice` as the response variable.
 
-To plot the response `logprice` pairwise with the covariates `carat`, `logcarat`, `color`, `clarity` and `cut`, we can make a scatter plot.
+The response `logprice` is plotted pairwise with the covariates `carat`, `logcarat`, `color`, `clarity` and `cut` below.
 
-
-```{r,eval = TRUE}
-scatter_plot = dtrain[, c("logprice","carat", "logcarat", "color", "clarity", "cut")]
-pairs(scatter_plot)
+```{r,eval=TRUE, echo=FALSE}
+price=unlist(dtrain[,"price"])
+logprice=unlist(dtrain[,"logprice"])
+carat = unlist(dtrain[,"carat"])
+logcarat = unlist(dtrain[,"logcarat"])
+color = unlist(dtrain[,"color"])
+clarity = unlist(dtrain[,"clarity"])
+cut = unlist(dtrain[,"cut"])
 ```
 
-KOMMENTAR: Veldig vanskelig å se hvordan color, clarity og cut påvirker, mulig å lage enkelte scatterplots for hver variabel? Får ikke til med "plot(x,y)" funksjonen ..
-
-Her er et slags scatterplot: 
-
-```{r,eval=TRUE}
-price=unlist(dtrain[,1])
-logprice=unlist(dtrain[,2])
-carat = unlist(dtrain[,3])
-logcarat = unlist(dtrain[,4])
-color = unlist(dtrain[,6])
-clarity = unlist(dtrain[,6])
-cut = unlist(dtrain[,5])
-
-plot(logprice, carat, type = "p") 
-plot(logprice, logcarat, type = "p") 
-plot(logprice, cut, type = "p")
-plot(logprice, color, type = "p")
-plot(logprice, clarity, type = "p")
-plot(logprice, cut, type = "p")
+```{r,eval=TRUE, echo=FALSE, out.width=c('50%', '50%'), fig.show='hold'}
+plot(logcarat, logprice, type = "p", xlab="logcarat", ylab="logprice")
+plot(color, logprice, type = "p", xlab="color", ylab="logprice")
+plot(cut, logprice, type = "p", xlab="cut", ylab="logprice")
+plot(clarity, logprice, type = "p", xlab="clarity", ylab="logprice")
 ```
+
+We see that the price of a diamond is fairly linear with its carat. We have here only plotted against `logcarat`, as our chosen response is `logprice`, but `carat` will naturally affect the response similarly (only in a logarithmic manner). For the categorical covariates we produce boxplots, where the median line gives an indication of the `logprice` for each category. All categories are plotted from worst to best in terms of quality. We see that `color` has a steady increase in `logprice` as we go from worst to best, but the other covariates seem to have an opposite response. This may indicate that quality diamonds in terms of `cut` and `clarity` have otherwise poor traits, or that this is simply the case for our sample. In total, it seems that the `carat` of a diamond is the strongest predictor when it comes to estimating the price.
 
 ***
 Use the local regression model $\texttt{logprice} = \beta_0 + \beta_1 \texttt{carat}+ \beta_2 \texttt{carat}^2$ weighted by the tricube kernel $K_{i0}$.
@@ -128,14 +123,16 @@ Use the local regression model $\texttt{logprice} = \beta_0 + \beta_1 \texttt{ca
 
 ```{r,eval = TRUE}
 fit = loess(logprice ~ carat, span = .2)
-price1 = predict(fit, 1)
-price1
+predictedlogprice = predict(fit, 1)
+predictedprice = 10^predictedlogprice
 ```
+
+The predicted price of a diamond weighting 1 `carat` is $5100.67 \$$. 
+
 ***
 **Q3:** What choice of $\beta_1$, $\beta_2$ and $K_{i0}$ would result in KNN-regression?
 
-If we choose $\beta_1=\beta_2 =0$ and $K_{i0} = 1$(or any other constant $k<0$), it will result in KNN-regression. 
-The $\beta_0$ that is left will give the average value in the group, and a constant kernel will give the same weight to all observations. ...And these are the same principles that KNN-regression is based on. 
+If we choose $\beta_1=\beta_2 =0$ and $K_{i0} = 1$, it will result in KNN-regression.
 
 ***
 **Q4:** Describe how you can perform model selection in regression with AIC as criterion.
@@ -147,9 +144,12 @@ $$
 The AIC is computed for each of the $p+1$ models, and the model with lowest score is deemed as the best model. $d$ is here the number of predictors, otherwise known as the $p+1$ covariates (intercept included). We can then see how the AIC penalizes larger models.  
 ***
 **Q5:** What are the main differences between using AIC for model selection and using cross-validation (with mean squared test error MSE)?
-Using AIC for model selection we may get a reduced model with fewer covariates, in contrast to using cross-validation which only gives variations of the full model. The data is also divided into different sections (folds) when doing cross-validation, whereas in model selection with AIC (or other criteria) the whole training set is used for selecting the model.
+
+By using AIC for model selection we may get a reduced model with fewer covariates, in contrast to using cross-validation which only gives variations of the full model. The data is also divided into different sections (folds) when doing cross-validation, whereas in model selection with AIC (or other criteria) the whole training set is used for selecting the model.
+
 ***
 **Q6:** See the code below for performing model selection with `bestglm()` based on AIC. What kind of contrast is used to represent `cut`, `color` and `clarity`? Write down the final best model and explain what you can interpret from the model.
+
 ```{r,eval=TRUE}
 library(bestglm)
 ds=as.data.frame(within(dtrain,{
@@ -161,16 +161,22 @@ ds=as.data.frame(within(dtrain,{
 fit=bestglm(Xy=ds, IC="AIC")$BestModel
 summary(fit)
 ```
-KOMMENTAR: Contrast?? Treatment?
-We see from the `summary` of `fit` that the best model includes the covariates `logcarat`, `cut`, `color`, `clarity` and `xx`.
-KOMMENTAR: What can we interpret from the model??
+
+We see from the `summary` how `cut`, `color` and `clarity` are represented in the model. As these are categorical covariates, each level may influence the response differently. This can be seen from the estimates of each level, where e.g an ideal `cut` affects the `logprice` more than a good `cut`. We also see from the `summary` of `fit` that the best model includes the covariates `logcarat`, `cut`, `color`, `clarity` and `xx`.
+$$
+\hat{Y_i}=\beta_0+\hat\beta_{logcarat}\cdot\text{logcarat}_i+\hat\beta_{cut}\cdot\text{cut}_i+\hat\beta_{color}\cdot\text{color}_i+\hat\beta_{clarity}\cdot\text{clarity}_i+\hat\beta_{xx}\cdot\text{xx}_i
+$$
+The estimated coefficients for `cut`, `color` and `clarity` will in this model depend on which value the covariates take. We can from the new model interpret which covariates and levels are significant in the regression, and from the estimates how they affect the response.
+
 ***
-**Q7:** Calculate and report the MSE of the test set using the best model (on the scale of `logprice`).  
+**Q7:** Calculate and report the MSE of the test set using the best model (on the scale of `logprice`). 
+
 ```{r,eval=TRUE}
 bss_prediction = predict.lm(fit, dtest)
 bss_testMSE = mean((dtest$logprice - bss_prediction)^2)
 ```
-Using the R code above, the test MSE for best subset selection is calculated to $\text{MSE}_{test} = `r I(bss_testMSE)`$. 
+
+Using the R code above, the test MSE for best subset selection is calculated to $\text{MSE}_{test} = `r I(bss_testMSE)`$.
 
 ***
 **Q8:** Build a model matrix for the covariates `~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1`. What is the dimension of this matrix?
@@ -200,8 +206,8 @@ Fitting a lasso regression is done with `glmnet` by setting `alpha`$=1$. Here we
 **Q10:** Calculate and report the MSE of the test set (on the scale of `logprice`).
 
 ```{r,eval=TRUE}
-model_matrix_test = model.matrix(logprice ~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1, data = dtest)
-lasso_prediction = predict(lasso,s=lambda_min,newx=model_matrix_test)
+model_matrix_test = model.matrix(logprice~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1, data = dtest)
+lasso_prediction = predict(lasso, s=lambda_min, newx=model_matrix_test)
 lasso_testMSE = mean((dtest$logprice - lasso_prediction)^2)
 ```
 
@@ -210,7 +216,7 @@ Using the R code above, the test MSE for lasso regression is calculated to $\tex
 ***
 **Q11:** A regression tree to model is built using a _greedy_ approach. What does that mean? Explain the strategy used for constructing a regression tree.
 
-A greedy approach will take locally optimal choices in order to approximate a globally optimal solution. For a regression tree we want to construct a tree that minimizes the $RSS$ of the training set, but we must then compute the $RSS$ for each possible partition of the predictor space. A more computationally feasible strategy is using the greedy algorithm _recursive binary splitting_. Here we split the predictor space in two for each predictor and minimize the $RSS$ for the binary split, resulting in two branches for each predictor. This means taking a locally optimal choice, namely the binary split that minimizes the $RSS$ for a specific predictor, without concerning ourselves with the overall $RSS$. In order for a greedy approach to approximate the global optimum, the problem at hand should have an optimal substructure, meaning the global optimum contains the local optimums of each sub-problem.
+A greedy approach will take locally optimal choices in order to approximate a globally optimal solution. For a regression tree we want to construct a tree that minimizes the $RSS$ of the training set, but we must then compute the $RSS$ for each possible partition of the predictor space. A more computationally feasible strategy is using the greedy algorithm *recursive binary splitting*. Here we split the predictor space in two for a predictor and minimize the $RSS$ for the binary split, resulting in two branches for the predictor. This means taking a locally optimal choice, namely the binary split that minimizes the $RSS$ for a specific predictor, without concerning ourselves with the overall $RSS$. In order for a greedy approach to approximate the global optimum, the problem at hand should have an optimal substructure, meaning the global optimum contains the local optimums of each sub-problem.
 
 ***
 **Q12:** Is a regression tree a suitable method to handle both numerical and categorical covariates? Elaborate.
@@ -218,7 +224,7 @@ A greedy approach will take locally optimal choices in order to approximate a gl
 A tree based method may be suitable as long as we can split the predictor space into sensible regions. In a binary split, the splitting condition may take on a true or false value. E.g for a numerical covariate, the splitting condition may be if the covariate is less than a certain value. Similarly for a categorical covariate (e.g `cut` for our model), we may split on the condition that the covariate takes on one or several of the categorical values or not. Here we may have interactions, e.g the condition that the `cut` of a diamond is <`Very good` or `Premium`> or not. This way, a regression tree may be suitable for both numerical and categorical covariates.  
 
 ***
-**Q13:** Fit a (full) regression tree to the diamond data with `logprice` as the response (and the same covariates as for c and d), and plot the result. Comment briefly on you findings.
+**Q13:** Fit a (full) regression tree to the diamond data with `logprice` as the response (and the same covariates as for c and d), and plot the result. Comment briefly on your findings.
 
 ```{r,eval=TRUE}
 library(tree)
@@ -227,6 +233,7 @@ plot(regtree, type="uniform")
 text(regtree)
 ```
 
+From the fitted regression tree we can see which binary splits result in the locally lowest $RSS$. Interesting to note is that only two of the predictors are used, indicating that `xx` and `yy` are suitable predictors for our dataset.
 
 ***
 **Q14:** Calculate and report the MSE of the test set (on the scale of `logprice`).  
@@ -272,7 +279,7 @@ rf_testMSE = mean((dtest$logprice-rf_prediction)^2)
 varImpPlot(rf)
 ```
 
-The plot for node impurity ranks the predictors based on the decrease in RSS due to a split for a predictor, where predictors resulting in a large decrease in RSS are ranked as important.
+The plot for node impurity ranks the predictors based on the decrease in RSS due to a split for a predictor, where predictors resulting in a large decrease in RSS are ranked as important. The plot based on randomization will test the predictive power of each predictor, one at a time, and rank the importance based on the OOB error. From the plots we can see which predictors are deemed important, and notice that the two plots are in disagreement. This may mean that several of the predictors are suitable for our dataset.
 
 Using the R code above, the test MSE for a the random forest is calculated to $\text{MSE}_{test} = `r I(rf_testMSE)`$.
 
@@ -280,7 +287,7 @@ Using the R code above, the test MSE for a the random forest is calculated to $\
 **Q20:** Finally, compare the results from c (subset selection), d (lasso), e (tree) and f (random forest): Which method has given the best performance on the test set and which method has given you the best insight into the relationship between the price and the covariates?
 
 ```{r table2, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
-tab <- " 
+tab <- "
 | Method                | MSE                 |
 |-----------------------|---------------------|
 | Best subset selection | 0.00360             |
@@ -291,20 +298,21 @@ tab <- "
 cat(tab)
 ```
 
+By calculating the MSE of each method, we see that the random forest has best performance on the test set. In terms of interpretation, the tree-based methods give good visual insight into how the price is predicted by the covariates. It does not necessarly show the relationship between the covariates and the response, where the other methods have the benefit of giving clear weights (coefficient values) to each covariate, giving us a sense of the relationship between each covariate and the response. 
 
 # Problem 2: Unsupervised learning [3 points]
 ***
-**Q21:** What is the definition of a principal component score, and how is the score related to the eigenvectors of the matrix ${\hat {\bf R}}$. 
+**Q21:** What is the definition of a principal component score, and how is the score related to the eigenvectors of the matrix ${\hat {\bf R}}$.
 
 The principal component scores are the $z_{1i}, ..., z_{ni}$ elements in the principal component vectors, where
 $z_{in} = \phi_{11}x_{i1}+\phi_{21}x_{i1}+...+\phi_{p1}x_{ip}$
 
-The direction of the first principal component is given by the first eigenvector(${\bf \phi$}) of the covariance matrix. The first eigenvector is the one with the largest eigenvalue. 
+The direction of the first principal component is given by the first eigenvector(${\bf \phi$}) of the covariance matrix. The first eigenvector is the one with the largest eigenvalue.
 
 ***
 **Q22:** Explain what is given in the plot with title "First eigenvector". Why are there only $n=64$ eigenvectors and $n=64$ principal component scores?
 
-In the plot we see the weights that the different genes are given in the first eigenvector ${\bf\phi_1}$. 
+In the plot we see the weights that the different genes are given in the first eigenvector ${\bf\phi_1}$.
 
 Where ${\bf \phi_1}=[\phi_{11}, \phi_{13},...,\phi_{1p}]$ and $\phi_{1i}$ are the different weights.
 
@@ -315,8 +323,8 @@ The Rank of a matrix centered by columns is $\leq(n-1,p)$, which gives our $\bf 
 
 We can read from the summary that we need 32 PCA´s for the cumulative proportion of variance explained to be 80%.  
 
-The PCA analysis gives 64 principal components that in total explain all the variability in the data. This means that the sum of the variance in the PCA equals the total variance of the data, sum(pca.sdev^2) =$\sigma_{tot}^2$. 
-We know that the column standard deviations for $\bf Z$ are 1, which gives column variance equal 1. To get the total variance in the data we sum the variance for each column. 
+The PCA analysis gives 64 principal components that in total explain all the variability in the data. This means that the sum of the variance in the PCA equals the total variance of the data, sum(pca.sdev^2) =$\sigma_{tot}^2$.
+We know that the column standard deviations for $\bf Z$ are 1, which gives column variance equal 1. To get the total variance in the data we sum the variance for each column.
 In our case: $\sigma_{tot}^2=6830\cdot 1=6830=p$
 ***
 **Q24**: Study the PC1 vs PC2 plot, and comment on the groupings observed. What can you say about the placement of the `K262`, `MCF7` and `UNKNOWN` samples? Produce the same plot for two other pairs of PCs and comment on your observations.
@@ -332,7 +340,7 @@ cols[c(4,5,7,8,14)] = "black"
 pch.vec = rep(4,14)
 pch.vec[c(4,5,7,8,14)] = 15:19
 colsvsnames=cbind(cols,sort(unique(rownames(X))))
-colsamples=cols[match(rownames(X),colsvsnames[,2])] 
+colsamples=cols[match(rownames(X),colsvsnames[,2])]
 pchvsnames=cbind(pch.vec,sort(unique(rownames(X))))
 pchsamples=pch.vec[match(rownames(X),pchvsnames[,2])]
 Z=scale(X)
@@ -345,33 +353,33 @@ plot(1:dim(X)[2],pca$rotation[,1],type="l",xlab="genes",ylab="weight",main="Firs
 summary(pca)
 ```
 
-For the PC1/PC2 plot we observe that several groupings of the same cell types have been made. The leukimia cells are grouped together with the K562 cells, which intuitively makes sense. The MC57 cells are spread out together with the other breast cancer cells. This might mean that the two first principal component don't hold much relevant information for these cells. 
-The UNKNOWN sample is placed quite close to the origin, together with many other different cancer tumors. This might mean that these pricinpal components do not hold enough useful information about these tumors to clearly tell them apart. 
+For the PC1/PC2 plot we observe that several groupings of the same cell types have been made. The leukimia cells are grouped together with the K562 cells, which intuitively makes sense. The MC57 cells are spread out together with the other breast cancer cells. This might mean that the two first principal component don't hold much relevant information for these cells.
+The UNKNOWN sample is placed quite close to the origin, together with many other different cancer tumors. This might mean that these pricinpal components do not hold enough useful information about these tumors to clearly tell them apart.
 
-In the PC3/PC4 plot we see some of the same groupings, eg. leukimia and colon. The breast cancer cells are still spread out and the UNKNOWN sample is still quite close to the origin. The MC57 are not present in this plot, telling us ?? 
+In the PC3/PC4 plot we see some of the same groupings, eg. leukimia and colon. The breast cancer cells are still spread out and the UNKNOWN sample is still quite close to the origin. The MC57 are not present in this plot, telling us ??
 
 ***
-**Q25:**: Explain what it means to use Euclidean distance and average linkage for hierarchical clustering. 
+**Q25:**: Explain what it means to use Euclidean distance and average linkage for hierarchical clustering.
 
-In hierarchical clustering we define a measure of dissimilarity, often the euclidean distance. The euclidean distance refers to the distance beetween pairs of observations: 
+In hierarchical clustering we define a measure of dissimilarity, often the euclidean distance. The euclidean distance refers to the distance beetween pairs of observations:
 $$||a-b||_2=\sqrt{\sum_i(a_i-b_i)^2}$$
 
 The use of euclidean distance will cluster observations of similar magnitude together.
 
-Linkage describes the concept of dissimilarity beetween groups of observations. In average linking the dissimilarity between two clusters, A and B, is given by the mean intercluster dissmilarity. All pairwise dissimilarities (in our case euclidean distances) between the observations in cluster A and B are computed, and the average is used. 
+Linkage describes the concept of dissimilarity beetween groups of observations. In average linking the dissimilarity between two clusters, A and B, is given by the mean intercluster dissmilarity. All pairwise dissimilarities (in our case euclidean distances) between the observations in cluster A and B are computed, and the average is used.
 $L(A,B)=\frac{1}{n_An_B}\sum_{i=1}^{n_A}\sum_{j=1}^{n_B}D(x_{Ai},x_{Bj})$
 
 ***
 **Q26:**: Perform hierarchical clustering with Euclidean distance and average linkage on the scaled gene expression in `Z`. Observe where our samples labelled as K562, MCF7 and `UNKNOWN` are placed in the dendrogram. Which conclusions can you draw from this?¨
 
 ```{r,eval = TRUE}
-library(dendextend)
+#library(dendextend)
 hc = hclust(dist(Z[,-1]), method = "average")
 plot(hc, xlab = "", sub = "")
 str(hc)
 ```
 
-The K562 samples are placed close to the other Leukimia samples, and the MC57s close to other breast cancer samples. Their clusters are placed low in the dendogram, which tells us they were one of the first clusters to be made and that the samples have clear similarities beetween each other. 
+The K562 samples are placed close to the other Leukimia samples, and the MC57s close to other breast cancer samples. Their clusters are placed low in the dendogram, which tells us they were one of the first clusters to be made and that the samples have clear similarities beetween each other.
 
 The UNKNOWN sample is placed close to several different cancer types, which indicates that there is a group of cancers that have similar characteristics and that are difficult to tell apart based on the gene activity. This is supported by the plots from Q24, which also scatter these cancer types close to each other.
 ***
@@ -379,15 +387,15 @@ The UNKNOWN sample is placed close to several different cancer types, which indi
 
 ```{r}
 library(pheatmap)
-npcs=64 
+npcs=64
 pheatmap(pca$x[,1:npcs],scale="none",cluster_col=FALSE,cluster_row=TRUE,clustering_distance_rows = "euclidean",clustering_method="average",fontsize_row=5,fontsize_col=5)
 ```
 From "the curse of dimensonality", we have that the use of Euclidean distance in high dimensional spaces might be problematic. By reducing the dimensions in the problem from $p$ to 64 the use of this distance metric might/will make more sense. But we still have quite many dimensions?
 
-Using the principal components enables us to make a heatmap of reasonable size and reduces the computation time for clustering.  Using the forst 64 principal components means using all of them, and by doing this we preserve all the variance in the data. 
+Using the principal components enables us to make a heatmap of reasonable size and reduces the computation time for clustering.  Using the forst 64 principal components means using all of them, and by doing this we preserve all the variance in the data.
 
-The horisontal axis list the principal components. The vertical axis, left side, shows the dendogram for the clustering. Vertical axis, right side, are the observed cancer types. As the vertical axis "sorts" the cancer tumors based on similarity, we can quickly see what cancer tumors had similar gene activity. 
-The colors in the pixel grid represent the changes in the expression of the cancer tumor. E.g. the leukimia tumors are given similar scores in PC1, and we can see that they must activate many of the same genes. In PC2 the same tumors are given more "neutral" colours, which tells is they are harder to tell apart from other cancer tumors baced on the variance captured in PC2. 
+The horisontal axis list the principal components. The vertical axis, left side, shows the dendogram for the clustering. Vertical axis, right side, are the observed cancer types. As the vertical axis "sorts" the cancer tumors based on similarity, we can quickly see what cancer tumors had similar gene activity.
+The colors in the pixel grid represent the changes in the expression of the cancer tumor. E.g. the leukimia tumors are given similar scores in PC1, and we can see that they must activate many of the same genes. In PC2 the same tumors are given more "neutral" colours, which tells is they are harder to tell apart from other cancer tumors baced on the variance captured in PC2.
 
 ---
 output:
@@ -396,7 +404,7 @@ output:
 ---
 # Problem 3: Flying solo with diabetes data [6 points]
 
-```{r}
+```{r,eval=TRUE}
 flying=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/flying.dd")
 ctrain=flying$ctrain
 ctest=flying$ctest
@@ -404,275 +412,202 @@ ctest=flying$ctest
 ***
 **Q28:** Start by getting to know the _training data_, by producing summaries and plots. Write a few sentences about what you observe and include your top 3 informative plots and/or outputs.
 
-```{r,eval = TRUE}
-library(plyr)
-library(phonTools)
+```{r,eval = TRUE,out.width=c('100%'), fig.show='hold'}
 library(ggplot2)
-
-summary(ctrain)
-
-#make plotable vectors from the dataset: 
-diabetes=unlist(ctrain[,1])
-npreg=unlist(ctrain[,2])
-glu=unlist(ctrain[,3])
-bp=unlist(ctrain[,4])
-skin=unlist(ctrain[,5])
-bmi=unlist(ctrain[,6])
-ped=unlist(ctrain[,7])
-age=unlist(ctrain[,8])
-
-#SCATTER PLOTS 
-tot_scatter_plot = ctrain[, c(1:8)]
-pairs(tot_scatter_plot)
-
-plot(diabetes, ped)
-
-#gludata = ctrain[, c(1,3)]
-#glm.glu = glm(diabetes ~ ., data = ctrain[, c(1,3)], family = "binomial")
-#summary(glm.glu)
-
-plot2 = ggplot(ctrain, aes(x = ped, y = glu, color = diabetes)) + 
-    geom_point(size = 2.5)
-plot2
-
-#fit1 = lm(diabetes ~ glu)
-#plot(fit)
+library(GGally)
+ggpairs(ctrain, ggplot2::aes(color=as.factor(ctrain$diabetes)),
+        lower = list(continuous = wrap("points", alpha = 0.3, size=0.2)))
 ```
 
-```{r,eval = TRUE}
+The pairs-plot above shows the relationship between the covariates and the response. From this we can see which covariates are more significant than others in predicting diabetes, and which covariates are correlated. E.g `skin` and `bmi` can be seen to have a linear relationship, so one would expect these to affect the response similarly. Otherwise, it is difficult to see any clear relationships between the covariates, which is confirmed by the calculated correlations right of the diagonal. In the leftmost column we see how diabetes is classified by the individual covariates, where `glu` and `bmi` seem to be the most significant covariates. Again, we see no clear relationships between the response and other covariates, as people with diabetes seem to have similar traits to those without diabetes. In total, this will make classification more difficult. To the left of the diagonal are scatterplots for different combinations of covariates, with the respective classes plottet. Here we can see which combinations seperate the two classes best. By visual inspection, `glu` and `bmi` seem to seperate the two classes best, supporting our previous statement that they may be the most significant covariates.
 
-#NPREG
-#adapting pregnancydata to see if it is any use 
-preg1=zeros(1:17)
-preg0=zeros(1:17)
+Some classification methods assume that the data comes from specific probability distributions, e.g LDA assumes the normal distribution. It may therefore be valuable to investigate if there are any known distributions present in our data. This can be done with a *Cullen and Frey graph*, from the `fitdistrplus` package, on each covariate separately. To investigate if a covariate is normally distributed, we can also compute the $p$-value of the Anderson-Darling test. An example is given in the R code below with `glu` and `bmi`.
 
-for (j in 1:17){
-  for (i in 1:100){
-    if (ctrain[i, 2]==j)
-        preg1[j]=preg1[j]+1
-    }
-}# makes preg = [number of people with one pregnancy, number of people with 2 pregrancies etc...] when diabetes = 1
+```{r,eval=TRUE, out.width='100%'}
+#Cullen and Frey graph
+library(fitdistrplus)
+vec.glu = c(ctrain["glu"]$glu)
+descdist(vec.glu)
 
-for (j in 1:17){
-  for (i in 101:300){
-    if (ctrain[i, 2]==j)
-        preg0[j]=preg0[j]+1
-    }
-}# makes preg = [number of people with one pregnancy, number of people with 2 pregrancies etc...] when diabetes = 0
-
-
-#GLU
-glu1=ctrain[0:100,3] #gluv-erdier for dem med diabetes = 1
-glu0=ctrain[101:300, 3] #glu-verdier for dem med diabetes = 0
-glu1=sort(glu1)
-glu0=sort(glu0)
-glu0short = glu0[c(TRUE, FALSE)] #tar ut annenhver verdi 
-
-xaxis = c(1:100)
-
-plot(xaxis, glu1, type = "l")
-lines(xaxis,glu0short,col="green")
-
-#BLOOD PRESSURE 
-bp1=ctrain[0:100,4]
-bp0=ctrain[101:300, 4]
-bp1=sort(bp1)
-bp0=sort(bp0)
-bp0short = bp0[c(TRUE, FALSE)] #tar ut annenhver verdi 
-
-xaxis = c(1:100)
-
-plot(xaxis, bp1, type = "l")
-lines(xaxis,bp0short,col="green")
-
-#SKIN 
-skin1=ctrain[0:100,5]
-skin0=ctrain[101:300, 5]
-skin1=sort(skin1)
-skin0=sort(skin0)
-skin0short = skin0[c(TRUE, FALSE)] #tar ut annenhver verdi 
-
-xaxis = c(1:100)
-
-plot(xaxis, skin1, type = "l")
-lines(xaxis,skin0short,col="green")
-
-#BODY MASS INDEX 
-bmi1=ctrain[0:100,6]
-bmi0=ctrain[101:300, 6]
-bmi1=sort(bmi1)
-bmi0=sort(bmi0)
-bmi0short = bmi0[c(TRUE, FALSE)] #tar ut annenhver verdi 
-
-xaxis = c(1:100)
-
-plot(xaxis, bmi1, type = "l")
-lines(xaxis,bmi0short,col="green")
-
-#DIABETES PEDRIGREE FUNCTION 
-ped1=ctrain[0:100,7]
-ped0=ctrain[101:300, 7]
-ped1=sort(ped1)
-ped0=sort(ped0)
-ped0short = ped0[c(TRUE, FALSE)] #tar ut annenhver verdi 
-
-xaxis = c(1:100)
-
-plot(xaxis, ped1, type = "l")
-lines(xaxis,ped0short,col="green")
-
-#AGE 
-age1=ctrain[0:100,7]
-age0=ctrain[101:300, 7]
-age1=sort(age1)
-age0=sort(age0)
-age0short = age0[c(TRUE, FALSE)] #tar ut annenhver verdi 
-
-xaxis = c(1:100)
-
-plot(xaxis, age1, type = "l")
-lines(xaxis,age0short,col="green")
-
-
+#Anderson-Darling test
+library(nortest)
+vec.bmi = c(ctrain["bmi"]$bmi)
+ad.test(vec.bmi)
 ```
 
+Repeating this for all covariates, we find that none are normally distributed.
 
 ***
-**Q29:** Use different methods to analyse the data. In particular use 
+**Q29:** Use different methods to analyse the data. In particular use
 
 * one method from Module 4: Classification
 * one method from Module 8: Trees (and forests)
 * one method from Module 9: Support vector machines and, finally
 * one method from Module 11: Neural networks
 
-For each method you 
+For each method you
 
 * clearly write out the model and model assumptions for the method
 * explain how any tuning parameters are chosen or model selection is performed
 * report (any) insight into the interpretation of the fitted model
 * evaluate the model using the test data, and report misclassifiation rate (cut-off 0.5 on probability) and plot ROC-curves and give the AUC (for method where class probabilities are given).
 
+***
+**Module 4: Classification**
+
+We have several methods to choose from:
+
+* LDA
+* QDA
+* Logistic regression
+* KNN
+
+As the data isn't normally distributed and the classes aren't well separated, the performance of LDA and QDA falls quickly. We therefore choose either logistic regression or KNN, and we will here look at logistic regression.
+
 ```{r,eval = TRUE}
-#npreg + glu + bp + skin + bmi + ped + age,
-library(knitr)
-
-#MODULE 4
-#LOGISTIC REGRESSION
-glm_diabetes = glm(diabetes ~ ., data = ctrain, family = "binomial")
-summary(glm_diabetes)
-
-probs_diabetes = predict(glm_diabetes, newdata = ctest, type = "response")
-
-pred_diabetes = ifelse(probs_diabetes > 0.5, 1, 0)
-
-predictions_diabetes = data.frame(probs_diabetes, pred_diabetes, ctest)
-colnames(predictions_diabetes) = c("Estim. prob. of Y=1", "Predicted class", 
-    "True class")
-kable(head(predictions_diabetes), booktabs = TRUE)
-conf_test=table(pred_diabetes, ctest[, 1]) #confusion matrix 
-
-#testing misclass error
-misclass_test = (conf_test[1,2]+conf_test[2,1])/(sum(conf_test))
-misclass_test
-
-#training misclass error (FUNGERER IKKE)
-#diabetes_train_prob = glm_diabetes$fitted.values
-#diabetes_train_pred = ifelse(diabetes_train_prob > 0.5, 1, 0)
-#conf_train = table(diabetes_train_pred, ctrain[, 1])
-#misclas_train = (232 - sum(diag(conf_train)))/232
-#misclas_train
-```
-The logistic function: 
-$p(X)=\frac{e^{\beta_0+\beta_1X_1+\cdot\cdot\cdot+\beta_pX_p}}{1+e^{\beta_0+\beta_1X_1+\cdot\cdot\cdot+\beta_pX_p}}$
-We fit the model using maximum likelihood. 
-Assuming
- - observations that are independent of each other. 
- - little or no multicolliniearity among the independent variables. 
- - linearity of independent variables and log odds. 
- - large enough sample size. 
- 
- The misclassification test error is 20%. 
-
-```{r,eval = TRUE} 
- library(pROC)
-diabetes_roc = roc(ctest[,1], probs_diabetes, legacy.axes = TRUE)
-ggroc(diabetes_roc) + ggtitle("ROC curve") + annotate("text", x = 0.25, y = 0.3, 
-    label = "AUC = 0.8451")
-auc = diabetes_roc$auc
+#Model selection using best subset selection
+df = as.data.frame(within(ctrain, {
+  y=diabetes
+  diabetes=NULL
+}))
+fit = bestglm(Xy=df, familiy=binomial, IC="AIC")$BestModel
+fit$coefficients
 ```
 
-```{r,eval = TRUE} 
-#MODULE 8
-#TREES
-library(tree)
-diabetes.tree = tree(as.factor(diabetes) ~ ., data = ctrain, split = "gini", method = "class") #evt cross-entropy split? 
-summary(diabetes.tree)
-plot(diabetes.tree, type = "proportional")
-text(diabetes.tree)
+The logistic function takes the form
 
-library(caret)
-diabetes.pred = predict(diabetes.tree, newdata = ctest, type = "class")
-confusionMatrix(diabetes.pred, reference = as.factor(ctest$diabetes))
+$$
+p_{i}=\frac{e^{\beta_{0}+\beta_{1}x_{i1}+\cdots+\beta_{p}x_{ip}}}{1+e^{\beta_{0}+\beta_{1}x_{i1}+\cdots+\beta_{p}x_{ip}}}
+$$
 
-#random forest  
+where $p_i$ is the probability of classifying to `diabetes`$=1$ and $(1-p_i)$ to `diabetes`$=0$, and $\hat{\boldsymbol\beta}$ is found by maximizing the likelihood function. This classification method will only work on problems with two classes, and we assume that the classification $Y_i$ is Bernoulli distributed. In addition, we assume:
+
+* Independent observations
+* Little to no multicollinearity among independent variables
+* Linearity between independent variables and log odds
+* Large enough sample size
+
+Using best subset selection, we may produce the combination of covariates that gives the best score according to some criteria, here the AIC. The resulting model consists of `npreg`, `glu`, `bmi`, `ped` and `age`.
+
+We can then test our new model on the test set.
+
+```{r,eval=TRUE}
+fit.probabilities = predict(fit, newdata = ctest, type = "response")
+fit.predictions = ifelse(fit.probabilities > 0.5, 1, 0)
+fit.confTable = table(fit.predictions, ctest[,1])
+fit.error = (fit.confTable[1,2]+fit.confTable[2,1])/sum(fit.confTable)
+```
+
+Using the confusion matrix, the test error is calculated to
+$$
+\text{Test error} = \frac{31+15}{232} = 0.198
+$$
+The misclassification rate is thus $19.8\%$. The ROC and AUC are given below.
+
+```{r,eval = TRUE, out.width='100%'}
+library(pROC)
+fit.roc = roc(ctest[,1], fit.probabilities, legacy.axes = TRUE)
+auc = fit.roc$auc
+ggroc(fit.roc) + ggtitle("ROC curve") + annotate("text", x = 0.25, y = 0.3,
+    label = "AUC = 0.8547")
+```
+
+***
+**Module 8: Trees**
+
+A weakness with trees is their high variance. This can be improved by bagging, but in our dataset we have a strong predictor, `glu`. The result of bagging will then result in similar trees with the same predictor at the top, and the trees will then be correlated. For this reason, we will instead make a random forest to account for the strong predictor.
+
+```{r,eval = TRUE}
 library(randomForest)
 set.seed(300)
-rf = randomForest(as.factor(diabetes) ~ ., data = ctrain, mtry = 3, ntree = 500, importance = TRUE)
-rf$confusion
-1 - sum(diag(rf$confusion[1:2, 1:2]))/(sum(rf$confusion[1:2, 1:2]))
-yhat.rf = predict(rf, newdata = ctest)
-misclass.rf = table(yhat.rf, ctest$diabetes)
-print(misclass.rf)
-misclass = 1 - sum(diag(misclass.rf))/(sum(misclass.rf))
-print(misclass)
-varImpPlot(rf, pch = 20)
-predrf = predict(rf, ctest, type = "prob")
-testrfroc = roc(ctest$diabetes == "1", as.numeric(predrf[,2]))
-ggroc(testrfroc) + ggtitle("ROC curve Random Forest") + annotate("text", x = 0.25, y = 0.3, 
-    label = "AUC = 0.84")
-auc = testrfroc$auc
+rf = randomForest(as.factor(diabetes) ~., data=ctrain, mtry=3, ntree = 500, importance=TRUE)
 ```
 
-Explain prediction and splitting criterion. 
+We use the same model as when bagging,
 
-Choosing random forest instead of bagging because we have a strong predictor in the dataset (glu). We don't want trees that are highly correlated, because this won't give us a large reduction in variance when averaging $\hat{f}(x)$
-Choosing mtry = 3 beause $\sqrt{7}\approx 3$
+$$ \hat{f}_{avg}({\bf x})=\frac{1}{B}\sum_{b=1}^B \hat{f}_b({\bf x}),$$
+but choose to split randomly with a subset of the predictors, instead of using a splitting criteria. The parameter $B$ is chosen by bootstrapping. A tuning parameter in the random forest is the number predictors to choose from in each split, here chosen to `mtry`$=3$. When the predictors are correlated, the number of predictors to split on should be relatively low. From the pairs-plot in **Q28** we see that we don't have very correlated predictors, so we choose the typical amount of $\sqrt{p} = \sqrt{7} \approx 3$, where $p$ is the number of predictors. The number of trees to generate, `ntree`, is set to 500 in order to average over enough trees so the variance lowers.
 
-Burde det prunes for å unngå overfitting? 
+```{r,eval=TRUE}
+rf.prediction = predict(rf, newdata = ctest)
+rf.confTable = table(rf.prediction, ctest$diabetes)
+rf.error = (rf.confTable[1,2]+rf.confTable[2,1])/sum(rf.confTable)
+```
 
-The misclassification rate is 22%. 
+Using the confusion matrix, the test error is calculated to
+$$
+\text{Test error} = \frac{23+30}{232} = 0.228
+$$
+The misclassification rate is thus $22.8\%$. The ROC and AUC are given below.
+```{r,eval=TRUE, out.width='100%'}
+rf.probabilities = predict(rf, ctest, type = "prob")
+rf.roc = roc(ctest$diabetes == "1", rf.probabilities[,2])
+rf.auc = rf.roc$auc
+ggroc(fit.roc) + ggtitle("ROC curve") + annotate("text", x = 0.25, y = 0.3,
+    label = "AUC = 0.8384")
+```
 
-```{r,eval = TRUE} 
-#SUPPORT VECTOR MACHINE 
+***
+**Module 9: Support vector machines**
+
+A difficult part of using support vector machines for our dataset is choosing which kernel to base the decision boundry on. Usually, a visual inspection with a scatterplot will give an indication as to which boundry seems reasonable, but this is hard to visualize for models with $p>3$ predictors. Our approach is therefore testing out different kernels, and comparing the resulting misclassification rate from each model.
+
+For a support vector *classifier*, we choose a linear decision boundry, where we wish to maximize the margin $M$ with respect to the coefficients $\boldsymbol{\beta}$ and slack variables $\epsilon_i$, with the constraints $\sum_{j=1}^{p}\beta_{j}^2=1$ and $\sum_{i=1}^{n}\epsilon_{i}\leq C$. We get the resulting classifier $f(\boldsymbol{x})=\beta_0+\beta_1x_1+\cdots+\beta_px_p$, where the sign of $f(\boldsymbol{x})$ determines the class. $C$ is here a tuning parameter, restricting the number of training observations that can be on the wrong side of the decision boundry (hyperplane). Choosing the value of $C$ is a trade-off between acceptable bias and variance, where a low value will allow fewer violations (less bias) and a high value will allow many violations (less variation). This tuning parameter is normally chosen by cross-validation.
+
+Extending to support vector *machines*, we choose a non-linear decision boundry. This boundry is set by choosing a specific *kernel*, $K(\boldsymbol{x},\boldsymbol{x}_i)$, giving e.g a radial or polynomial boundry. The resulting classifier is $f({\bf x}_i)=\beta_0 +\sum_{l\in \cal{S}} \alpha_l K({\bf x}_i,{\bf x}_l)$.
+
+The models above do not assume anything in particular about the data, as the methods are moreso a product of computer science than statistics.
+
+The R code below tests three different models, with linear, radial and polynomial kernels. The tuning parameter $C$ is chosen by cross-validation for each model, where we choose from the values 0.001, 0.01, 0.1, 1, 5, 10 and 100.
+
+```{r,eval = TRUE}
 library(e1071)
-svmfit_kernel1 = svm(as.factor(diabetes) ~ ., data = ctrain, kernel = "radial", gamma = 1, 
-    cost = 10, scale = FALSE)
-#plot(svmfit_kernel1, ctrain, col = c("lightcoral", "lightgreen"))
-summary(svmfit_kernel1)
-#find optimal tuning parameter C 
-set.seed(1)
-CV_kernel = tune(svm, as.factor(diabetes) ~ ., data = ctrain, kernel = "radial", gamma = 1, 
-    ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
-summary(CV_kernel)
+#Linear boundry
+svmlinear.cv = tune(svm, as.factor(diabetes) ~ ., data = ctrain, kernel = "linear", ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
+svmlinear.model = svmlinear.cv$best.model
 
-bestmod_kernel = CV_kernel$best.model
-ypred_kernel = predict(bestmod_kernel, ctest)
+svmlinear.prediction = predict(svmlinear.model, newdata=ctest)
+svmlinear.confTable = table(svmlinear.prediction, ctest$diabetes)
+svmlinear.error = (svmlinear.confTable[1,2]+svmlinear.confTable[2,1])/sum(svmlinear.confTable)
 
-conf_svm = table(predict = ypred_kernel, truth = ctest[, 1])
-misclass_svm= 1 - sum(diag(conf_svm))/(sum(conf_svm))
-misclass_svm
+#Radial boundry
+svmradial.cv = tune(svm, as.factor(diabetes) ~ ., data = ctrain, kernel = "radial", ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
+svmradial.model = svmradial.cv$best.model
+
+svmradial.prediction = predict(svmradial.model, newdata=ctest)
+svmradial.confTable = table(svmradial.prediction, ctest$diabetes)
+svmradial.error = (svmradial.confTable[1,2]+svmradial.confTable[2,1])/sum(svmradial.confTable)
+
+#Polynomial boundry
+svmpoly.cv = tune(svm, as.factor(diabetes) ~ ., data = ctrain, kernel = "polynomial", degree = 3, ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
+svmpoly.model = svmpoly.cv$best.model
+
+svmpoly.prediction = predict(svmpoly.model, newdata=ctest)
+svmpoly.confTable = table(svmpoly.prediction, ctest$diabetes)
+svmpoly.error = (svmpoly.confTable[1,2]+svmpoly.confTable[2,1])/sum(svmpoly.confTable)
 ```
 
-Probabilities for each class not given, therefore no ROC. STEMMER DETTE? 
-The misclassification rate is 29%. 
+We get the following results from the different classifiers:
 
-ARTIFICIAL NEURAL NETWORKS
+```{r table3, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tab <- "
+| Kernel    | Misclassification rate  |
+|-----------|-------------------------|
+| Linear    | 0.224                   |
+| Radial    | 0.246                   |
+| Polynomial| 0.280                   |
+"
+cat(tab)
+```
 
-Firstly, we use cross validation to fint the number of hidden nodes that will give us the best model. 
-```{r,eval = TRUE} 
+We see that a linear decision boundry produces the smallest misclassification rate, so it seems this kernel fits our data best. As we do not get class probabilities using this method, we cannot produce a ROC curve.
+
+***
+**Module 11: Neural networks**
+```{r,eval = TRUE}
 library(caret)
 library(nnet)
-library(keras) 
+library(keras)
 
 #normalizing the data
 # org_train = ctrain
@@ -692,6 +627,7 @@ k <- 4
 set.seed(123)
 indices <- sample(1:nrow(ctrain))
 folds <- cut(indices, breaks = k, labels = FALSE)
+diabetes = unlist(ctrain$diabetes)
 
 resmat = matrix(NA, ncol = k, nrow = length(grid))
 for (j in 1:k) {
@@ -702,7 +638,7 @@ for (j in 1:k) {
     new <- scale(org_train, center = mean, scale = std)
     for (i in 1:length(grid)) {
         thissize = grid[i]
-        
+
         fit = nnet(as.factor(diabetes) ~ ., data = new, size = thissize, linout = FALSE,
             maxit = 5000)
         pred = predict(fit, newdata = new[thisvalid, ], type = "raw")
@@ -715,47 +651,47 @@ misclass = 1-apply(resmat, 1, sum)/nrow(train_data)
 plot(grid, misclass, type = "l")
 misclass
 ```
-We find the lowest misclassification rate when we use 25 nodes, and use this when fitting the model with the full test set. 
-```{r,eval = TRUE} 
+We find the lowest misclassification rate when we use 25 nodes, and use this when fitting the model with the full test set.
+```{r,eval = TRUE}
 fitnnet = nnet(as.factor(diabetes) ~., size = 25, data = train_data, lineout = FALSE, maxit = 1000)
 summary(fitnnet)
 ```
-In nnet we can only have one hidden layer, and for single hidden layer feeedforwad networks we have the model: 
-$$\hat{y}_c({\bf x})=\phi_o(\beta_{0c}+\sum_{m=1}^{M}\beta _{mc}z_m)=\phi_o(\beta_ {0c}+\sum_{m=1}^{M}\beta_{mc}\phi_h(\alpha_{0m} +\sum_{j=1}^{p}\alpha_{jm}x_j) $$ where $\phi_0(x)=x$. 
+In nnet we can only have one hidden layer, and for single hidden layer feeedforwad networks we have the model:
+$$\hat{y}_c({\bf x})=\phi_o(\beta_{0c}+\sum_{m=1}^{M}\beta _{mc}z_m)=\phi_o(\beta_ {0c}+\sum_{m=1}^{M}\beta_{mc}\phi_h(\alpha_{0m} +\sum_{j=1}^{p}\alpha_{jm}x_j) $$ where $\phi_0(x)=x$.
 
 By default, we have sigmoid as output layer activation: $$g(a)=\frac{1}{1+e^{-a}}$$
 
-With out given C=2 classification problem, we use the Binary cross-entropy loss function: 
+With out given C=2 classification problem, we use the Binary cross-entropy loss function:
 $$J({\bf \theta})=-\frac{1}{n}\sum_{i=1}^{n}(y_iln(\hat{y}_1({\bf x}_i)) + (1-y_i)ln(1-\hat{y}_1({\bf x}_i))$$
-where $\hat{y_1}({\bf x_i})$ is the output from the sigmoid output node and $y_i$ is the 0/1 observed class. 
-We estimate det unknown parameters $\theta$ by minimizing the loss function $J(\theta)$. 
+where $\hat{y_1}({\bf x_i})$ is the output from the sigmoid output node and $y_i$ is the 0/1 observed class.
+We estimate det unknown parameters $\theta$ by minimizing the loss function $J(\theta)$.
 COMMENT: Are we using gradient descent to achieve this?
 Our tuning parameters are: $\alpha:{jm}$ an $\beta_{mc}$
-When using neural networks we don't make any assumptions about the data, errors or targets. 
+When using neural networks we don't make any assumptions about the data, errors or targets.
 
-```{r,eval = TRUE} 
+```{r,eval = TRUE}
 # #neuralnet plot
 # library(NeuralNetTools)
 # plotnet(fitnnet)
 
 prednnet = predict(fitnnet, newdata = test_data, type = "class")
-``` 
-We make a confusion matrix and calculate the accuracy: 
-```{r,eval = TRUE} 
+```
+We make a confusion matrix and calculate the accuracy:
+```{r,eval = TRUE}
 #accuracy
 conf_nnet = table(prednnet, truth = ctest[, 1])
-accuracy_nnet= sum(diag(conf_svm))/(sum(conf_svm))
+accuracy_nnet= sum(diag(conf_nnet))/(sum(conf_nnet))
 accuracy_nnet
 ```
 The ROC and AUC are given below
-```{r,eval = TRUE} 
+```{r,eval = TRUE}
 #ROC and AUC
 nnetroc = roc(test_data[,1], as.numeric(prednnet))
-auc(testrfroc)
-plot(testrfroc)
+auc(nnetroc)
+plot(nnetroc)
 ```
 
 KAN VURDERE Å SE PÅ: We can add weight decays = penalties in the nnet.
-                    Early stopping to avoid overfitting. 
+                    Early stopping to avoid overfitting.
 ***
 **Q30:** Conclude with choosing a winning method, and explain why you mean that this is the winning method.

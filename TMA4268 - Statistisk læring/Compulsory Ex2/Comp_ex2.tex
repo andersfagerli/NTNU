@@ -1,0 +1,1758 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+
+subtitle: ``TMA4268 Statistical Learning V2019'' title: ``Compulsory
+exercise 2: Group 2'' author: ``Anders Fagerli, Rebecca Sandstø'' date:
+``08 april, 2019'' output: html\_document \#pdf\_document ---
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"knitr"}\NormalTok{) }\CommentTok{#probably already installed}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"rmarkdown"}\NormalTok{) }\CommentTok{#probably already installed}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"bestglm"}\NormalTok{)}\CommentTok{# for subset selection with categorical variables}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"glmnet"}\NormalTok{)}\CommentTok{# for lasso}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"tree"}\NormalTok{) }\CommentTok{#tree}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"randomForest"}\NormalTok{) }\CommentTok{#for random forest}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"ElemStatLearn"}\NormalTok{) }\CommentTok{#dataset in Problem 2}
+\NormalTok{BiocManager}\OperatorTok{::}\KeywordTok{install}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"pheatmap"}\NormalTok{)) }\CommentTok{#heatmap in Problem 2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{)}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"GGally"}\NormalTok{) }\CommentTok{# for ggpairs}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"caret"}\NormalTok{) }\CommentTok{#for confusion matrices}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"pROC"}\NormalTok{) }\CommentTok{#for ROC curves}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"e1071"}\NormalTok{) }\CommentTok{# for support vector machines}
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"nnet"}\NormalTok{) }\CommentTok{# for feed forward neural networks}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Problem 1: Regression {[}6
+points{]}}\label{problem-1-regression-6-points}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all=}\KeywordTok{dget}\NormalTok{(}\StringTok{"https://www.math.ntnu.no/emner/TMA4268/2019v/data/diamond.dd"}\NormalTok{)}
+\NormalTok{dtrain=all}\OperatorTok{$}\NormalTok{dtrain}
+\NormalTok{dtest=all}\OperatorTok{$}\NormalTok{dtest}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q1}: Would you choose \texttt{price} or \texttt{logprice} as
+response variable? Justify your choice. Next, plot your choice of
+response pairwise with \texttt{carat}, \texttt{logcarat},
+\texttt{color}, \texttt{clarity} and \texttt{cut}. Comment.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{full =}\StringTok{ }\KeywordTok{lm}\NormalTok{(price }\OperatorTok{~}\NormalTok{. }\OperatorTok{-}\NormalTok{logprice }\OperatorTok{-}\NormalTok{logcarat, }\DataTypeTok{data =}\NormalTok{ dtrain)}
+\NormalTok{logfull =}\StringTok{ }\KeywordTok{lm}\NormalTok{(logprice }\OperatorTok{~}\NormalTok{. }\OperatorTok{-}\NormalTok{price }\OperatorTok{-}\NormalTok{carat, }\DataTypeTok{data =}\NormalTok{ dtrain)}
+\end{Highlighting}
+\end{Shaded}
+
+To choose between \texttt{price} or \texttt{logprice}, we must see how
+they behave under the assumptions of multiple regression. This can be
+done by looking at the \texttt{F-statistic} and
+\texttt{Multiple\ R-squared} from the \texttt{summary}, and generating
+Q-Q plots and plots for the standardized residuals vs.~the fitted values
+of the model. We have here denoted the model \texttt{full} as the the
+model with response variable \texttt{price}, and the model
+\texttt{logfull} as the model with response variable \texttt{logprice}.
+
+KOMMENTAR: kan også se på boxcox(full,plotit=TRUE)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(full)}
+\KeywordTok{summary}\NormalTok{(logfull)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = price ~ . - logprice - logcarat, data = dtrain)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7245.8  -582.5  -168.5   379.1  9680.9 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   5881.951   1183.401   4.970 6.91e-07 ***
+## carat        12168.767    168.173  72.358  < 2e-16 ***
+## cutGood        328.663    107.221   3.065  0.00219 ** 
+## cutVery Good   524.328    102.547   5.113 3.29e-07 ***
+## cutPremium     597.908     99.714   5.996 2.16e-09 ***
+## cutIdeal       650.581    105.345   6.176 7.11e-10 ***
+## colorE        -105.449     54.535  -1.934  0.05322 .  
+## colorF        -181.441     55.895  -3.246  0.00118 ** 
+## colorG        -382.407     54.471  -7.020 2.51e-12 ***
+## colorH        -937.276     58.384 -16.054  < 2e-16 ***
+## colorI       -1515.220     66.537 -22.773  < 2e-16 ***
+## colorJ       -2411.179     82.180 -29.340  < 2e-16 ***
+## claritySI2    1938.245    142.887  13.565  < 2e-16 ***
+## claritySI1    3022.480    142.075  21.274  < 2e-16 ***
+## clarityVS2    3616.937    142.906  25.310  < 2e-16 ***
+## clarityVS1    3959.765    145.255  27.261  < 2e-16 ***
+## clarityVVS2   4319.387    148.477  29.091  < 2e-16 ***
+## clarityVVS1   4439.341    154.133  28.802  < 2e-16 ***
+## clarityIF     4511.489    165.127  27.321  < 2e-16 ***
+## depth          -89.882     12.427  -7.233 5.44e-13 ***
+## table          -28.364      9.004  -3.150  0.00164 ** 
+## xx           -2026.228    310.438  -6.527 7.38e-11 ***
+## yy             668.766    308.369   2.169  0.03015 *  
+## zz             -10.911     37.012  -0.295  0.76816    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1075 on 4976 degrees of freedom
+## Multiple R-squared:  0.9262, Adjusted R-squared:  0.9259 
+## F-statistic:  2717 on 23 and 4976 DF,  p-value: < 2.2e-16
+## 
+## 
+## Call:
+## lm(formula = logprice ~ . - price - carat, data = dtrain)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.31544 -0.03724  0.00056  0.03598  0.59431 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   2.8772433  0.0932627  30.851  < 2e-16 ***
+## logcarat      1.5643961  0.0326275  47.947  < 2e-16 ***
+## cutGood       0.0295387  0.0059639   4.953 7.55e-07 ***
+## cutVery Good  0.0421273  0.0057031   7.387 1.75e-13 ***
+## cutPremium    0.0449758  0.0055463   8.109 6.36e-16 ***
+## cutIdeal      0.0580279  0.0058587   9.905  < 2e-16 ***
+## colorE       -0.0220033  0.0030333  -7.254 4.67e-13 ***
+## colorF       -0.0388306  0.0031085 -12.492  < 2e-16 ***
+## colorG       -0.0680694  0.0030300 -22.465  < 2e-16 ***
+## colorH       -0.1129362  0.0032475 -34.776  < 2e-16 ***
+## colorI       -0.1653006  0.0036998 -44.678  < 2e-16 ***
+## colorJ       -0.2240509  0.0045698 -49.029  < 2e-16 ***
+## claritySI2    0.1751002  0.0079453  22.038  < 2e-16 ***
+## claritySI1    0.2517896  0.0078914  31.907  < 2e-16 ***
+## clarityVS2    0.3156476  0.0079421  39.743  < 2e-16 ***
+## clarityVS1    0.3465096  0.0080735  42.920  < 2e-16 ***
+## clarityVVS2   0.4025658  0.0082588  48.744  < 2e-16 ***
+## clarityVVS1   0.4333399  0.0085774  50.521  < 2e-16 ***
+## clarityIF     0.4738308  0.0091893  51.563  < 2e-16 ***
+## depth         0.0006998  0.0007463   0.938 0.348449    
+## table         0.0006903  0.0005033   1.372 0.170218    
+## xx            0.0626466  0.0176674   3.546 0.000395 ***
+## yy            0.0087342  0.0173335   0.504 0.614361    
+## zz            0.0025433  0.0020589   1.235 0.216802    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.05978 on 4976 degrees of freedom
+## Multiple R-squared:  0.9815, Adjusted R-squared:  0.9814 
+## F-statistic: 1.148e+04 on 23 and 4976 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{ggplot}\NormalTok{(full, }\KeywordTok{aes}\NormalTok{(.fitted, .stdresid)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{pch =} \DecValTok{21}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_hline}\NormalTok{(}\DataTypeTok{yintercept =} \DecValTok{0}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{method =} \StringTok{"loess"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Fitted values"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Standardized residuals"}\NormalTok{,}
+       \DataTypeTok{title =} \StringTok{"Fitted values vs. Standardized residuals full model"}\NormalTok{,}
+       \DataTypeTok{subtitle =} \KeywordTok{deparse}\NormalTok{(full}\OperatorTok{$}\NormalTok{call))}
+\KeywordTok{ggplot}\NormalTok{(full, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{sample =}\NormalTok{ .stdresid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_qq}\NormalTok{(}\DataTypeTok{pch =} \DecValTok{19}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_abline}\NormalTok{(}\DataTypeTok{intercept =} \DecValTok{0}\NormalTok{, }\DataTypeTok{slope =} \DecValTok{1}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Theoretical quantiles"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Standardized residuals"}\NormalTok{, }
+       \DataTypeTok{title =} \StringTok{"Normal Q-Q full model"}\NormalTok{, }\DataTypeTok{subtitle =} \KeywordTok{deparse}\NormalTok{(full}\OperatorTok{$}\NormalTok{call))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics[width=0.5\linewidth]{Comp_ex2_files/figure-latex/unnamed-chunk-6-1}
+\includegraphics[width=0.5\linewidth]{Comp_ex2_files/figure-latex/unnamed-chunk-6-2}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{ggplot}\NormalTok{(logfull, }\KeywordTok{aes}\NormalTok{(.fitted, .stdresid)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{pch =} \DecValTok{21}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_hline}\NormalTok{(}\DataTypeTok{yintercept =} \DecValTok{0}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{method =} \StringTok{"loess"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Fitted values"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Standardized residuals"}\NormalTok{,}
+       \DataTypeTok{title =} \StringTok{"Fitted values vs. Standardized residuals logfull model"}\NormalTok{,}
+       \DataTypeTok{subtitle =} \KeywordTok{deparse}\NormalTok{(logfull}\OperatorTok{$}\NormalTok{call))}
+\KeywordTok{ggplot}\NormalTok{(logfull, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{sample =}\NormalTok{ .stdresid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_qq}\NormalTok{(}\DataTypeTok{pch =} \DecValTok{19}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_abline}\NormalTok{(}\DataTypeTok{intercept =} \DecValTok{0}\NormalTok{, }\DataTypeTok{slope =} \DecValTok{1}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Theoretical quantiles"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Standardized residuals"}\NormalTok{, }
+       \DataTypeTok{title =} \StringTok{"Normal Q-Q logfull model"}\NormalTok{, }\DataTypeTok{subtitle =} \KeywordTok{deparse}\NormalTok{(logfull}\OperatorTok{$}\NormalTok{call))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics[width=0.5\linewidth]{Comp_ex2_files/figure-latex/unnamed-chunk-7-1}
+\includegraphics[width=0.5\linewidth]{Comp_ex2_files/figure-latex/unnamed-chunk-7-2}
+
+We see from the information in the \texttt{summary} and the plots that
+\texttt{logprice} is preferred when doing inference about the predicted
+price of a diamond. We see that the regression is significant for both
+models, although \texttt{logfull} has a higher \texttt{F-statistic} and
+may therefore be preferred. Both models explain the variability in the
+data well, but again, \texttt{logfull} has a higher
+\texttt{Multiple\ R-squared} and is therefore preferred. The biggest
+difference between the models are the violatons of the model assumptions
+for multiple regression, in particular the residuals, seen from the
+plots. The \texttt{full} model has residuals that greatly vary with the
+fitted values of the response, breaking the assumption of constant
+variance for the residuals. In addition, the residuals can not be said
+to come from a normal distribution, as they diverge greatly from the
+plotted normal distribution in the Q-Q plot. This can to some degree
+also be said about \texttt{logfull}, as we see the distribution of the
+residuals deviate at the tails in the Q-Q plot. On the other hand, the
+residuals seem to have a more constant spread plotted against the fitted
+values. In total, we therefore prefer \texttt{logprice} as the response
+variable.
+
+To plot the response \texttt{logprice} pairwise with the covariates
+\texttt{carat}, \texttt{logcarat}, \texttt{color}, \texttt{clarity} and
+\texttt{cut}, we can make a scatter plot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{scatter_plot =}\StringTok{ }\NormalTok{dtrain[, }\KeywordTok{c}\NormalTok{(}\StringTok{"logprice"}\NormalTok{,}\StringTok{"carat"}\NormalTok{, }\StringTok{"logcarat"}\NormalTok{, }\StringTok{"color"}\NormalTok{, }\StringTok{"clarity"}\NormalTok{, }\StringTok{"cut"}\NormalTok{)]}
+\KeywordTok{pairs}\NormalTok{(scatter_plot)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+KOMMENTAR: Veldig vanskelig å se hvordan color, clarity og cut påvirker,
+mulig å lage enkelte scatterplots for hver variabel? Får ikke til med
+``plot(x,y)'' funksjonen ..
+
+Her er et slags scatterplot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{price=}\KeywordTok{unlist}\NormalTok{(dtrain[,}\DecValTok{1}\NormalTok{])}
+\NormalTok{logprice=}\KeywordTok{unlist}\NormalTok{(dtrain[,}\DecValTok{2}\NormalTok{])}
+\NormalTok{carat =}\StringTok{ }\KeywordTok{unlist}\NormalTok{(dtrain[,}\DecValTok{3}\NormalTok{])}
+\NormalTok{logcarat =}\StringTok{ }\KeywordTok{unlist}\NormalTok{(dtrain[,}\DecValTok{4}\NormalTok{])}
+\NormalTok{color =}\StringTok{ }\KeywordTok{unlist}\NormalTok{(dtrain[,}\DecValTok{6}\NormalTok{])}
+\NormalTok{clarity =}\StringTok{ }\KeywordTok{unlist}\NormalTok{(dtrain[,}\DecValTok{6}\NormalTok{])}
+\NormalTok{cut =}\StringTok{ }\KeywordTok{unlist}\NormalTok{(dtrain[,}\DecValTok{5}\NormalTok{])}
+
+\KeywordTok{plot}\NormalTok{(logprice, carat, }\DataTypeTok{type =} \StringTok{"p"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(logprice, logcarat, }\DataTypeTok{type =} \StringTok{"p"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-9-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(logprice, cut, }\DataTypeTok{type =} \StringTok{"p"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-9-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(logprice, color, }\DataTypeTok{type =} \StringTok{"p"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-9-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(logprice, clarity, }\DataTypeTok{type =} \StringTok{"p"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-9-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(logprice, cut, }\DataTypeTok{type =} \StringTok{"p"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-9-6.pdf}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+Use the local regression model
+\(\texttt{logprice} = \beta_0 + \beta_1 \texttt{carat}+ \beta_2 \texttt{carat}^2\)
+weighted by the tricube kernel \(K_{i0}\).
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q2:} What is the predicted price of a diamond weighting 1 carat.
+Use the closest 20\% of the observations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit =}\StringTok{ }\KeywordTok{loess}\NormalTok{(logprice }\OperatorTok{~}\StringTok{ }\NormalTok{carat, }\DataTypeTok{span =}\NormalTok{ .}\DecValTok{2}\NormalTok{)}
+\NormalTok{price1 =}\StringTok{ }\KeywordTok{predict}\NormalTok{(fit, }\DecValTok{1}\NormalTok{)}
+\NormalTok{price1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3.707628
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q3:} What choice of \(\beta_1\), \(\beta_2\) and \(K_{i0}\)
+would result in KNN-regression?
+
+If we choose \(\beta_1=\beta_2 =0\) and \(K_{i0} = 1\)(or any other
+constant \(k<0\)), it will result in KNN-regression. The \(\beta_0\)
+that is left will give the average value in the group, and a constant
+kernel will give the same weight to all observations. \ldots{}And these
+are the same principles that KNN-regression is based on.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q4:} Describe how you can perform model selection in regression
+with AIC as criterion.
+
+Model selection can be done by best subset model selection, which aims
+to produce a subset of the model that performs best according to some
+model choice criteria. The method goes through every possible
+combination of covariates \(p \choose j\) for
+\(j = 1,2, \ _\cdots \ ,p\), and chooses a model for each \(j\) that has
+the lowest \(SSR\). The resulting \(p+1\) models (intercept included)
+are then evaluated with a chosen model choice criteria, e.g AIC. \[
+AIC = \frac{1}{n\hat{\sigma}^2}(RSS+2d\hat{\sigma}^2)
+\] The AIC is computed for each of the \(p+1\) models, and the model
+with lowest score is deemed as the best model. \(d\) is here the number
+of predictors, otherwise known as the \(p+1\) covariates (intercept
+included). We can then see how the AIC penalizes larger models.\\
+\emph{\textbf{ }Q5:\textbf{ What are the main differences between using
+AIC for model selection and using cross-validation (with mean squared
+test error MSE)? Using AIC for model selection we may get a reduced
+model with fewer covariates, in contrast to using cross-validation which
+only gives variations of the full model. The data is also divided into
+different sections (folds) when doing cross-validation, whereas in model
+selection with AIC (or other criteria) the whole training set is used
+for selecting the model. }} \textbf{Q6:} See the code below for
+performing model selection with \texttt{bestglm()} based on AIC. What
+kind of contrast is used to represent \texttt{cut}, \texttt{color} and
+\texttt{clarity}? Write down the final best model and explain what you
+can interpret from the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(bestglm)}
+\NormalTok{ds=}\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{within}\NormalTok{(dtrain,\{}
+\NormalTok{  y=logprice    }\CommentTok{# setting reponse}
+\NormalTok{  logprice=}\OtherTok{NULL} \CommentTok{# not include as covariate}
+\NormalTok{  price=}\OtherTok{NULL}    \CommentTok{# not include as covariate}
+\NormalTok{  carat=}\OtherTok{NULL}    \CommentTok{# not include as covariate}
+\NormalTok{  \}))}
+\NormalTok{fit=}\KeywordTok{bestglm}\NormalTok{(}\DataTypeTok{Xy=}\NormalTok{ds, }\DataTypeTok{IC=}\StringTok{"AIC"}\NormalTok{)}\OperatorTok{$}\NormalTok{BestModel}
+\KeywordTok{summary}\NormalTok{(fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = y ~ ., data = data.frame(Xy[, c(bestset[-1], FALSE), 
+##     drop = FALSE], y = y))
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.31283 -0.03717  0.00033  0.03564  0.58991 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   2.985969   0.042993  69.452  < 2e-16 ***
+## logcarat      1.580675   0.029042  54.428  < 2e-16 ***
+## cutGood       0.028558   0.005747   4.970 6.93e-07 ***
+## cutVery Good  0.040480   0.005285   7.660 2.22e-14 ***
+## cutPremium    0.042984   0.005295   8.118 5.90e-16 ***
+## cutIdeal      0.054829   0.005223  10.498  < 2e-16 ***
+## colorE       -0.021787   0.003031  -7.189 7.51e-13 ***
+## colorF       -0.038892   0.003107 -12.519  < 2e-16 ***
+## colorG       -0.067999   0.003024 -22.488  < 2e-16 ***
+## colorH       -0.112815   0.003235 -34.877  < 2e-16 ***
+## colorI       -0.165072   0.003686 -44.783  < 2e-16 ***
+## colorJ       -0.223651   0.004543 -49.233  < 2e-16 ***
+## claritySI2    0.174988   0.007933  22.060  < 2e-16 ***
+## claritySI1    0.251631   0.007876  31.950  < 2e-16 ***
+## clarityVS2    0.315556   0.007924  39.824  < 2e-16 ***
+## clarityVS1    0.346409   0.008051  43.027  < 2e-16 ***
+## clarityVVS2   0.402528   0.008233  48.894  < 2e-16 ***
+## clarityVVS1   0.433326   0.008549  50.684  < 2e-16 ***
+## clarityIF     0.473681   0.009154  51.745  < 2e-16 ***
+## xx            0.069331   0.006610  10.489  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.05978 on 4980 degrees of freedom
+## Multiple R-squared:  0.9815, Adjusted R-squared:  0.9814 
+## F-statistic: 1.39e+04 on 19 and 4980 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+KOMMENTAR: Contrast?? Treatment? We see from the \texttt{summary} of
+\texttt{fit} that the best model includes the covariates
+\texttt{logcarat}, \texttt{cut}, \texttt{color}, \texttt{clarity} and
+\texttt{xx}. KOMMENTAR: What can we interpret from the model?? *\textbf{
+}Q7:** Calculate and report the MSE of the test set using the best model
+(on the scale of \texttt{logprice}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bss_prediction =}\StringTok{ }\KeywordTok{predict.lm}\NormalTok{(fit, dtest)}
+\NormalTok{bss_testMSE =}\StringTok{ }\KeywordTok{mean}\NormalTok{((dtest}\OperatorTok{$}\NormalTok{logprice }\OperatorTok{-}\StringTok{ }\NormalTok{bss_prediction)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Using the R code above, the test MSE for best subset selection is
+calculated to \(\text{MSE}_{test} = 0.0036003\).
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q8:} Build a model matrix for the covariates
+\texttt{\textasciitilde{}logcarat+cut+clarity+color+depth+table+xx+yy+zz-1}.
+What is the dimension of this matrix?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_matrix =}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(logprice }\OperatorTok{~}\NormalTok{logcarat}\OperatorTok{+}\NormalTok{cut}\OperatorTok{+}\NormalTok{clarity}\OperatorTok{+}\NormalTok{color}\OperatorTok{+}\NormalTok{depth}\OperatorTok{+}\NormalTok{table}\OperatorTok{+}\NormalTok{xx}\OperatorTok{+}\NormalTok{yy}\OperatorTok{+}\NormalTok{zz}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ dtrain)}
+\NormalTok{dim =}\StringTok{ }\KeywordTok{dim}\NormalTok{(model_matrix)}
+\end{Highlighting}
+\end{Shaded}
+
+The model matrix for the above covariates has dimensions
+\((5000 \times 24)\).
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q9:} Fit a lasso regression to the diamond data with
+\texttt{logprice} as the response and the model matrix given in Q8. How
+did you find the value to be used for the regularization parameter?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(glmnet)}
+\NormalTok{cv.out =}\StringTok{ }\KeywordTok{cv.glmnet}\NormalTok{(model_matrix, dtrain}\OperatorTok{$}\NormalTok{logprice, }\DataTypeTok{alpha=}\DecValTok{1}\NormalTok{)}
+\NormalTok{lambda_min =}\StringTok{ }\NormalTok{cv.out}\OperatorTok{$}\NormalTok{lambda.min }\CommentTok{#Can also choose lamda.1se for one standard error rule}
+\NormalTok{lasso <-}\StringTok{ }\KeywordTok{glmnet}\NormalTok{(model_matrix, dtrain}\OperatorTok{$}\NormalTok{logprice, }\DataTypeTok{alpha=}\DecValTok{1}\NormalTok{, }\DataTypeTok{lambda =}\NormalTok{ lambda_min)}
+\NormalTok{lasso_coeff =}\StringTok{ }\KeywordTok{coef}\NormalTok{(lasso)}
+\NormalTok{lasso_coeff}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 25 x 1 sparse Matrix of class "dgCMatrix"
+##                         s0
+## (Intercept)   3.050230e+00
+## logcarat      1.588901e+00
+## cutFair      -4.731752e-02
+## cutGood      -1.489853e-02
+## cutVery Good -2.337768e-03
+## cutPremium    .           
+## cutIdeal      1.279676e-02
+## claritySI2    1.405974e-01
+## claritySI1    2.168782e-01
+## clarityVS2    2.806773e-01
+## clarityVS1    3.112062e-01
+## clarityVVS2   3.671705e-01
+## clarityVVS1   3.976273e-01
+## clarityIF     4.377507e-01
+## colorE       -1.981794e-02
+## colorF       -3.662724e-02
+## colorG       -6.542357e-02
+## colorH       -1.102818e-01
+## colorI       -1.625192e-01
+## colorJ       -2.207556e-01
+## depth         3.545491e-05
+## table         4.281761e-04
+## xx            6.169559e-02
+## yy            3.615818e-03
+## zz            2.412922e-03
+\end{verbatim}
+
+Fitting a lasso regression is done with \texttt{glmnet} by setting
+\texttt{alpha}\(=1\). Here we have found the optimal regularization
+parameter \(\lambda = 1.2928324\times 10^{-4}\) by cross-validation on
+the training set, which is then used to fit the lasso regression. We can
+see by the print-out above how the lasso shrinks some of the estimated
+coefficients towards zero, where the ones that are shrunk the most are
+least significant in the regression.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q10:} Calculate and report the MSE of the test set (on the scale
+of \texttt{logprice}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_matrix_test =}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(logprice }\OperatorTok{~}\NormalTok{logcarat}\OperatorTok{+}\NormalTok{cut}\OperatorTok{+}\NormalTok{clarity}\OperatorTok{+}\NormalTok{color}\OperatorTok{+}\NormalTok{depth}\OperatorTok{+}\NormalTok{table}\OperatorTok{+}\NormalTok{xx}\OperatorTok{+}\NormalTok{yy}\OperatorTok{+}\NormalTok{zz}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ dtest)}
+\NormalTok{lasso_prediction =}\StringTok{ }\KeywordTok{predict}\NormalTok{(lasso,}\DataTypeTok{s=}\NormalTok{lambda_min,}\DataTypeTok{newx=}\NormalTok{model_matrix_test)}
+\NormalTok{lasso_testMSE =}\StringTok{ }\KeywordTok{mean}\NormalTok{((dtest}\OperatorTok{$}\NormalTok{logprice }\OperatorTok{-}\StringTok{ }\NormalTok{lasso_prediction)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Using the R code above, the test MSE for lasso regression is calculated
+to \(\text{MSE}_{test} = 0.0036369\).
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q11:} A regression tree to model is built using a \emph{greedy}
+approach. What does that mean? Explain the strategy used for
+constructing a regression tree.
+
+A greedy approach will take locally optimal choices in order to
+approximate a globally optimal solution. For a regression tree we want
+to construct a tree that minimizes the \(RSS\) of the training set, but
+we must then compute the \(RSS\) for each possible partition of the
+predictor space. A more computationally feasible strategy is using the
+greedy algorithm \emph{recursive binary splitting}. Here we split the
+predictor space in two for each predictor and minimize the \(RSS\) for
+the binary split, resulting in two branches for each predictor. This
+means taking a locally optimal choice, namely the binary split that
+minimizes the \(RSS\) for a specific predictor, without concerning
+ourselves with the overall \(RSS\). In order for a greedy approach to
+approximate the global optimum, the problem at hand should have an
+optimal substructure, meaning the global optimum contains the local
+optimums of each sub-problem.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q12:} Is a regression tree a suitable method to handle both
+numerical and categorical covariates? Elaborate.
+
+A tree based method may be suitable as long as we can split the
+predictor space into sensible regions. In a binary split, the splitting
+condition may take on a true or false value. E.g for a numerical
+covariate, the splitting condition may be if the covariate is less than
+a certain value. Similarly for a categorical covariate (e.g \texttt{cut}
+for our model), we may split on the condition that the covariate takes
+on one or several of the categorical values or not. Here we may have
+interactions, e.g the condition that the \texttt{cut} of a diamond is
+\textless{}\texttt{Very\ good} or \texttt{Premium}\textgreater{} or not.
+This way, a regression tree may be suitable for both numerical and
+categorical covariates.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q13:} Fit a (full) regression tree to the diamond data with
+\texttt{logprice} as the response (and the same covariates as for c and
+d), and plot the result. Comment briefly on you findings.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tree)}
+\NormalTok{regtree =}\StringTok{ }\KeywordTok{tree}\NormalTok{(logprice }\OperatorTok{~}\NormalTok{logcarat}\OperatorTok{+}\NormalTok{cut}\OperatorTok{+}\NormalTok{color}\OperatorTok{+}\NormalTok{clarity}\OperatorTok{+}\NormalTok{depth}\OperatorTok{+}\NormalTok{table}\OperatorTok{+}\NormalTok{xx}\OperatorTok{+}\NormalTok{yy}\OperatorTok{+}\NormalTok{zz}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ dtrain)}
+\KeywordTok{plot}\NormalTok{(regtree, }\DataTypeTok{type=}\StringTok{"uniform"}\NormalTok{)}
+\KeywordTok{text}\NormalTok{(regtree)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q14:} Calculate and report the MSE of the test set (on the scale
+of \texttt{logprice}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tree_prediction =}\StringTok{ }\KeywordTok{predict}\NormalTok{(regtree, }\DataTypeTok{newdata =}\NormalTok{ dtest)}
+\NormalTok{tree_testMSE =}\StringTok{ }\KeywordTok{mean}\NormalTok{((dtest}\OperatorTok{$}\NormalTok{logprice}\OperatorTok{-}\NormalTok{tree_prediction)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Using the R code above, the test MSE for a tree-based regression is
+calculated to \(\text{MSE}_{test} = 0.0171555\).
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q15:} Explain the motivation behind bagging, and how bagging
+differs from random forest? What is the role of bootstrapping?
+
+Bagging is used to lower the variance of a predictor by taking an
+average of each bootstrap sample prediction. This is especially useful
+for predictors that have high variance in the first place, e.g decision
+trees. Bootstrapping is here used to generate \(B\) trees from the \(n\)
+observations of our sample. Bagging will perform poorly when there is a
+strong predictor in the dataset, since most of the trees generated will
+have similar splits for the first nodes. The trees then become
+correlated, and an average will not enhance the variance much. A
+solution to this is random forests. The motivation behind random forests
+is similar to bagging; we want to reduce the variance of our predictor.
+This is done by taking bootstrap samples of our observations and
+generating trees with a random subset of the predictors as split for
+each node. This is a contrast to bagging, where all predictors are
+considered for each split. The end result is a number of different trees
+(forest), and we can take a majority vote for classification problems
+and a mean for regression problems when using the forest on a dataset.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q16:} What are the parameter(s) to be set in random forest, and
+what are the rules for setting these?
+
+A parameter to be set in a random forest is the subset \(m\) of all
+predictors \(p\) being used in each split. This is constrained to be
+less than the number of predictors, so \(m < p\) for each tree in the
+forest. Otherwise, the method would be identical to bagging. For
+regression trees a popular choice for \(m\) is \(p/3\), while for
+classification trees a popular choice is \(\sqrt{p}\). The number of
+trees \(B\) that our forest consists of should be large, in order to
+reduce the variability of the method.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q17:} Boosting is a popular method. What is the main difference
+between random forest and boosting?
+
+In boosting, a single tree is grown sequentially from several previously
+fitted trees. A big difference from a random forest is that there is no
+use of bootstrapping when boosting, the whole dataset is used when
+fitting trees sequentially.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q18:} Fit a random forest to the diamond data with
+\texttt{logprice} as the response (and the same covariates as before).
+Comment on your choice of parameter (as decribed in Q16).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(randomForest)}
+\NormalTok{rf =}\StringTok{ }\KeywordTok{randomForest}\NormalTok{(logprice }\OperatorTok{~}\NormalTok{logcarat}\OperatorTok{+}\NormalTok{cut}\OperatorTok{+}\NormalTok{color}\OperatorTok{+}\NormalTok{clarity}\OperatorTok{+}\NormalTok{depth}\OperatorTok{+}\NormalTok{table}\OperatorTok{+}\NormalTok{xx}\OperatorTok{+}\NormalTok{yy}\OperatorTok{+}\NormalTok{zz}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{data=}\NormalTok{dtrain, }\DataTypeTok{mtry=}\DecValTok{3}\NormalTok{, }\DataTypeTok{ntree =} \DecValTok{500}\NormalTok{, }\DataTypeTok{importance=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We have 9 predictors (covariates) in our model, and following the
+typical choice of \(p/3\) for each subset in a regression tree we get 3
+predictors for each subset. This ensures that most of the trees aren't
+correlated. The number of trees in the forest is chosen to a fairly high
+number to ensure a lower variability from the resulting prediction.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q19:} Make a variable importance plot and comment on the plot.
+Calculate and report the MSE of the test set (on the scale of
+\texttt{logprice}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rf_prediction =}\StringTok{ }\KeywordTok{predict}\NormalTok{(rf, }\DataTypeTok{newdata =}\NormalTok{ dtest)}
+\NormalTok{rf_testMSE =}\StringTok{ }\KeywordTok{mean}\NormalTok{((dtest}\OperatorTok{$}\NormalTok{logprice}\OperatorTok{-}\NormalTok{rf_prediction)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\KeywordTok{varImpPlot}\NormalTok{(rf)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+The plot for node impurity ranks the predictors based on the decrease in
+RSS due to a split for a predictor, where predictors resulting in a
+large decrease in RSS are ranked as important.
+
+Using the R code above, the test MSE for a the random forest is
+calculated to \(\text{MSE}_{test} = 0.0027761\).
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q20:} Finally, compare the results from c (subset selection), d
+(lasso), e (tree) and f (random forest): Which method has given the best
+performance on the test set and which method has given you the best
+insight into the relationship between the price and the covariates?
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Method & MSE\tabularnewline
+\midrule
+\endhead
+Best subset selection & 0.00360\tabularnewline
+Lasso & 0.00364\tabularnewline
+Tree & 0.01715\tabularnewline
+Random forest & 0.00281\tabularnewline
+\bottomrule
+\end{longtable}
+
+\section{Problem 2: Unsupervised learning {[}3
+points{]}}\label{problem-2-unsupervised-learning-3-points}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q21:} What is the definition of a principal component score, and
+how is the score related to the eigenvectors of the matrix
+\({\hat {\bf R}}\).
+
+The principal component scores are the \(z_{1i}, ..., z_{ni}\) elements
+in the principal component vectors, where
+\(z_{in} = \phi_{11}x_{i1}+\phi_{21}x_{i1}+...+\phi_{p1}x_{ip}\)
+
+The direction of the first principal component is given by the first
+eigenvector of the covariance matrix. The first eigenvector is the one
+with the largest eigenvalue.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q22:} Explain what is given in the plot with title ``First
+eigenvector''. Why are there only \(n=64\) eigenvectors and \(n=64\)
+principal component scores?
+
+In the plot we see the weights that the genes are given in the first
+eigenvector.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q23:} How many principal components are needed to explain 80\%
+of the total variance in \({\bf Z}\)? Why is
+\texttt{sum(pca\$sdev\^{}2)=p}?
+
+In the summary we can see that from the summary that we need 32 PCA´s
+for the cumulative proportion of variance explained to be 80\%.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q24}: Study the PC1 vs PC2 plot, and comment on the groupings
+observed. What can you say about the placement of the \texttt{K262},
+\texttt{MCF7} and \texttt{UNKNOWN} samples? Produce the same plot for
+two other pairs of PCs and comment on your observations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ElemStatLearn)}
+\NormalTok{X=}\KeywordTok{t}\NormalTok{(nci) }\CommentTok{#n times p matrix}
+\KeywordTok{table}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(X))}
+\NormalTok{ngroups=}\KeywordTok{length}\NormalTok{(}\KeywordTok{table}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(X)))}
+\NormalTok{cols=}\KeywordTok{rainbow}\NormalTok{(ngroups)}
+\NormalTok{cols[}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{14}\NormalTok{)] =}\StringTok{ "black"}
+\NormalTok{pch.vec =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{14}\NormalTok{)}
+\NormalTok{pch.vec[}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{14}\NormalTok{)] =}\StringTok{ }\DecValTok{15}\OperatorTok{:}\DecValTok{19}
+\NormalTok{colsvsnames=}\KeywordTok{cbind}\NormalTok{(cols,}\KeywordTok{sort}\NormalTok{(}\KeywordTok{unique}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(X))))}
+\NormalTok{colsamples=cols[}\KeywordTok{match}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(X),colsvsnames[,}\DecValTok{2}\NormalTok{])] }
+\NormalTok{pchvsnames=}\KeywordTok{cbind}\NormalTok{(pch.vec,}\KeywordTok{sort}\NormalTok{(}\KeywordTok{unique}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(X))))}
+\NormalTok{pchsamples=pch.vec[}\KeywordTok{match}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(X),pchvsnames[,}\DecValTok{2}\NormalTok{])]}
+\NormalTok{Z=}\KeywordTok{scale}\NormalTok{(X)}
+\NormalTok{pca=}\KeywordTok{prcomp}\NormalTok{(Z)}
+\KeywordTok{plot}\NormalTok{(pca}\OperatorTok{$}\NormalTok{x[,}\DecValTok{1}\NormalTok{],pca}\OperatorTok{$}\NormalTok{x[,}\DecValTok{2}\NormalTok{],}\DataTypeTok{xlab=}\StringTok{"PC1"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"PC2"}\NormalTok{,}\DataTypeTok{pch=}\NormalTok{pchsamples,}\DataTypeTok{col=}\NormalTok{colsamples)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-20-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(pca}\OperatorTok{$}\NormalTok{x[,}\DecValTok{3}\NormalTok{],pca}\OperatorTok{$}\NormalTok{x[,}\DecValTok{4}\NormalTok{],}\DataTypeTok{xlab=}\StringTok{"PC3"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"PC4"}\NormalTok{,}\DataTypeTok{pch=}\NormalTok{pchsamples,}\DataTypeTok{col=}\NormalTok{colsamples)}
+\KeywordTok{legend}\NormalTok{(}\StringTok{"bottomright"}\NormalTok{,}\DataTypeTok{legend =}\NormalTok{ colsvsnames[,}\DecValTok{2}\NormalTok{],}\DataTypeTok{cex=}\FloatTok{0.55}\NormalTok{,}\DataTypeTok{col=}\NormalTok{cols,}\DataTypeTok{pch =}\NormalTok{ pch.vec)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-20-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{dim}\NormalTok{(X)[}\DecValTok{2}\NormalTok{],pca}\OperatorTok{$}\NormalTok{rotation[,}\DecValTok{1}\NormalTok{],}\DataTypeTok{type=}\StringTok{"l"}\NormalTok{,}\DataTypeTok{xlab=}\StringTok{"genes"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"weight"}\NormalTok{,}\DataTypeTok{main=}\StringTok{"First eigenvector"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-20-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(pca)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##      BREAST         CNS       COLON K562A-repro K562B-repro    LEUKEMIA 
+##           7           5           7           1           1           6 
+## MCF7A-repro MCF7D-repro    MELANOMA       NSCLC     OVARIAN    PROSTATE 
+##           1           1           8           9           6           2 
+##       RENAL     UNKNOWN 
+##           9           1 
+## Importance of components:
+##                            PC1      PC2      PC3      PC4      PC5
+## Standard deviation     27.8535 21.48136 19.82046 17.03256 15.97181
+## Proportion of Variance  0.1136  0.06756  0.05752  0.04248  0.03735
+## Cumulative Proportion   0.1136  0.18115  0.23867  0.28115  0.31850
+##                             PC6      PC7      PC8      PC9     PC10
+## Standard deviation     15.72108 14.47145 13.54427 13.14400 12.73860
+## Proportion of Variance  0.03619  0.03066  0.02686  0.02529  0.02376
+## Cumulative Proportion   0.35468  0.38534  0.41220  0.43750  0.46126
+##                            PC11     PC12     PC13     PC14     PC15
+## Standard deviation     12.68672 12.15769 11.83019 11.62554 11.43779
+## Proportion of Variance  0.02357  0.02164  0.02049  0.01979  0.01915
+## Cumulative Proportion   0.48482  0.50646  0.52695  0.54674  0.56590
+##                            PC16     PC17     PC18     PC19    PC20
+## Standard deviation     11.00051 10.65666 10.48880 10.43518 10.3219
+## Proportion of Variance  0.01772  0.01663  0.01611  0.01594  0.0156
+## Cumulative Proportion   0.58361  0.60024  0.61635  0.63229  0.6479
+##                            PC21    PC22    PC23    PC24    PC25    PC26
+## Standard deviation     10.14608 10.0544 9.90265 9.64766 9.50764 9.33253
+## Proportion of Variance  0.01507  0.0148 0.01436 0.01363 0.01324 0.01275
+## Cumulative Proportion   0.66296  0.6778 0.69212 0.70575 0.71899 0.73174
+##                           PC27   PC28    PC29    PC30    PC31    PC32
+## Standard deviation     9.27320 9.0900 8.98117 8.75003 8.59962 8.44738
+## Proportion of Variance 0.01259 0.0121 0.01181 0.01121 0.01083 0.01045
+## Cumulative Proportion  0.74433 0.7564 0.76824 0.77945 0.79027 0.80072
+##                           PC33    PC34    PC35    PC36    PC37    PC38
+## Standard deviation     8.37305 8.21579 8.15731 7.97465 7.90446 7.82127
+## Proportion of Variance 0.01026 0.00988 0.00974 0.00931 0.00915 0.00896
+## Cumulative Proportion  0.81099 0.82087 0.83061 0.83992 0.84907 0.85803
+##                           PC39    PC40    PC41   PC42    PC43   PC44
+## Standard deviation     7.72156 7.58603 7.45619 7.3444 7.10449 7.0131
+## Proportion of Variance 0.00873 0.00843 0.00814 0.0079 0.00739 0.0072
+## Cumulative Proportion  0.86676 0.87518 0.88332 0.8912 0.89861 0.9058
+##                           PC45   PC46    PC47    PC48    PC49    PC50
+## Standard deviation     6.95839 6.8663 6.80744 6.64763 6.61607 6.40793
+## Proportion of Variance 0.00709 0.0069 0.00678 0.00647 0.00641 0.00601
+## Cumulative Proportion  0.91290 0.9198 0.92659 0.93306 0.93947 0.94548
+##                           PC51    PC52    PC53    PC54    PC55    PC56
+## Standard deviation     6.21984 6.20326 6.06706 5.91805 5.91233 5.73539
+## Proportion of Variance 0.00566 0.00563 0.00539 0.00513 0.00512 0.00482
+## Cumulative Proportion  0.95114 0.95678 0.96216 0.96729 0.97241 0.97723
+##                           PC57   PC58    PC59    PC60    PC61    PC62
+## Standard deviation     5.47261 5.2921 5.02117 4.68398 4.17567 4.08212
+## Proportion of Variance 0.00438 0.0041 0.00369 0.00321 0.00255 0.00244
+## Cumulative Proportion  0.98161 0.9857 0.98940 0.99262 0.99517 0.99761
+##                           PC63      PC64
+## Standard deviation     4.04124 1.237e-14
+## Proportion of Variance 0.00239 0.000e+00
+## Cumulative Proportion  1.00000 1.000e+00
+\end{verbatim}
+
+We observe that several groupings have been made. The leukimia cells are
+grouped together with the K562 cells, which intuitively makes sense. The
+MC57 cells are spread out together with the other breast cancer cells.
+This might mean that the two first principal component don't hold much
+relevant information for these cells. The UNKNOWN sample is placed close
+to the origin, especially for PC1. (KAN VI SI NOE MER OM DETTE?)
+
+In the PC3/PC4 plot we see some of the same grouping, eg. leukimia and
+colon. The breast cancer cells are still spread out and the UNKNOWN
+sample is still quite close to the origin. The MC57 are not present in
+this plot, telling
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q25:}: Explain what it means to use Euclidean distance and
+average linkage for hierarchical clustering.
+
+In hierarchical clustering Euclidean distance refers to distance in
+X1/X2-plot (?hvordan formulere dette?) and it measures the
+dissimilarity. This means that obervations of similar magnitude will be
+clustered together.
+
+Linkage describes the concept of dissimilarity beetween groups of
+observations. In average linking the distance between two clusters, a
+and b, is defined by the average distance beetween the points in the two
+clusters.
+\(L(a,b)=\frac{1}{n_an_b}\sum_{i=1}^{n_a}\sum_{j=1}^{n_b}D(x_{ai},x_{bj})\)
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q26:}: Perform hierarchical clustering with Euclidean distance
+and average linkage on the scaled gene expression in \texttt{Z}. Observe
+where our samples labelled as K562, MCF7 and \texttt{UNKNOWN} are placed
+in the dendrogram. Which conclusions can you draw from this?¨
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#library(dendextend)}
+\NormalTok{hc =}\StringTok{ }\KeywordTok{hclust}\NormalTok{(}\KeywordTok{dist}\NormalTok{(Z[,}\OperatorTok{-}\DecValTok{1}\NormalTok{]), }\DataTypeTok{method =} \StringTok{"average"}\NormalTok{)}
+\CommentTok{#skal det evt være Z? Eller nci/nci[,-1]?}
+\KeywordTok{plot}\NormalTok{(hc, }\DataTypeTok{xlab =} \StringTok{""}\NormalTok{, }\DataTypeTok{sub =} \StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(hc)}
+
+\CommentTok{#cluster assignment}
+\CommentTok{#cut.hc=cutree(hc, 100)}
+\CommentTok{#cut.hc}
+\CommentTok{#plot(cut.hc)}
+
+\CommentTok{#prunesize=fullcv$size[which.min(fullcv$dev)]}
+\CommentTok{#prunedendo=prune(hc, l) }
+\CommentTok{#plot(prunedendo)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## List of 7
+##  $ merge      : int [1:63, 1:2] -57 -50 -35 -49 -37 -21 -1 -42 -12 -60 ...
+##  $ height     : num [1:63] 48.4 53 55.7 56.2 62 ...
+##  $ order      : int [1:64] 41 39 40 34 38 37 35 36 20 55 ...
+##  $ labels     : chr [1:64] "CNS" "CNS" "CNS" "RENAL" ...
+##  $ method     : chr "average"
+##  $ call       : language hclust(d = dist(Z[, -1]), method = "average")
+##  $ dist.method: chr "euclidean"
+##  - attr(*, "class")= chr "hclust"
+\end{verbatim}
+
+The mentioned values end up low in the dendogram, whcih means?..
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q27:}: Study the R-code and plot below. Here we have performed
+hierarchical clustering based on thefirst 64 principal component instead
+of the gene expression data in \texttt{Z}. What is the difference
+between using all the gene expression data and using the first 64
+principal components in the clustering? We have plotted the dendrogram
+together with a heatmap of the data. Explain what is shown in the
+heatmap. What is given on the horizontal axis, vertical axis, value in
+the pixel grid?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(pheatmap)}
+\NormalTok{npcs=}\DecValTok{64} 
+\KeywordTok{pheatmap}\NormalTok{(pca}\OperatorTok{$}\NormalTok{x[,}\DecValTok{1}\OperatorTok{:}\NormalTok{npcs],}\DataTypeTok{scale=}\StringTok{"none"}\NormalTok{,}\DataTypeTok{cluster_col=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{cluster_row=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{clustering_distance_rows =} \StringTok{"euclidean"}\NormalTok{,}\DataTypeTok{clustering_method=}\StringTok{"average"}\NormalTok{,}\DataTypeTok{fontsize_row=}\DecValTok{5}\NormalTok{,}\DataTypeTok{fontsize_col=}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-22-1.pdf}
+
+\section{Problem 3: Flying solo with diabetes data {[}6
+points{]}}\label{problem-3-flying-solo-with-diabetes-data-6-points}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{flying=}\KeywordTok{dget}\NormalTok{(}\StringTok{"https://www.math.ntnu.no/emner/TMA4268/2019v/data/flying.dd"}\NormalTok{)}
+\NormalTok{ctrain=flying}\OperatorTok{$}\NormalTok{ctrain}
+\NormalTok{ctest=flying}\OperatorTok{$}\NormalTok{ctest}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q28:} Start by getting to know the \emph{training data}, by
+producing summaries and plots. Write a few sentences about what you
+observe and include your top 3 informative plots and/or outputs.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(plyr)}
+\CommentTok{#library(phonTools)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+
+\KeywordTok{summary}\NormalTok{(ctrain)}
+
+\CommentTok{#make plotable vectors from the dataset: }
+\NormalTok{diabetes=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{1}\NormalTok{])}
+\NormalTok{npreg=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{2}\NormalTok{])}
+\NormalTok{glu=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{3}\NormalTok{])}
+\NormalTok{bp=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{4}\NormalTok{])}
+\NormalTok{skin=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{5}\NormalTok{])}
+\NormalTok{bmi=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{6}\NormalTok{])}
+\NormalTok{ped=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{7}\NormalTok{])}
+\NormalTok{age=}\KeywordTok{unlist}\NormalTok{(ctrain[,}\DecValTok{8}\NormalTok{])}
+
+\CommentTok{#SCATTER PLOTS }
+\NormalTok{tot_scatter_plot =}\StringTok{ }\NormalTok{ctrain[, }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{8}\NormalTok{)]}
+\KeywordTok{pairs}\NormalTok{(tot_scatter_plot)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-24-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(diabetes, ped)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-24-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#gludata = ctrain[, c(1,3)]}
+\CommentTok{#glm.glu = glm(diabetes ~ ., data = ctrain[, c(1,3)], family = "binomial")}
+\CommentTok{#summary(glm.glu)}
+
+\NormalTok{plot2 =}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(ctrain, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ ped, }\DataTypeTok{y =}\NormalTok{ glu, }\DataTypeTok{color =}\NormalTok{ diabetes)) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{size =} \FloatTok{2.5}\NormalTok{)}
+\NormalTok{plot2}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-24-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#fit1 = lm(diabetes ~ glu)}
+\CommentTok{#plot(fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     diabetes          npreg             glu              bp        
+##  Min.   :0.0000   Min.   : 0.000   Min.   : 57.0   Min.   : 24.00  
+##  1st Qu.:0.0000   1st Qu.: 1.000   1st Qu.:100.0   1st Qu.: 64.00  
+##  Median :0.0000   Median : 2.000   Median :117.0   Median : 70.00  
+##  Mean   :0.3333   Mean   : 3.437   Mean   :122.7   Mean   : 71.23  
+##  3rd Qu.:1.0000   3rd Qu.: 5.000   3rd Qu.:143.0   3rd Qu.: 78.00  
+##  Max.   :1.0000   Max.   :17.000   Max.   :199.0   Max.   :110.00  
+##       skin            bmi             ped              age       
+##  Min.   : 7.00   Min.   :18.20   Min.   :0.0850   Min.   :21.00  
+##  1st Qu.:21.00   1st Qu.:27.88   1st Qu.:0.2532   1st Qu.:23.00  
+##  Median :29.00   Median :32.90   Median :0.4075   Median :28.00  
+##  Mean   :29.22   Mean   :33.09   Mean   :0.4789   Mean   :31.48  
+##  3rd Qu.:37.00   3rd Qu.:37.12   3rd Qu.:0.6525   3rd Qu.:37.25  
+##  Max.   :60.00   Max.   :67.10   Max.   :2.1370   Max.   :70.00
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#NPREG}
+\CommentTok{#adapting pregnancydata to see if it is any use }
+\NormalTok{preg1=}\KeywordTok{numeric}\NormalTok{(}\DecValTok{17}\NormalTok{)}
+\NormalTok{preg0=}\KeywordTok{numeric}\NormalTok{(}\DecValTok{17}\NormalTok{)}
+
+\ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{17}\NormalTok{)\{}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)\{}
+    \ControlFlowTok{if}\NormalTok{ (ctrain[i, }\DecValTok{2}\NormalTok{]}\OperatorTok{==}\NormalTok{j)}
+\NormalTok{        preg1[j]=preg1[j]}\OperatorTok{+}\DecValTok{1}
+\NormalTok{    \}}
+\NormalTok{\}}\CommentTok{# makes preg = [number of people with one pregnancy, number of people with 2 pregrancies etc...] when diabetes = 1}
+
+\ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{17}\NormalTok{)\{}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{101}\OperatorTok{:}\DecValTok{300}\NormalTok{)\{}
+    \ControlFlowTok{if}\NormalTok{ (ctrain[i, }\DecValTok{2}\NormalTok{]}\OperatorTok{==}\NormalTok{j)}
+\NormalTok{        preg0[j]=preg0[j]}\OperatorTok{+}\DecValTok{1}
+\NormalTok{    \}}
+\NormalTok{\}}\CommentTok{# makes preg = [number of people with one pregnancy, number of people with 2 pregrancies etc...] when diabetes = 0}
+
+
+\CommentTok{#GLU}
+\NormalTok{glu1=ctrain[}\DecValTok{0}\OperatorTok{:}\DecValTok{100}\NormalTok{,}\DecValTok{3}\NormalTok{] }\CommentTok{#gluv-erdier for dem med diabetes = 1}
+\NormalTok{glu0=ctrain[}\DecValTok{101}\OperatorTok{:}\DecValTok{300}\NormalTok{, }\DecValTok{3}\NormalTok{] }\CommentTok{#glu-verdier for dem med diabetes = 0}
+\NormalTok{glu1=}\KeywordTok{sort}\NormalTok{(glu1)}
+\NormalTok{glu0=}\KeywordTok{sort}\NormalTok{(glu0)}
+\NormalTok{glu0short =}\StringTok{ }\NormalTok{glu0[}\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{)] }\CommentTok{#tar ut annenhver verdi }
+
+\NormalTok{xaxis =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(xaxis, glu1, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(xaxis,glu0short,}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-25-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#BLOOD PRESSURE }
+\NormalTok{bp1=ctrain[}\DecValTok{0}\OperatorTok{:}\DecValTok{100}\NormalTok{,}\DecValTok{4}\NormalTok{]}
+\NormalTok{bp0=ctrain[}\DecValTok{101}\OperatorTok{:}\DecValTok{300}\NormalTok{, }\DecValTok{4}\NormalTok{]}
+\NormalTok{bp1=}\KeywordTok{sort}\NormalTok{(bp1)}
+\NormalTok{bp0=}\KeywordTok{sort}\NormalTok{(bp0)}
+\NormalTok{bp0short =}\StringTok{ }\NormalTok{bp0[}\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{)] }\CommentTok{#tar ut annenhver verdi }
+
+\NormalTok{xaxis =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(xaxis, bp1, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(xaxis,bp0short,}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-25-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#SKIN }
+\NormalTok{skin1=ctrain[}\DecValTok{0}\OperatorTok{:}\DecValTok{100}\NormalTok{,}\DecValTok{5}\NormalTok{]}
+\NormalTok{skin0=ctrain[}\DecValTok{101}\OperatorTok{:}\DecValTok{300}\NormalTok{, }\DecValTok{5}\NormalTok{]}
+\NormalTok{skin1=}\KeywordTok{sort}\NormalTok{(skin1)}
+\NormalTok{skin0=}\KeywordTok{sort}\NormalTok{(skin0)}
+\NormalTok{skin0short =}\StringTok{ }\NormalTok{skin0[}\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{)] }\CommentTok{#tar ut annenhver verdi }
+
+\NormalTok{xaxis =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(xaxis, skin1, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(xaxis,skin0short,}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-25-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#BODY MASS INDEX }
+\NormalTok{bmi1=ctrain[}\DecValTok{0}\OperatorTok{:}\DecValTok{100}\NormalTok{,}\DecValTok{6}\NormalTok{]}
+\NormalTok{bmi0=ctrain[}\DecValTok{101}\OperatorTok{:}\DecValTok{300}\NormalTok{, }\DecValTok{6}\NormalTok{]}
+\NormalTok{bmi1=}\KeywordTok{sort}\NormalTok{(bmi1)}
+\NormalTok{bmi0=}\KeywordTok{sort}\NormalTok{(bmi0)}
+\NormalTok{bmi0short =}\StringTok{ }\NormalTok{bmi0[}\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{)] }\CommentTok{#tar ut annenhver verdi }
+
+\NormalTok{xaxis =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(xaxis, bmi1, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(xaxis,bmi0short,}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-25-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#DIABETES PEDRIGREE FUNCTION }
+\NormalTok{ped1=ctrain[}\DecValTok{0}\OperatorTok{:}\DecValTok{100}\NormalTok{,}\DecValTok{7}\NormalTok{]}
+\NormalTok{ped0=ctrain[}\DecValTok{101}\OperatorTok{:}\DecValTok{300}\NormalTok{, }\DecValTok{7}\NormalTok{]}
+\NormalTok{ped1=}\KeywordTok{sort}\NormalTok{(ped1)}
+\NormalTok{ped0=}\KeywordTok{sort}\NormalTok{(ped0)}
+\NormalTok{ped0short =}\StringTok{ }\NormalTok{ped0[}\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{)] }\CommentTok{#tar ut annenhver verdi }
+
+\NormalTok{xaxis =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(xaxis, ped1, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(xaxis,ped0short,}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-25-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#AGE }
+\NormalTok{age1=ctrain[}\DecValTok{0}\OperatorTok{:}\DecValTok{100}\NormalTok{,}\DecValTok{7}\NormalTok{]}
+\NormalTok{age0=ctrain[}\DecValTok{101}\OperatorTok{:}\DecValTok{300}\NormalTok{, }\DecValTok{7}\NormalTok{]}
+\NormalTok{age1=}\KeywordTok{sort}\NormalTok{(age1)}
+\NormalTok{age0=}\KeywordTok{sort}\NormalTok{(age0)}
+\NormalTok{age0short =}\StringTok{ }\NormalTok{age0[}\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{)] }\CommentTok{#tar ut annenhver verdi }
+
+\NormalTok{xaxis =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(xaxis, age1, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(xaxis,age0short,}\DataTypeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-25-6.pdf}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q29:} Use different methods to analyse the data. In particular
+use
+
+\begin{itemize}
+\tightlist
+\item
+  one method from Module 4: Classification
+\item
+  one method from Module 8: Trees (and forests)
+\item
+  one method from Module 9: Support vector machines and, finally
+\item
+  one method from Module 11: Neural networks
+\end{itemize}
+
+For each method you
+
+\begin{itemize}
+\tightlist
+\item
+  clearly write out the model and model assumptions for the method
+\item
+  explain how any tuning parameters are chosen or model selection is
+  performed
+\item
+  report (any) insight into the interpretation of the fitted model
+\item
+  evaluate the model using the test data, and report misclassifiation
+  rate (cut-off 0.5 on probability) and plot ROC-curves and give the AUC
+  (for method where class probabilities are given).
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#npreg + glu + bp + skin + bmi + ped + age,}
+\KeywordTok{library}\NormalTok{(knitr)}
+
+\CommentTok{#MODULE 4}
+\CommentTok{#LOGISTIC REGRESSION}
+\NormalTok{glm_diabetes =}\StringTok{ }\KeywordTok{glm}\NormalTok{(diabetes }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{family =} \StringTok{"binomial"}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(glm_diabetes)}
+
+\NormalTok{probs_diabetes =}\StringTok{ }\KeywordTok{predict}\NormalTok{(glm_diabetes, }\DataTypeTok{newdata =}\NormalTok{ ctest, }\DataTypeTok{type =} \StringTok{"response"}\NormalTok{)}
+
+\NormalTok{pred_diabetes =}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(probs_diabetes }\OperatorTok{>}\StringTok{ }\FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+
+\NormalTok{predictions_diabetes =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(probs_diabetes, pred_diabetes, ctest)}
+\KeywordTok{colnames}\NormalTok{(predictions_diabetes) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Estim. prob. of Y=1"}\NormalTok{, }\StringTok{"Predicted class"}\NormalTok{, }
+    \StringTok{"True class"}\NormalTok{)}
+\KeywordTok{kable}\NormalTok{(}\KeywordTok{head}\NormalTok{(predictions_diabetes), }\DataTypeTok{booktabs =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{conf_test=}\KeywordTok{table}\NormalTok{(pred_diabetes, ctest[, }\DecValTok{1}\NormalTok{]) }\CommentTok{#confusion matrix }
+
+\CommentTok{#testing misclass error}
+\NormalTok{misclass_test =}\StringTok{ }\NormalTok{(conf_test[}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{]}\OperatorTok{+}\NormalTok{conf_test[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{])}\OperatorTok{/}\NormalTok{(}\KeywordTok{sum}\NormalTok{(conf_test))}
+\NormalTok{misclass_test}
+
+\CommentTok{#training misclass error (FUNGERER IKKE)}
+\CommentTok{#diabetes_train_prob = glm_diabetes$fitted.values}
+\CommentTok{#diabetes_train_pred = ifelse(diabetes_train_prob > 0.5, 1, 0)}
+\CommentTok{#conf_train = table(diabetes_train_pred, ctrain[, 1])}
+\CommentTok{#misclas_train = (232 - sum(diag(conf_train)))/232}
+\CommentTok{#misclas_train}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = diabetes ~ ., family = "binomial", data = ctrain)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.8155  -0.6367  -0.3211   0.6147   2.2408  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(>|z|)    
+## (Intercept) -10.583538   1.428276  -7.410 1.26e-13 ***
+## npreg         0.105109   0.062721   1.676 0.093775 .  
+## glu           0.035586   0.005892   6.039 1.55e-09 ***
+## bp           -0.014654   0.013982  -1.048 0.294615    
+## skin          0.020379   0.020575   0.990 0.321962    
+## bmi           0.094683   0.031265   3.028 0.002458 ** 
+## ped           1.931666   0.529573   3.648 0.000265 ***
+## age           0.038291   0.020247   1.891 0.058594 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 381.91  on 299  degrees of freedom
+## Residual deviance: 253.84  on 292  degrees of freedom
+## AIC: 269.84
+## 
+## Number of Fisher Scoring iterations: 5
+\end{verbatim}
+
+\begin{longtable}[]{@{}lrrrrrrrrrr@{}}
+\toprule
+& Estim. prob. of Y=1 & Predicted class & True class & NA & NA & NA & NA
+& NA & NA & NA\tabularnewline
+\midrule
+\endhead
+11 & 0.9849753 & 1 & 1 & 0 & 137 & 40 & 35 & 43.1 & 2.288 &
+33\tabularnewline
+13 & 0.8474461 & 1 & 1 & 1 & 189 & 60 & 23 & 30.1 & 0.398 &
+59\tabularnewline
+14 & 0.3257543 & 0 & 1 & 12 & 92 & 62 & 7 & 27.6 & 0.926 &
+44\tabularnewline
+41 & 0.9009875 & 1 & 1 & 8 & 176 & 90 & 34 & 33.7 & 0.467 &
+58\tabularnewline
+49 & 0.4727061 & 0 & 1 & 3 & 171 & 72 & 33 & 33.3 & 0.199 &
+24\tabularnewline
+61 & 0.8530227 & 1 & 1 & 7 & 184 & 84 & 33 & 35.5 & 0.355 &
+41\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{verbatim}
+## [1] 0.2025862
+\end{verbatim}
+
+The logistic function:
+\(p(X)=\frac{e^{\beta_0+\beta_1X_1+\cdot\cdot\cdot+\beta_pX_p}}{1+e^{\beta_0+\beta_1X_1+\cdot\cdot\cdot+\beta_pX_p}}\)
+We fit the model using maximum likelihood. Assuming - observations that
+are independent of each other. - little or no multicolliniearity among
+the independent variables. - linearity of independent variables and log
+odds. - large enough sample size.
+
+The misclassification test error is 20\%.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+ \KeywordTok{library}\NormalTok{(pROC)}
+\NormalTok{diabetes_roc =}\StringTok{ }\KeywordTok{roc}\NormalTok{(ctest[,}\DecValTok{1}\NormalTok{], probs_diabetes, }\DataTypeTok{legacy.axes =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{ggroc}\NormalTok{(diabetes_roc) }\OperatorTok{+}\StringTok{ }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"ROC curve"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{, }\DataTypeTok{x =} \FloatTok{0.25}\NormalTok{, }\DataTypeTok{y =} \FloatTok{0.3}\NormalTok{, }
+    \DataTypeTok{label =} \StringTok{"AUC = 0.8451"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-27-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{auc =}\StringTok{ }\NormalTok{diabetes_roc}\OperatorTok{$}\NormalTok{auc}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#MODULE 8}
+\CommentTok{#TREES}
+\KeywordTok{library}\NormalTok{(tree)}
+\NormalTok{diabetes.tree =}\StringTok{ }\KeywordTok{tree}\NormalTok{(}\KeywordTok{as.factor}\NormalTok{(diabetes) }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{split =} \StringTok{"gini"}\NormalTok{, }\DataTypeTok{method =} \StringTok{"class"}\NormalTok{) }\CommentTok{#evt cross-entropy split? }
+\KeywordTok{summary}\NormalTok{(diabetes.tree)}
+\KeywordTok{plot}\NormalTok{(diabetes.tree, }\DataTypeTok{type =} \StringTok{"proportional"}\NormalTok{)}
+\KeywordTok{text}\NormalTok{(diabetes.tree)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-28-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(caret)}
+\NormalTok{diabetes.pred =}\StringTok{ }\KeywordTok{predict}\NormalTok{(diabetes.tree, }\DataTypeTok{newdata =}\NormalTok{ ctest, }\DataTypeTok{type =} \StringTok{"class"}\NormalTok{)}
+\KeywordTok{confusionMatrix}\NormalTok{(diabetes.pred, }\DataTypeTok{reference =} \KeywordTok{as.factor}\NormalTok{(ctest}\OperatorTok{$}\NormalTok{diabetes))}
+
+\CommentTok{#random forest  }
+\KeywordTok{library}\NormalTok{(randomForest)}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{300}\NormalTok{)}
+\NormalTok{rf =}\StringTok{ }\KeywordTok{randomForest}\NormalTok{(}\KeywordTok{as.factor}\NormalTok{(diabetes) }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{mtry =} \DecValTok{3}\NormalTok{, }\DataTypeTok{ntree =} \DecValTok{500}\NormalTok{, }\DataTypeTok{importance =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{rf}\OperatorTok{$}\NormalTok{confusion}
+\DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{sum}\NormalTok{(}\KeywordTok{diag}\NormalTok{(rf}\OperatorTok{$}\NormalTok{confusion[}\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]))}\OperatorTok{/}\NormalTok{(}\KeywordTok{sum}\NormalTok{(rf}\OperatorTok{$}\NormalTok{confusion[}\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]))}
+\NormalTok{yhat.rf =}\StringTok{ }\KeywordTok{predict}\NormalTok{(rf, }\DataTypeTok{newdata =}\NormalTok{ ctest)}
+\NormalTok{misclass.rf =}\StringTok{ }\KeywordTok{table}\NormalTok{(yhat.rf, ctest}\OperatorTok{$}\NormalTok{diabetes)}
+\KeywordTok{print}\NormalTok{(misclass.rf)}
+\NormalTok{misclass =}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{sum}\NormalTok{(}\KeywordTok{diag}\NormalTok{(misclass.rf))}\OperatorTok{/}\NormalTok{(}\KeywordTok{sum}\NormalTok{(misclass.rf))}
+\KeywordTok{print}\NormalTok{(misclass)}
+\KeywordTok{varImpPlot}\NormalTok{(rf, }\DataTypeTok{pch =} \DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-28-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{predrf =}\StringTok{ }\KeywordTok{predict}\NormalTok{(rf, ctest, }\DataTypeTok{type =} \StringTok{"prob"}\NormalTok{)}
+\NormalTok{testrfroc =}\StringTok{ }\KeywordTok{roc}\NormalTok{(ctest}\OperatorTok{$}\NormalTok{diabetes }\OperatorTok{==}\StringTok{ "1"}\NormalTok{, }\KeywordTok{as.numeric}\NormalTok{(predrf[,}\DecValTok{2}\NormalTok{]))}
+\KeywordTok{ggroc}\NormalTok{(testrfroc) }\OperatorTok{+}\StringTok{ }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"ROC curve Random Forest"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{, }\DataTypeTok{x =} \FloatTok{0.25}\NormalTok{, }\DataTypeTok{y =} \FloatTok{0.3}\NormalTok{, }
+    \DataTypeTok{label =} \StringTok{"AUC = 0.84"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-28-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{auc =}\StringTok{ }\NormalTok{testrfroc}\OperatorTok{$}\NormalTok{auc}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Classification tree:
+## tree(formula = as.factor(diabetes) ~ ., data = ctrain, method = "class", 
+##     split = "gini")
+## Number of terminal nodes:  29 
+## Residual mean deviance:  0.4741 = 128.5 / 271 
+## Misclassification error rate: 0.11 = 33 / 300 
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0 122  27
+##          1  33  50
+##                                         
+##                Accuracy : 0.7414        
+##                  95% CI : (0.68, 0.7965)
+##     No Information Rate : 0.6681        
+##     P-Value [Acc > NIR] : 0.009645      
+##                                         
+##                   Kappa : 0.4281        
+##  Mcnemar's Test P-Value : 0.518605      
+##                                         
+##             Sensitivity : 0.7871        
+##             Specificity : 0.6494        
+##          Pos Pred Value : 0.8188        
+##          Neg Pred Value : 0.6024        
+##              Prevalence : 0.6681        
+##          Detection Rate : 0.5259        
+##    Detection Prevalence : 0.6422        
+##       Balanced Accuracy : 0.7182        
+##                                         
+##        'Positive' Class : 0             
+##                                         
+##     0  1 class.error
+## 0 173 27       0.135
+## 1  40 60       0.400
+## [1] 0.2233333
+##        
+## yhat.rf   0   1
+##       0 133  29
+##       1  22  48
+## [1] 0.2198276
+\end{verbatim}
+
+Explain prediction and splitting criterion.
+
+Choosing random forest instead of bagging because we have a strong
+predictor in the dataset (glu). We don't want trees that are highly
+correlated, because this won't give us a large reduction in variance
+when averaging \(\hat{f}(x)\) Choosing mtry = 3 beause
+\(\sqrt{7}\approx 3\)
+
+Burde det prunes for å unngå overfitting?
+
+The misclassification rate is 22\%.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#SUPPORT VECTOR MACHINE }
+\KeywordTok{library}\NormalTok{(e1071)}
+\NormalTok{svmfit_kernel1 =}\StringTok{ }\KeywordTok{svm}\NormalTok{(}\KeywordTok{as.factor}\NormalTok{(diabetes) }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{kernel =} \StringTok{"radial"}\NormalTok{, }\DataTypeTok{gamma =} \DecValTok{1}\NormalTok{, }
+    \DataTypeTok{cost =} \DecValTok{10}\NormalTok{, }\DataTypeTok{scale =} \OtherTok{FALSE}\NormalTok{)}
+\CommentTok{#plot(svmfit_kernel1, ctrain, col = c("lightcoral", "lightgreen"))}
+\KeywordTok{summary}\NormalTok{(svmfit_kernel1)}
+\CommentTok{#find optimal tuning parameter C }
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{CV_kernel =}\StringTok{ }\KeywordTok{tune}\NormalTok{(svm, }\KeywordTok{as.factor}\NormalTok{(diabetes) }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{kernel =} \StringTok{"radial"}\NormalTok{, }\DataTypeTok{gamma =} \DecValTok{1}\NormalTok{, }
+    \DataTypeTok{ranges =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{cost =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.001}\NormalTok{, }\FloatTok{0.01}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{100}\NormalTok{)))}
+\KeywordTok{summary}\NormalTok{(CV_kernel)}
+
+\NormalTok{bestmod_kernel =}\StringTok{ }\NormalTok{CV_kernel}\OperatorTok{$}\NormalTok{best.model}
+\NormalTok{ypred_kernel =}\StringTok{ }\KeywordTok{predict}\NormalTok{(bestmod_kernel, ctest)}
+
+\NormalTok{conf_svm =}\StringTok{ }\KeywordTok{table}\NormalTok{(}\DataTypeTok{predict =}\NormalTok{ ypred_kernel, }\DataTypeTok{truth =}\NormalTok{ ctest[, }\DecValTok{1}\NormalTok{])}
+\NormalTok{misclass_svm=}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{sum}\NormalTok{(}\KeywordTok{diag}\NormalTok{(conf_svm))}\OperatorTok{/}\NormalTok{(}\KeywordTok{sum}\NormalTok{(conf_svm))}
+\NormalTok{misclass_svm}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## svm(formula = as.factor(diabetes) ~ ., data = ctrain, kernel = "radial", 
+##     gamma = 1, cost = 10, scale = FALSE)
+## 
+## 
+## Parameters:
+##    SVM-Type:  C-classification 
+##  SVM-Kernel:  radial 
+##        cost:  10 
+##       gamma:  1 
+## 
+## Number of Support Vectors:  300
+## 
+##  ( 100 200 )
+## 
+## 
+## Number of Classes:  2 
+## 
+## Levels: 
+##  0 1
+## 
+## 
+## 
+## 
+## Parameter tuning of 'svm':
+## 
+## - sampling method: 10-fold cross validation 
+## 
+## - best parameters:
+##  cost
+##     1
+## 
+## - best performance: 0.3266667 
+## 
+## - Detailed performance results:
+##    cost     error dispersion
+## 1 1e-03 0.3333333 0.07535922
+## 2 1e-02 0.3333333 0.07535922
+## 3 1e-01 0.3333333 0.07535922
+## 4 1e+00 0.3266667 0.09269624
+## 5 5e+00 0.3333333 0.08461970
+## 6 1e+01 0.3333333 0.08461970
+## 7 1e+02 0.3333333 0.08461970
+## 
+## [1] 0.2931034
+\end{verbatim}
+
+Probabilities for each class not given, therefore no ROC. STEMMER DETTE?
+The misclassification rate is 29\%.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#NEURAL NETWORKS}
+\KeywordTok{library}\NormalTok{(caret)}
+\KeywordTok{library}\NormalTok{(nnet)}
+\CommentTok{#bruk av keras er utenfor pensum }
+\CommentTok{#library(keras) }
+
+\CommentTok{#Parameter estimitation }
+\NormalTok{fitnnet =}\StringTok{ }\KeywordTok{nnet}\NormalTok{(diabetes }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ ctrain, }
+    \DataTypeTok{linout =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{size =} \DecValTok{0}\NormalTok{, }\DataTypeTok{skip =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{maxit =} \DecValTok{1000}\NormalTok{)}
+\KeywordTok{cbind}\NormalTok{(fitnnet}\OperatorTok{$}\NormalTok{wts)}
+
+\CommentTok{#parameterestimation vs. network weights}
+\NormalTok{fitlogist =}\StringTok{ }\KeywordTok{glm}\NormalTok{(diabetes }\OperatorTok{~}\StringTok{ }\NormalTok{npreg }\OperatorTok{+}\StringTok{ }\NormalTok{glu }\OperatorTok{+}\StringTok{ }\NormalTok{bp }\OperatorTok{+}\StringTok{ }\NormalTok{skin }\OperatorTok{+}\StringTok{ }\NormalTok{bmi }\OperatorTok{+}\StringTok{ }\NormalTok{ped }\OperatorTok{+}\StringTok{ }\NormalTok{age, }
+    \DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{))}
+\NormalTok{fitnnet =}\StringTok{ }\KeywordTok{nnet}\NormalTok{(diabetes }\OperatorTok{~}\StringTok{ }\NormalTok{npreg }\OperatorTok{+}\StringTok{ }\NormalTok{glu }\OperatorTok{+}\StringTok{ }\NormalTok{bp }\OperatorTok{+}\StringTok{ }\NormalTok{skin }\OperatorTok{+}\StringTok{ }\NormalTok{bmi }\OperatorTok{+}\StringTok{ }\NormalTok{ped }\OperatorTok{+}\StringTok{ }\NormalTok{age, }
+    \DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{linout =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{size =} \DecValTok{0}\NormalTok{, }\DataTypeTok{skip =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{maxit =} \DecValTok{1000}\NormalTok{, }
+    \DataTypeTok{entropy =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{Wts =}\NormalTok{ fitlogist}\OperatorTok{$}\NormalTok{coefficients }\OperatorTok{+}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{8}\NormalTok{, }\DecValTok{0}\NormalTok{, }\FloatTok{0.1}\NormalTok{))}
+\CommentTok{#plot(fitnnet)}
+
+\CommentTok{#single hidden layer }
+\NormalTok{fitnnet =}\StringTok{ }\KeywordTok{nnet}\NormalTok{(}\KeywordTok{as.factor}\NormalTok{(diabetes) }\OperatorTok{~}\NormalTok{., }\DataTypeTok{size =} \DecValTok{50}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ ctrain, }\DataTypeTok{lineout =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{maxit =} \DecValTok{1000}\NormalTok{)}
+\NormalTok{pred =}\StringTok{ }\KeywordTok{predict}\NormalTok{(fitnnet, }\DataTypeTok{newdata =}\NormalTok{ ctest, }\DataTypeTok{type =} \StringTok{"raw"}\NormalTok{)}
+
+\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{mean}\NormalTok{((pred[, }\DecValTok{1}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{ctest[,}\DecValTok{1}\NormalTok{])}\OperatorTok{^}\DecValTok{2}\NormalTok{))}
+\NormalTok{mae =}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(pred[, }\DecValTok{1}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{ctest[,}\DecValTok{1}\NormalTok{]))}
+\NormalTok{mae}
+
+\NormalTok{conf_nnet =}\StringTok{ }\KeywordTok{table}\NormalTok{(}\DataTypeTok{predict =}\NormalTok{ pred, }\DataTypeTok{truth =}\NormalTok{ ctest[, }\DecValTok{1}\NormalTok{])}
+\NormalTok{misclass_nnet=}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{sum}\NormalTok{(}\KeywordTok{diag}\NormalTok{(conf_nnet))}\OperatorTok{/}\NormalTok{(}\KeywordTok{sum}\NormalTok{(conf_nnet))}
+\NormalTok{misclass_nnet}
+
+\NormalTok{nnetroc =}\StringTok{ }\KeywordTok{roc}\NormalTok{(ctest}\OperatorTok{$}\NormalTok{diabetes, }\KeywordTok{as.numeric}\NormalTok{(pred))}
+\KeywordTok{auc}\NormalTok{(testrfroc)}
+\KeywordTok{plot}\NormalTok{(testrfroc)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Comp_ex2_files/figure-latex/unnamed-chunk-30-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# <!-- # using cross validation to find the best number of hidden nodes -->}
+\CommentTok{# <!-- grid = c(5, 10, 15, 20, 25, 30, 50) -->}
+\CommentTok{# <!-- train_targets = ctrain[,1] -->}
+\CommentTok{# }
+\CommentTok{# <!-- k <- 4 -->}
+\CommentTok{# <!-- set.seed(123) -->}
+\CommentTok{# <!-- indices <- sample(1:nrow(ctrain)) -->}
+\CommentTok{# <!-- folds <- cut(indices, breaks = k, labels = FALSE) -->}
+\CommentTok{# <!-- # have now assigned the traning data to 4 diffeent folds all of the -->}
+\CommentTok{# <!-- # same size (101) -->}
+\CommentTok{# }
+\CommentTok{# <!-- resmat = matrix(NA, ncol = k, nrow = length(grid)) -->}
+\CommentTok{# <!-- for (j in 1:k) \{ -->}
+\CommentTok{# <!--     thistrain = (1:dim(ctrain)[1])[folds != j] -->}
+\CommentTok{# <!--     thisvalid = (1:dim(ctrain)[1])[folds == j] -->}
+\CommentTok{# <!--     mean <- apply(ctrain[thistrain, ], 2, mean) -->}
+\CommentTok{# <!--     std <- apply(ctrain[thistrain, ], 2, sd) -->}
+\CommentTok{# <!--     new <- scale(ctrain, center = mean, scale = std) -->}
+\CommentTok{# <!--     for (i in 1:length(grid)) \{ -->}
+\CommentTok{# <!--         thissize = grid[i] -->}
+\CommentTok{# }
+\CommentTok{# <!--         fit = nnet(unlist(ctrain) ~ ., data = new, size = thissize, linout = TRUE, -->}
+\CommentTok{# <!--             maxit = 5000) -->}
+\CommentTok{# <!--         pred = predict(fit, newdata = new[thisvalid, ], type = "raw") -->}
+\CommentTok{# <!--         resmat[i, j] = sum((pred[, 1] - train_targets[thisvalid])^2) -->}
+\CommentTok{# <!--     \} -->}
+\CommentTok{# <!-- \} -->}
+\CommentTok{# <!-- mse = apply(resmat, 1, sum)/nrow(ctrain) -->}
+\CommentTok{# <!-- #plot(grid, mse, type = "l") -->}
+\CommentTok{# <!-- mse -->}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # weights:  8
+## initial  value 182027.402575 
+## iter  10 value 6373.431074
+## final  value 42.165329 
+## converged
+##              [,1]
+## [1,] -1.141421018
+## [2,]  0.016331218
+## [3,]  0.005847302
+## [4,] -0.001624975
+## [5,]  0.003247627
+## [6,]  0.012400179
+## [7,]  0.267997808
+## [8,]  0.005816023
+## # weights:  8
+## initial  value 2060.840939 
+## iter  10 value 144.384452
+## final  value 126.919749 
+## converged
+## # weights:  451
+## initial  value 290.834159 
+## iter  10 value 165.134438
+## iter  20 value 159.328089
+## iter  30 value 152.208478
+## iter  40 value 150.356721
+## iter  50 value 146.064307
+## iter  60 value 135.823738
+## iter  70 value 133.390684
+## iter  80 value 131.899537
+## iter  90 value 123.901151
+## iter 100 value 114.872170
+## iter 110 value 109.125190
+## iter 120 value 106.637223
+## iter 130 value 105.661910
+## iter 140 value 104.612949
+## iter 150 value 104.193587
+## iter 160 value 102.136197
+## iter 170 value 99.791857
+## iter 180 value 98.128512
+## iter 190 value 96.136374
+## iter 200 value 90.150684
+## iter 210 value 88.861922
+## iter 220 value 88.279158
+## iter 230 value 88.078135
+## iter 240 value 88.057229
+## iter 250 value 88.056148
+## final  value 88.056083 
+## converged
+## [1] 0.4882056
+## [1] 0.3227955
+## [1] 0.7456897
+## Area under the curve: 0.84
+\end{verbatim}
+
+The neural network model:
+\[\hat{y}_1(x_i)=\phi_0(w_o+w_1x_{i1}+\cdot\cdot\cdot+w_px_{ip})\] where
+\(\phi_0(x)=x\). Loss function: ?
+\[J({\bf w})=\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y_1}({\bf x_i}))^2\]
+
+Chosen tuning parameters and model selection:
+
+report (any) insight into the interpretation of the fitted model:
+
+Mislcass = 75\% :S AUC = 0.7407
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Q30:} Conclude with choosing a winning method, and explain why
+you mean that this is the winning method.
+
+
+\end{document}
