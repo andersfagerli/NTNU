@@ -667,88 +667,95 @@ Probabilities for each class not given, therefore no ROC. STEMMER DETTE?
 The misclassification rate is 29%. 
 
 ARTIFICIAL NEURAL NETWORKS
+
+Firstly, we use cross validation to fint the number of hidden nodes that will give us the best model. 
 ```{r,eval = TRUE} 
 library(caret)
 library(nnet)
-#bruk av keras er utenfor pensum 
 library(keras) 
 
-#Parameter estimitation 
-fitnnet = nnet(diabetes ~ ., data = ctrain, 
-    linout = TRUE, size = 0, skip = TRUE, maxit = 1000)
-cbind(fitnnet$wts)
+#normalizing the data
+# org_train = ctrain
+# mean <- apply(ctrain[,-1], 2, mean)
+# std <- apply(ctrain[,-1], 2, sd)
+# train_data <- scale(ctrain[,-1], center = mean, scale = std)
+# test_data <- scale(ctest[,-1], center = mean, scale = std)
 
-#parameterestimation vs. network weights
-fitlogist = glm(diabetes ~ npreg + glu + bp + skin + bmi + ped + age, 
-    data = ctrain, family = binomial(link = "logit"))
-fitnnet = nnet(diabetes ~ npreg + glu + bp + skin + bmi + ped + age, 
-    data = ctrain, linout = FALSE, size = 0, skip = TRUE, maxit = 1000, 
-    entropy = TRUE, Wts = fitlogist$coefficients + rnorm(8, 0, 0.1))
-#plot(fitnnet)
+org_train = ctrain
+train_data <- ctrain
+test_data <- ctest
 
-#single hidden layer 
-fitnnet = nnet(as.factor(diabetes) ~., size = 50, data = ctrain, lineout = TRUE, maxit = 1000)
-pred = predict(fitnnet, newdata = ctest, type = "raw")
+#using CV to find best number of hidden nodes
+grid = c(5, 10, 15, 20, 25, 30, 50)
 
-sqrt(mean((pred[, 1] - ctest[,1])^2))
-mae = mean(abs(pred[, 1] - ctest[,1]))
-mae
+k <- 4
+set.seed(123)
+indices <- sample(1:nrow(ctrain))
+folds <- cut(indices, breaks = k, labels = FALSE)
 
-conf_nnet = table(predict = pred, truth = ctest[, 1])
-misclass_nnet= 1 - sum(diag(conf_nnet))/(sum(conf_nnet))
-misclass_nnet
+resmat = matrix(NA, ncol = k, nrow = length(grid))
+for (j in 1:k) {
+    thistrain = (1:dim(train_data)[1])[folds != j]
+    thisvalid = (1:dim(train_data)[1])[folds == j]
+    mean <- apply(org_train[thistrain, ], 2, mean)
+    std <- apply(org_train[thistrain, ], 2, sd)
+    new <- scale(org_train, center = mean, scale = std)
+    for (i in 1:length(grid)) {
+        thissize = grid[i]
+        
+        fit = nnet(as.factor(diabetes) ~ ., data = new, size = thissize, linout = FALSE,
+            maxit = 5000)
+        pred = predict(fit, newdata = new[thisvalid, ], type = "raw")
+        resmat[i, j] = sum((pred[, 1]==diabetes[thisvalid]))
+    }
+}
 
-nnetroc = roc(ctest$diabetes, as.numeric(pred))
+#misclass = 1- table(resmat, truth = ctest[, 1])
+misclass = 1-apply(resmat, 1, sum)/nrow(train_data)
+plot(grid, misclass, type = "l")
+misclass
+```
+We find the lowest misclassification rate when we use 25 nodes, and use this when fitting the model with the full test set. 
+```{r,eval = TRUE} 
+fitnnet = nnet(as.factor(diabetes) ~., size = 25, data = train_data, lineout = FALSE, maxit = 1000)
+summary(fitnnet)
+```
+In nnet we can only have one hidden layer, and for single hidden layer feeedforwad networks we have the model: 
+$$\hat{y}_c({\bf x})=\phi_o(\beta_{0c}+\sum_{m=1}^{M}\beta _{mc}z_m)=\phi_o(\beta_ {0c}+\sum_{m=1}^{M}\beta_{mc}\phi_h(\alpha_{0m} +\sum_{j=1}^{p}\alpha_{jm}x_j) $$ where $\phi_0(x)=x$. 
+
+By default, we have sigmoid as output layer activation: $$g(a)=\frac{1}{1+e^{-a}}$$
+
+With out given C=2 classification problem, we use the Binary cross-entropy loss function: 
+$$J({\bf \theta})=-\frac{1}{n}\sum_{i=1}^{n}(y_iln(\hat{y}_1({\bf x}_i)) + (1-y_i)ln(1-\hat{y}_1({\bf x}_i))$$
+where $\hat{y_1}({\bf x_i})$ is the output from the sigmoid output node and $y_i$ is the 0/1 observed class. 
+We estimate det unknown parameters $\theta$ by minimizing the loss function $J(\theta)$. 
+COMMENT: Are we using gradient descent to achieve this?
+Our tuning parameters are: $\alpha:{jm}$ an $\beta_{mc}$
+When using neural networks we don't make any assumptions about the data, errors or targets. 
+
+```{r,eval = TRUE} 
+# #neuralnet plot
+# library(NeuralNetTools)
+# plotnet(fitnnet)
+
+prednnet = predict(fitnnet, newdata = test_data, type = "class")
+``` 
+We make a confusion matrix and calculate the accuracy: 
+```{r,eval = TRUE} 
+#accuracy
+conf_nnet = table(prednnet, truth = ctest[, 1])
+accuracy_nnet= sum(diag(conf_svm))/(sum(conf_svm))
+accuracy_nnet
+```
+The ROC and AUC are given below
+```{r,eval = TRUE} 
+#ROC and AUC
+nnetroc = roc(test_data[,1], as.numeric(prednnet))
 auc(testrfroc)
 plot(testrfroc)
-
-
-# <!-- # using cross validation to find the best number of hidden nodes -->
-# <!-- grid = c(5, 10, 15, 20, 25, 30, 50) -->
-# <!-- train_targets = ctrain[,1] -->
-# 
-# <!-- k <- 4 -->
-# <!-- set.seed(123) -->
-# <!-- indices <- sample(1:nrow(ctrain)) -->
-# <!-- folds <- cut(indices, breaks = k, labels = FALSE) -->
-# <!-- # have now assigned the traning data to 4 diffeent folds all of the -->
-# <!-- # same size (101) -->
-# 
-# <!-- resmat = matrix(NA, ncol = k, nrow = length(grid)) -->
-# <!-- for (j in 1:k) { -->
-# <!--     thistrain = (1:dim(ctrain)[1])[folds != j] -->
-# <!--     thisvalid = (1:dim(ctrain)[1])[folds == j] -->
-# <!--     mean <- apply(ctrain[thistrain, ], 2, mean) -->
-# <!--     std <- apply(ctrain[thistrain, ], 2, sd) -->
-# <!--     new <- scale(ctrain, center = mean, scale = std) -->
-# <!--     for (i in 1:length(grid)) { -->
-# <!--         thissize = grid[i] -->
-# 
-# <!--         fit = nnet(unlist(ctrain) ~ ., data = new, size = thissize, linout = TRUE, -->
-# <!--             maxit = 5000) -->
-# <!--         pred = predict(fit, newdata = new[thisvalid, ], type = "raw") -->
-# <!--         resmat[i, j] = sum((pred[, 1] - train_targets[thisvalid])^2) -->
-# <!--     } -->
-# <!-- } -->
-# <!-- mse = apply(resmat, 1, sum)/nrow(ctrain) -->
-# <!-- #plot(grid, mse, type = "l") -->
-# <!-- mse -->
 ```
 
-The neural network model: 
-$$\hat{y}_1(x_i)=\phi_0(w_o+w_1x_{i1}+\cdot\cdot\cdot+w_px_{ip})$$ where $\phi_0(x)=x$. 
-Loss function: ?
-$$J({\bf w})=\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y_1}({\bf x_i}))^2$$
-
-Chosen tuning parameters and model selection: 
-
-report (any) insight into the interpretation of the fitted model: 
-
-Mislcass = 75% :S 
-AUC = 0.7407
-
-
-
-
+KAN VURDERE Å SE PÅ: We can add weight decays = penalties in the nnet.
+                    Early stopping to avoid overfitting. 
 ***
 **Q30:** Conclude with choosing a winning method, and explain why you mean that this is the winning method.
