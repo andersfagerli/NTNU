@@ -1,8 +1,4 @@
 ---
-output:
-  html_document: default
-  pdf_document: default
----
 subtitle: "TMA4268 Statistical Learning V2019"
 title: "Compulsory exercise 2: Group 2"
 author: "Anders Fagerli, Rebecca Sandstø"
@@ -141,7 +137,8 @@ Model selection can be done by best subset model selection, which aims to produc
 $$
 AIC = \frac{1}{n\hat{\sigma}^2}(RSS+2d\hat{\sigma}^2)
 $$
-The AIC is computed for each of the $p+1$ models, and the model with lowest score is deemed as the best model. $d$ is here the number of predictors, otherwise known as the $p+1$ covariates (intercept included). We can then see how the AIC penalizes larger models.  
+The AIC is computed for each of the $p+1$ models, and the model with lowest score is deemed as the best model. $d$ is here the number of predictors, otherwise known as the $p+1$ covariates (intercept included). We can then see how the AIC penalizes larger models.
+
 ***
 **Q5:** What are the main differences between using AIC for model selection and using cross-validation (with mean squared test error MSE)?
 
@@ -164,7 +161,7 @@ summary(fit)
 
 We see from the `summary` how `cut`, `color` and `clarity` are represented in the model. As these are categorical covariates, each level may influence the response differently. This can be seen from the estimates of each level, where e.g an ideal `cut` affects the `logprice` more than a good `cut`. We also see from the `summary` of `fit` that the best model includes the covariates `logcarat`, `cut`, `color`, `clarity` and `xx`.
 $$
-\hat{Y_i}=\beta_0+\hat\beta_{logcarat}\cdot\text{logcarat}_i+\hat\beta_{cut}\cdot\text{cut}_i+\hat\beta_{color}\cdot\text{color}_i+\hat\beta_{clarity}\cdot\text{clarity}_i+\hat\beta_{xx}\cdot\text{xx}_i
+\hat{Y_i}=\hat\beta_0+\hat\beta_{logcarat}\cdot\text{logcarat}_i+\hat\beta_{cut}\cdot\text{cut}_i+\hat\beta_{color}\cdot\text{color}_i+\hat\beta_{clarity}\cdot\text{clarity}_i+\hat\beta_{xx}\cdot\text{xx}_i
 $$
 The estimated coefficients for `cut`, `color` and `clarity` will in this model depend on which value the covariates take. We can from the new model interpret which covariates and levels are significant in the regression, and from the estimates how they affect the response.
 
@@ -304,31 +301,27 @@ By calculating the MSE of each method, we see that the random forest has best pe
 ***
 **Q21:** What is the definition of a principal component score, and how is the score related to the eigenvectors of the matrix ${\hat {\bf R}}$.
 
-The principal component scores are the $z_{1i}, ..., z_{ni}$ elements in the principal component vectors, where
-$z_{in} = \phi_{11}x_{i1}+\phi_{21}x_{i1}+...+\phi_{p1}x_{ip}$
+*Remark*: We will here denote a principal component as ${\bf Z}_m$, not to be confused with the standardized design matrix in the task.
 
-The direction of the first principal component is given by the first eigenvector(${\bf \phi$}) of the covariance matrix. The first eigenvector is the one with the largest eigenvalue.
+The principal component scores are the principal components projected onto the data, ${\bf Z}_m{\bf X}_i=z_{1}x_{i1}+z_{2}x_{i2}+\cdots+z_{n}x_{ip}$, where each principal component ${\bf Z}_m$ is a weighted sum of the covariates ${\bf Z}_m=\sum_{j=1}^{p}\phi_{jm}X_j$ subject to $\sum_{j=1}^{p}\phi_{jm}^2=1$. The weights $\boldsymbol{\phi}_m$ are given by the eigenvectors of the estimated covariance matrix ${\hat {\bf R}}$.
 
 ***
 **Q22:** Explain what is given in the plot with title "First eigenvector". Why are there only $n=64$ eigenvectors and $n=64$ principal component scores?
 
-In the plot we see the weights that the different genes are given in the first eigenvector ${\bf\phi_1}$.
-
-Where ${\bf \phi_1}=[\phi_{11}, \phi_{13},...,\phi_{1p}]$ and $\phi_{1i}$ are the different weights.
-
-The Rank of a matrix centered by columns is $\leq(n-1,p)$, which gives our $\bf Z$ a rank 63. Then the sample covariance matrix should also have rank 63, which gives us a maximum of 63 principal components. ????
+In the plot we see the weights that the different genes are given by the first eigenvector ${\boldsymbol\phi}_1$, and thus also how the first principal component ${\bf Z}_1$ weights the genes. The rank of the design matrix can at maximum be 64, as we only have $n=64$ samples, so the maximum amount of eigenvectors (orthogonal to eachother) is then 64. The rank of a matrix centered by columns is $\leq(n-1,p)$, which gives our $\bf Z$ a rank 63. Then the sample covariance matrix will also have rank 63, which should give us a maximum of 63 principal components. Principal component ${\bf Z}_{64}$ can be seen from the `summary` below to equal 0.
 
 ***
 **Q23:** How many principal components are needed to explain 80% of the total variance in ${\bf Z}$? Why is `sum(pca$sdev^2)=p`?  
 
-We can read from the summary that we need 32 PCA´s for the cumulative proportion of variance explained to be 80%.  
+We can read from the `summary` that we need 32 PCs for the cumulative proportion of variance explained to be 80%.  
 
-The PCA analysis gives 64 principal components that in total explain all the variability in the data. This means that the sum of the variance in the PCA equals the total variance of the data, sum(pca.sdev^2) =$\sigma_{tot}^2$.
-We know that the column standard deviations for $\bf Z$ are 1, which gives column variance equal 1. To get the total variance in the data we sum the variance for each column.
-In our case: $\sigma_{tot}^2=6830\cdot 1=6830=p$
+The PCA analysis gives 64 principal components that in total explain all the variability in the data. This means that the sum of the variance in the PCs equals the total variance of the data, sum(pca.sdev^2) =$\text{total variance}$.
+We know that the column standard deviations for the standardized design matrix $\bf Z$ are 1, which gives column variance equal 1. To get the total variance in the data we sum the variance for each column.
+
+In our case: $\text{total variance}=6830\cdot 1=p$
+
 ***
 **Q24**: Study the PC1 vs PC2 plot, and comment on the groupings observed. What can you say about the placement of the `K262`, `MCF7` and `UNKNOWN` samples? Produce the same plot for two other pairs of PCs and comment on your observations.
-
 
 ```{r}
 library(ElemStatLearn)
@@ -339,33 +332,39 @@ cols=rainbow(ngroups)
 cols[c(4,5,7,8,14)] = "black"
 pch.vec = rep(4,14)
 pch.vec[c(4,5,7,8,14)] = 15:19
+
 colsvsnames=cbind(cols,sort(unique(rownames(X))))
 colsamples=cols[match(rownames(X),colsvsnames[,2])]
 pchvsnames=cbind(pch.vec,sort(unique(rownames(X))))
 pchsamples=pch.vec[match(rownames(X),pchvsnames[,2])]
+
 Z=scale(X)
+
 pca=prcomp(Z)
 plot(pca$x[,1],pca$x[,2],xlab="PC1",ylab="PC2",pch=pchsamples,col=colsamples)
-plot(pca$x[,3],pca$x[,4],xlab="PC3",ylab="PC4",pch=pchsamples,col=colsamples)
-legend("bottomright",legend = colsvsnames[,2],cex=0.55,col=cols,pch = pch.vec)
+#legend("bottomright",legend = colsvsnames[,2],cex=0.55,col=cols,pch = pch.vec)
 plot(1:dim(X)[2],pca$rotation[,1],type="l",xlab="genes",ylab="weight",main="First eigenvector")
+```
 
+For the PC1/PC2 plot we observe that several groupings of the same cell types have been made. This indicates that the analysis has suceeded in placing cancer tumours that have similar gene activity together. The K562 cells are grouped together with the leukemia samples, as K562 is a leukemia cell. Similarly, the MC57 cells are spread out together with the other breast cancer samples. The UNKNOWN sample is placed together in a grouping with many other different cancer tumors, indicating that it may be one of these. The plot illustrates the abilities of principal components, where we now can use only two vectors to explain the data, in comparison to using all the 6830 genes. The legend in the R code above can be uncommented to see which markers correspond to which cells.
+
+```{r,eval=TRUE}
+plot(pca$x[,3],pca$x[,4],xlab="PC3",ylab="PC4",pch=pchsamples,col=colsamples)
+#legend("bottomright",legend = colsvsnames[,2],cex=0.55,col=cols,pch = pch.vec)
 summary(pca)
 ```
 
-For the PC1/PC2 plot we observe that several groupings of the same cell types have been made. The leukimia cells are grouped together with the K562 cells, which intuitively makes sense. The MC57 cells are spread out together with the other breast cancer cells. This might mean that the two first principal component don't hold much relevant information for these cells.
-The UNKNOWN sample is placed quite close to the origin, together with many other different cancer tumors. This might mean that these pricinpal components do not hold enough useful information about these tumors to clearly tell them apart.
-
-In the PC3/PC4 plot we see some of the same groupings, eg. leukimia and colon. The breast cancer cells are still spread out and the UNKNOWN sample is still quite close to the origin. The MC57 are not present in this plot, telling us ??
+In the PC3/PC4 plot we see some of the same groupings, e.g the K562 cells are still grouped with leukemia samples, although the samples are not as grouped this time. A big difference from the previous plot is where the groupings are placed, and the groupings for UNKNOWN and MC57. Because the principal components are uncorrelated, but still give us the same tendencies, we will mostly see the same groupings but with different scores. 
 
 ***
 **Q25:**: Explain what it means to use Euclidean distance and average linkage for hierarchical clustering.
 
 In hierarchical clustering we define a measure of dissimilarity, often the euclidean distance. The euclidean distance refers to the distance beetween pairs of observations:
-$$||a-b||_2=\sqrt{\sum_i(a_i-b_i)^2}$$
 
+$$
+||a-b||_2=\sqrt{\sum_i(a_i-b_i)^2}
+$$
 The use of euclidean distance will cluster observations of similar magnitude together.
-
 Linkage describes the concept of dissimilarity beetween groups of observations. In average linking the dissimilarity between two clusters, A and B, is given by the mean intercluster dissmilarity. All pairwise dissimilarities (in our case euclidean distances) between the observations in cluster A and B are computed, and the average is used.
 $L(A,B)=\frac{1}{n_An_B}\sum_{i=1}^{n_A}\sum_{j=1}^{n_B}D(x_{Ai},x_{Bj})$
 
@@ -373,15 +372,15 @@ $L(A,B)=\frac{1}{n_An_B}\sum_{i=1}^{n_A}\sum_{j=1}^{n_B}D(x_{Ai},x_{Bj})$
 **Q26:**: Perform hierarchical clustering with Euclidean distance and average linkage on the scaled gene expression in `Z`. Observe where our samples labelled as K562, MCF7 and `UNKNOWN` are placed in the dendrogram. Which conclusions can you draw from this?¨
 
 ```{r,eval = TRUE}
-#library(dendextend)
 hc = hclust(dist(Z[,-1]), method = "average")
 plot(hc, xlab = "", sub = "")
 str(hc)
 ```
 
-The K562 samples are placed close to the other Leukimia samples, and the MC57s close to other breast cancer samples. Their clusters are placed low in the dendogram, which tells us they were one of the first clusters to be made and that the samples have clear similarities beetween each other.
+The K562 samples are placed close to the other leukemia samples, and the MC57s close to other breast cancer samples. Their clusters are placed low in the dendogram, which tells us they were one of the first clusters to be made and that the samples have clear similarities beetween each other.
 
-The UNKNOWN sample is placed close to several different cancer types, which indicates that there is a group of cancers that have similar characteristics and that are difficult to tell apart based on the gene activity. This is supported by the plots from Q24, which also scatter these cancer types close to each other.
+The UNKNOWN sample ends up beeing clustered together with several different cancer types, which indicates that there is a group of cancers that have similar characteristics and that are difficult to tell apart based on the gene activity. This is supported by the plots from **Q24**, which also scatter these cancer types close to each other.
+
 ***
 **Q27:**: Study the R-code and plot below. Here we have performed hierarchical clustering based on thefirst 64 principal component instead of the gene expression data in `Z`. What is the difference between using all the gene expression data and using the first 64 principal components in the clustering? We have plotted the dendrogram together with a heatmap of the data. Explain what is shown in the heatmap. What is given on the horizontal axis, vertical axis, value in the pixel grid?
 
@@ -390,18 +389,14 @@ library(pheatmap)
 npcs=64
 pheatmap(pca$x[,1:npcs],scale="none",cluster_col=FALSE,cluster_row=TRUE,clustering_distance_rows = "euclidean",clustering_method="average",fontsize_row=5,fontsize_col=5)
 ```
-From "the curse of dimensonality", we have that the use of Euclidean distance in high dimensional spaces might be problematic. By reducing the dimensions in the problem from $p$ to 64 the use of this distance metric might/will make more sense. But we still have quite many dimensions?
 
-Using the principal components enables us to make a heatmap of reasonable size and reduces the computation time for clustering.  Using the forst 64 principal components means using all of them, and by doing this we preserve all the variance in the data.
+Using the principal components enables us to make a heatmap of reasonable size and reduces the computation time for clustering. Using the first 64 principal components means using all of them, and by doing this we preserve 100% of the variance in the data.
 
-The horisontal axis list the principal components. The vertical axis, left side, shows the dendogram for the clustering. Vertical axis, right side, are the observed cancer types. As the vertical axis "sorts" the cancer tumors based on similarity, we can quickly see what cancer tumors had similar gene activity.
-The colors in the pixel grid represent the changes in the expression of the cancer tumor. E.g. the leukimia tumors are given similar scores in PC1, and we can see that they must activate many of the same genes. In PC2 the same tumors are given more "neutral" colours, which tells is they are harder to tell apart from other cancer tumors baced on the variance captured in PC2.
+The horisontal axis list the principal components. The vertical axis, left side, shows the dendogram for the clustering. Because we have preserved all the variance in the data, this dendogram should be the same as in **Q26**. Vertical axis, right side, are the observed cancer types. As the vertical axis "sorts" the cancer tumors based on similarity, we can quickly see what cancer tumors had similar gene activity.
+The colors in the pixel grid represent the changes in the expression of the cancer tumor. E.g. the leukemia tumors are given similar values in PC1, and we can see that they must activate many of the same genes. In PC2 the same tumors are given more "neutral" colours, which tells us they are harder to tell apart from other cancer tumors baced on the variance captured in PC2.
 
----
-output:
-  pdf_document: default
-  html_document: default
----
+From "the curse of dimensonality", we have that the use of Euclidean distance in high dimensional spaces might be problematic. By reducing the dimensions in the problem from $p$ to 64 the use of this distance metric might make more sense. But we still have quite many dimensions, so in our case this will not make much difference. 
+
 # Problem 3: Flying solo with diabetes data [6 points]
 
 ```{r,eval=TRUE}
@@ -428,7 +423,6 @@ Some classification methods assume that the data comes from specific probability
 library(fitdistrplus)
 vec.glu = c(ctrain["glu"]$glu)
 descdist(vec.glu)
-
 #Anderson-Darling test
 library(nortest)
 vec.bmi = c(ctrain["bmi"]$bmi)
@@ -487,7 +481,7 @@ where $p_i$ is the probability of classifying to `diabetes`$=1$ and $(1-p_i)$ to
 * Linearity between independent variables and log odds
 * Large enough sample size
 
-Using best subset selection, we may produce the combination of covariates that gives the best score according to some criteria, here the AIC. The resulting model consists of `npreg`, `glu`, `bmi`, `ped` and `age`.
+Using best subset selection, we may produce the combination of covariates that gives the best score according to some criteria, here the AIC. The resulting model consists of `npreg`, `glu`, `bmi`, `ped` and `age`, where we can interpret the importance of each covariate from print-out of the estimated coefficients above.
 
 We can then test our new model on the test set.
 
@@ -554,7 +548,7 @@ A difficult part of using support vector machines for our dataset is choosing wh
 
 For a support vector *classifier*, we choose a linear decision boundry, where we wish to maximize the margin $M$ with respect to the coefficients $\boldsymbol{\beta}$ and slack variables $\epsilon_i$, with the constraints $\sum_{j=1}^{p}\beta_{j}^2=1$ and $\sum_{i=1}^{n}\epsilon_{i}\leq C$. We get the resulting classifier $f(\boldsymbol{x})=\beta_0+\beta_1x_1+\cdots+\beta_px_p$, where the sign of $f(\boldsymbol{x})$ determines the class. $C$ is here a tuning parameter, restricting the number of training observations that can be on the wrong side of the decision boundry (hyperplane). Choosing the value of $C$ is a trade-off between acceptable bias and variance, where a low value will allow fewer violations (less bias) and a high value will allow many violations (less variation). This tuning parameter is normally chosen by cross-validation.
 
-Extending to support vector *machines*, we choose a non-linear decision boundry. This boundry is set by choosing a specific *kernel*, $K(\boldsymbol{x},\boldsymbol{x}_i)$, giving e.g a radial or polynomial boundry. The resulting classifier is $f({\bf x}_i)=\beta_0 +\sum_{l\in \cal{S}} \alpha_l K({\bf x}_i,{\bf x}_l)$.
+Extending to support vector *machines*, we choose a non-linear decision boundry. This boundry is set by choosing a specific *kernel*, $K(\boldsymbol{x},\boldsymbol{x}_i)$, giving e.g a radial or polynomial boundry. The resulting classifier is $f({\bf x}_i)=\beta_0 +\sum_{l\in \cal{S}} \alpha_l K({\bf x}_i,{\bf x}_l)$, where a positive value for $f({\bf x}_i)$ classifies to one class, and a negative value classifies to the other.
 
 The models above do not assume anything in particular about the data, as the methods are moreso a product of computer science than statistics.
 
@@ -565,23 +559,18 @@ library(e1071)
 #Linear boundry
 svmlinear.cv = tune(svm, as.factor(diabetes) ~ ., data = ctrain, kernel = "linear", ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
 svmlinear.model = svmlinear.cv$best.model
-
 svmlinear.prediction = predict(svmlinear.model, newdata=ctest)
 svmlinear.confTable = table(svmlinear.prediction, ctest$diabetes)
 svmlinear.error = (svmlinear.confTable[1,2]+svmlinear.confTable[2,1])/sum(svmlinear.confTable)
-
 #Radial boundry
 svmradial.cv = tune(svm, as.factor(diabetes) ~ ., data = ctrain, kernel = "radial", ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
 svmradial.model = svmradial.cv$best.model
-
 svmradial.prediction = predict(svmradial.model, newdata=ctest)
 svmradial.confTable = table(svmradial.prediction, ctest$diabetes)
 svmradial.error = (svmradial.confTable[1,2]+svmradial.confTable[2,1])/sum(svmradial.confTable)
-
 #Polynomial boundry
 svmpoly.cv = tune(svm, as.factor(diabetes) ~ ., data = ctrain, kernel = "polynomial", degree = 3, ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
 svmpoly.model = svmpoly.cv$best.model
-
 svmpoly.prediction = predict(svmpoly.model, newdata=ctest)
 svmpoly.confTable = table(svmpoly.prediction, ctest$diabetes)
 svmpoly.error = (svmpoly.confTable[1,2]+svmpoly.confTable[2,1])/sum(svmpoly.confTable)
@@ -589,7 +578,7 @@ svmpoly.error = (svmpoly.confTable[1,2]+svmpoly.confTable[2,1])/sum(svmpoly.conf
 
 We get the following results from the different classifiers:
 
-```{r table3, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+```{r table4, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
 tab <- "
 | Kernel    | Misclassification rate  |
 |-----------|-------------------------|
@@ -604,94 +593,130 @@ We see that a linear decision boundry produces the smallest misclassification ra
 
 ***
 **Module 11: Neural networks**
-```{r,eval = TRUE}
+
+Firstly, we use cross validation to find the number of hidden nodes that will give us the best model.
+
+```{r,eval = TRUE, trace=FALSE} 
 library(caret)
 library(nnet)
-library(keras)
+library(keras) 
 
-#normalizing the data
-# org_train = ctrain
-# mean <- apply(ctrain[,-1], 2, mean)
-# std <- apply(ctrain[,-1], 2, sd)
-# train_data <- scale(ctrain[,-1], center = mean, scale = std)
-# test_data <- scale(ctest[,-1], center = mean, scale = std)
-
-org_train = ctrain
+org_train <- ctrain
 train_data <- ctrain
 test_data <- ctest
+diabetes=ctrain$diabetes
+
+#normalizing the data
+org_train = ctrain
+mean <- apply(ctrain, 2, mean)
+mean[1]=0
+std <- apply(ctrain, 2, sd)
+std[1]=1
+train_data <- scale(train_data, center = mean, scale = std)
+test_data <- scale(test_data, center = mean, scale = std)
 
 #using CV to find best number of hidden nodes
-grid = c(5, 10, 15, 20, 25, 30, 50)
-
+grid = c(1, 2, 3, 4, 5) 
 k <- 4
 set.seed(123)
 indices <- sample(1:nrow(ctrain))
 folds <- cut(indices, breaks = k, labels = FALSE)
-diabetes = unlist(ctrain$diabetes)
 
 resmat = matrix(NA, ncol = k, nrow = length(grid))
 for (j in 1:k) {
     thistrain = (1:dim(train_data)[1])[folds != j]
     thisvalid = (1:dim(train_data)[1])[folds == j]
     mean <- apply(org_train[thistrain, ], 2, mean)
+    mean[1]=0
     std <- apply(org_train[thistrain, ], 2, sd)
+    std[1]=1
     new <- scale(org_train, center = mean, scale = std)
+    
     for (i in 1:length(grid)) {
         thissize = grid[i]
-
-        fit = nnet(as.factor(diabetes) ~ ., data = new, size = thissize, linout = FALSE,
-            maxit = 5000)
+        
+        fit = nnet(diabetes ~ ., data = train_data, size = thissize, linout = FALSE,
+            maxit = 5000, trace = FALSE, entropy = TRUE, abstol = 1.0e-12, redtol = 1.0e-12) 
         pred = predict(fit, newdata = new[thisvalid, ], type = "raw")
-        resmat[i, j] = sum((pred[, 1]==diabetes[thisvalid]))
+        predfactor =ifelse(pred<0.5, 0, 1)
+        resmat[i, j] = sum((predfactor[, 1]==diabetes[thisvalid]))
     }
 }
+misclass_cv = 1-apply(resmat, 1, sum)/nrow(train_data)
+plot(grid, misclass_cv, type = "l")
+```
 
-#misclass = 1- table(resmat, truth = ctest[, 1])
-misclass = 1-apply(resmat, 1, sum)/nrow(train_data)
-plot(grid, misclass, type = "l")
-misclass
+We find the lowest misclassification rate when we use 4 nodes, and use this when fitting the model with the full test set. 
+
+```{r,eval = TRUE} 
+org_train = ctrain
+mean <- apply(ctrain, 2, mean)
+mean[1]=0
+std <- apply(ctrain, 2, sd)
+std[1]=1
+train_data <- scale(train_data, center = mean, scale = std)
+test_data <- scale(test_data, center = mean, scale = std)
+
+fitnnet = nnet(diabetes ~., size = 4, data = train_data, linout = FALSE, maxit = 5000, trace=FALSE, entropy = TRUE, abstol = 1.0e-12, redtol = 1.0e-12)
 ```
-We find the lowest misclassification rate when we use 25 nodes, and use this when fitting the model with the full test set.
-```{r,eval = TRUE}
-fitnnet = nnet(as.factor(diabetes) ~., size = 25, data = train_data, lineout = FALSE, maxit = 1000)
-summary(fitnnet)
-```
-In nnet we can only have one hidden layer, and for single hidden layer feeedforwad networks we have the model:
-$$\hat{y}_c({\bf x})=\phi_o(\beta_{0c}+\sum_{m=1}^{M}\beta _{mc}z_m)=\phi_o(\beta_ {0c}+\sum_{m=1}^{M}\beta_{mc}\phi_h(\alpha_{0m} +\sum_{j=1}^{p}\alpha_{jm}x_j) $$ where $\phi_0(x)=x$.
+
+In `nnet` we can only have one hidden layer, and for single hidden layer feeedforward networks we have the model: 
+$$
+\hat{y}_c({\bf x})=\phi_o(\beta_{0c}+\sum_{m=1}^{M}\beta _{mc}z_m)=\phi_o(\beta_ {0c}+\sum_{m=1}^{M}\beta_{mc}\phi_h(\alpha_{0m} +\sum_{j=1}^{p}\alpha_{jm}x_j)
+$$
+where $\phi_0(x)=x$. 
 
 By default, we have sigmoid as output layer activation: $$g(a)=\frac{1}{1+e^{-a}}$$
+We set `linout` = FALSE because we want the output as a probability.
 
-With out given C=2 classification problem, we use the Binary cross-entropy loss function:
-$$J({\bf \theta})=-\frac{1}{n}\sum_{i=1}^{n}(y_iln(\hat{y}_1({\bf x}_i)) + (1-y_i)ln(1-\hat{y}_1({\bf x}_i))$$
-where $\hat{y_1}({\bf x_i})$ is the output from the sigmoid output node and $y_i$ is the 0/1 observed class.
-We estimate det unknown parameters $\theta$ by minimizing the loss function $J(\theta)$.
-COMMENT: Are we using gradient descent to achieve this?
-Our tuning parameters are: $\alpha:{jm}$ an $\beta_{mc}$
-When using neural networks we don't make any assumptions about the data, errors or targets.
+With out given $C=2$ classification problem, we use the binary cross-entropy loss function: 
+$$
+J({\bf \theta})=-\frac{1}{n}\sum_{i=1}^{n}(y_iln(\hat{y}_1({\bf x}_i)) + (1-y_i)ln(1-\hat{y}_1({\bf x}_i))
+$$
+where $\hat{y_1}({\bf x_i})$ is the output from the sigmoid output node and $y_i$ is the 0/1 observed class. 
+We estimate det unknown parameters $\theta$ by minimizing the loss function $J(\theta)$, and `nnet` uses the bfgs method to achieve this. 
+Our tuning parameters are: $\alpha_{jm}$ an $\beta_{mc}$.
+When using neural networks we don't make any assumptions about the data.
 
-```{r,eval = TRUE}
-# #neuralnet plot
-# library(NeuralNetTools)
-# plotnet(fitnnet)
-
+```{r,eval = TRUE} 
 prednnet = predict(fitnnet, newdata = test_data, type = "class")
-```
-We make a confusion matrix and calculate the accuracy:
-```{r,eval = TRUE}
+prednnet_probabilities = predict(fitnnet, newdata = test_data, type = "raw")
+``` 
+
+We make a confusion matrix and calculate the misclassification rate:
+
+```{r,eval = TRUE} 
 #accuracy
 conf_nnet = table(prednnet, truth = ctest[, 1])
-accuracy_nnet= sum(diag(conf_nnet))/(sum(conf_nnet))
-accuracy_nnet
+misclass_nnet = 1-sum(diag(conf_nnet)/(sum(conf_nnet)))
 ```
-The ROC and AUC are given below
-```{r,eval = TRUE}
+$$
+\text{Test error} = \frac{24+30}{232} = 0.233
+$$
+The misclassification rate is thus $22.8\%$. The ROC and AUC are given below.
+
+```{r,eval = TRUE} 
 #ROC and AUC
-nnetroc = roc(test_data[,1], as.numeric(prednnet))
-auc(nnetroc)
-plot(nnetroc)
+nnetroc = roc(test_data[,1], prednnet_probabilities)
+nnet.auc = nnetroc$auc
+ggroc(fit.roc) + ggtitle("ROC curve") + annotate("text", x = 0.25, y = 0.3,
+    label = "AUC = 0.824")
 ```
 
-KAN VURDERE Å SE PÅ: We can add weight decays = penalties in the nnet.
-                    Early stopping to avoid overfitting.
 ***
 **Q30:** Conclude with choosing a winning method, and explain why you mean that this is the winning method.
+
+```{r table3, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tab <- "
+| Method                 | Misclassification rate  |
+|------------------------|-------------------------|
+| Logistic regression    | 0.198                   |
+| Trees                  | 0.228                   |
+| Support vector machines| 0.224                   |
+| Neural networks        | 0.233                   |
+"
+cat(tab)
+```
+
+In total, we see that logistic regression produces the lowest misclassification rate for our dataset, and is therefore the winning method. In addition, it has a short training time and is easier to interpret than some of the other methods. As previously mentioned, logistic regression is suited when we don't have clear class boundries, which we can see is the case from the scatterplots in **Q28**. This may be the reason it performs better than e.g support vector machines, which performance is dependent on these boundries. 
+
