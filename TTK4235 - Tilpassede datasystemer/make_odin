@@ -1,0 +1,43 @@
+# Which compiler to use
+CC = gcc
+
+# Compiler flags go here.
+CFLAGS = -g -Wall -D DEBUGGING
+
+# Linker flags go here
+
+# Include flags go here
+CURDIR = $(notdir $(shell pwd))
+INC = $(CURDIR)/include
+
+# list of sources
+SRC := $(wildcard debug/*.c) $(wildcard src/*.c)
+SRC := $(filter-out src/io.c src/elev.c, $(SRC))
+
+# program executable file name.
+TARGET = test_odin_target
+
+# Define all object files.
+OBJ = $(SRC:.c=.o)
+
+all: $(TARGET)
+
+# To link object files to executable
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET)
+	rm -f *.o *~
+ 
+# To obtain object files by compiling
+%.o: %.c
+	$(CC) $(CFLAGS) $< -c -g -o $@ -I include # $(INC)
+
+# rule for cleaning re-compilable files.
+clean:
+	rm -f $(TARGET) $(OBJ)
+
+rebuild:	clean all
+
+.PHONY: all rebuild clean
+
+
+#Martin Korsgaard, 2006

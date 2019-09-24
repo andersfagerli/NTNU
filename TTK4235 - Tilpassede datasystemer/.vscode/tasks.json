@@ -1,0 +1,91 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceRoot}"
+    },
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+    },
+    "tasks": [
+        {
+            "label": "make&build run",
+            "suppressTaskName": true,
+            "type": "shell",
+            "linux": {
+                "command": "make > /dev/null && ./run"
+            },
+            "windows": {
+                "command": "chcp 65001 >NUL && make >NUL && run.exe"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "make run",
+            "suppressTaskName": true,
+            "type": "shell",
+            "linux": {
+                "command": "make > /dev/null"
+            },
+            "windows": {
+                "command": "chcp 65001 >NUL && make >NUL"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "make run debugger",
+            "suppressTaskName": true,
+            "type": "shell",
+            "linux": {
+                "command": "make > /dev/null"
+            },
+            "windows": {
+                "command": "chcp 65001 >NUL && make"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "make&run tester",
+            "suppressTaskName": true,
+            "type": "shell",
+            "linux": {
+                "command": "make -f make_odin > /dev/null && ./test_odin_target"
+            },
+            "windows": {
+                "command": "chcp 65001 >NUL && make"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "elev debugger",
+            "suppressTaskName": true,
+            "type": "shell",
+            "linux": {
+                "command": "make > /dev/null"
+            },
+            "windows": {
+                "command": "chcp 65001 >NUL && make"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

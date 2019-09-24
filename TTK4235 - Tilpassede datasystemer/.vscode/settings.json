@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "iosfwd": "cpp"
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "C_Cpp.errorSquiggles": "Enabled",
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "C_Cpp.intelliSenseEngine": "Tag Parser"
+}
