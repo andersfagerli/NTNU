@@ -20,8 +20,8 @@ pGyro = 0; %gyro bias reciprocal time constant
 
 %% Estimator
 eskf = ESKF(qA, qG, qAb, qGb, pAcc, pGyro);
-eskf.Sa = S_a; % set the accelerometer correction matrix
-eskf.Sg = S_g; % set the gyro correction matrix
+eskf.Sa = eye(3); %S_a; % set the accelerometer correction matrix
+eskf.Sg = eye(3); %S_g; % set the gyro correction matrix
 
 %% Allocate
 xest = zeros(16, steps);
@@ -40,6 +40,13 @@ Ppred(4:6, 4:6, 1) = eye(3)*0.01^2;
 Ppred(7:9, 7:9, 1) = eye(3)*0.01^2; % error rotation vector (not quat)
 Ppred(10:12, 10:12, 1) = eye(3)*0.01^2;
 Ppred(13:15, 13:15, 1) = eye(3)*0.01^2;
+
+acc = [-0.328161579552016; 2.68330096848452; 1.60962633385023];
+gyro = [0.136434623987254; 0.250077104074413; 0.104254427363682];
+gnss = [17.6631658264422; 1.21991090037000; -7.06737812752972];
+
+[xnompred, Pnompred] = eskf.predict(xpred(:,1), Ppred(:,:,1), acc, gyro,dt);
+[xeste, Peste] = eskf.updateGNSS(xnompred, Pnompred, gnss, RGNSS);
 
 %% run
 N = 90000;
