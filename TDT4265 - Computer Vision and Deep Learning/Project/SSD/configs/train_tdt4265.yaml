@@ -1,0 +1,37 @@
+MODEL:
+    NUM_CLASSES: 5
+    THRESHOLD: 0.4
+    BACKBONE:
+        NAME: 'resnet_tdt'
+        PRETRAINED: True
+        FREEZE: False
+        OUT_CHANNELS: [256, 512, 512, 512, 512, 512]
+        INPUT_CHANNELS: 3
+    PRIORS:
+        FEATURE_MAPS: [[40, 23], [20, 12], [10, 6], [5, 3], [3, 2], [1, 1]]
+        STRIDES: [[16, 16], [32, 30], [64, 60], [128, 120], [213, 180], [640, 360]]         # (640,360)/(40,23), (640,360)/(20,12), ..
+        MIN_SIZES: [[64, 36], [128, 72], [237, 133], [346, 194], [454, 256], [563, 317]]    # [0.1, 0.2,0.37,0.54,0.71,0.88]*[640,360]
+        MAX_SIZES: [[128, 72], [237, 133], [346, 194], [454, 256], [563, 317], [672, 378]]  # [0.2,0.37,0.54,0.71,0.88,1.05]*[640,360]
+        ASPECT_RATIOS: [[2, 3], [2, 6], [2, 4], [2, 4], [2], [2]]
+        BOXES_PER_LOCATION: [6, 6, 6, 6, 4, 4]
+INPUT:
+    IMAGE_SIZE: [640, 360] # (1920,1080) / 3
+    PIXEL_MEAN: [97.3301, 101.3705, 98.0499]
+    PIXEL_STD: [0.2729, 0.2803, 0.2911]
+DATASETS:
+    TRAIN: ("tdt4265_train",)
+    TEST: ("tdt4265_val", )
+SOLVER:
+    TYPE: "sgd"
+    MAX_ITER: 120000
+    BATCH_SIZE: 16
+    LR: 0.01
+    MOMENTUM: 0.9
+    WEIGHT_DECAY: 5e-4
+    GAMMA: 0.1
+    MULTISTEP_MILESTONES: [5000, 6000]
+OUTPUT_DIR: 'outputs/tdt4265'
+DATASET_DIR: "datasets"
+EVAL_STEP: 500
+MODEL_SAVE_STEP: 500
+PRETRAINED_PATH: "pretrained_models/rdd2020_resnet_3668/model.pth"

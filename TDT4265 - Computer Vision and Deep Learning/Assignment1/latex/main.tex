@@ -1,0 +1,53 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\linespread{1.04}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{bm}
+\usepackage{xargs}
+\usepackage[textfont={it,footnotesize},labelfont={bf,it,footnotesize}]{caption}
+\usepackage[disable]{todonotes}
+\usepackage{nccmath}
+\usepackage[pdftex]{hyperref}
+\hypersetup{
+    colorlinks,%
+    citecolor=black,%
+    filecolor=black,%
+    linkcolor=black,%
+    urlcolor=black
+}
+\usepackage[noabbrev, nameinlink]{cleveref}
+\renewcommand{\cref}{\Cref}
+\crefname{equation}{}{}
+
+\newcommand{\figref}[1]{\figurename~\ref{#1}}
+
+\let\endtitlepage\relax					% Begin the text immidiately after the title page. Optional
+\setlength{\parindent}{0cm}				% Start paragraph without indent. Optional
+
+\usepackage{booktabs}
+\usepackage{gensymb}
+\usepackage{todonotes}
+
+
+\begin{document}
+
+\begin{center}
+\Large TDT4265 Assignment 1 \\
+\vspace{10pt}
+\large Anders Thallaug Fagerli
+\end{center}
+
+\input{task1.tex}
+\input{task2.tex}
+\input{task3.tex}
+\input{task4.tex}
+ 
+\bibliographystyle{IEEEtran}
+\bibliography{bibliography.bib}
+
+\end{document}

@@ -1,0 +1,112 @@
+\subsection*{Task 1}
+
+\subsubsection*{a)}
+
+As the convolved image should be $3\times5$, the image $I$ is zero-padded along all sides, giving a padded image of size $5\times7$. Using a stride of 1 and convolving with the Sobel kernel then gives
+
+\begin{equation*}
+  \begin{tabular}{c|c|c|c|c|c|c}
+    %\hline
+    0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \hline
+    0 & 1 & 0 & 2 & 3 & 1 & 0 \\
+    \hline
+    0 & 3 & 2 & 0 & 7 & 0 & 0 \\
+    \hline
+    0 & 0 & 6 & 1 & 1 & 4 & 0 \\
+    \hline
+    0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    %\hline
+  \end{tabular}
+  \quad
+  *
+  \quad
+  \begin{tabular}{|c|c|c|}
+    \hline
+    -1 & 0 & 1 \\
+    \hline
+    -2 & 0 & 2 \\
+    \hline
+    -1 & 0 & 1 \\
+    \hline
+  \end{tabular}
+  \quad
+  =
+  \quad
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    2 & -1 & 11 & -2 & -13 \\
+    \hline
+    10 & -4 & 8 & 2 & -18 \\
+    \hline
+    14 & -1 & -5 & 6 & 9 \\
+    \hline
+  \end{tabular}
+\end{equation*}
+
+
+\subsubsection*{b)}
+
+The convolutional layer (i) reduces sensitivity to translational variations, as a feature map uses the same weights and bias over the entire image.
+
+\subsubsection*{c)}
+
+Using the formulas at the bottom of the assignment, the new width and height are given as
+
+\begin{subequations}
+  \begin{align}
+    W_2 &= (W_1 - F_W + 2P_W)/S_W + 1 \\
+    H_2 &= (H_1 - F_H + 2P_H)/S_H + 1
+  \end{align}
+  \label{eq:task1:width_height}
+\end{subequations}
+
+
+where $F$ is the receptive field size, $S$ is the stride, $P$ is the padding, and $W_1$ and $H_1$ are the original image width and height. Setting $W_1=W_2$, $H_1=H_2$, $S_W=S_H=1$ and $F_W=F_H=5$, we solve for $P_W$ and $P_H$, giving
+
+\begin{align*}
+  P_W &= (5 -1) / 2 = 2 \\
+  P_H &= (5 -1) / 2 = 2.
+\end{align*}
+
+\subsubsection*{d)}
+
+Using \cref{eq:task1:width_height} and solving for $F_W$ and $F_H$, we get
+
+\begin{align*}
+  F_W &= 512 - 504 + 1 = 9 \\
+  F_H &= 512 - 504 + 1 = 9.
+\end{align*}
+
+The dimensions of the kernels are thus $9 \times 9$.
+
+\subsubsection*{e)}
+
+Using \cref{eq:task1:width_height} with $W_1=H_1=504$, $F_W=F_H=2$, $P_W=P_H=0$ and $S_W=S_H=2$, the pooled feature maps are of dimension $252\times 252$.
+
+\subsubsection*{f)}
+
+Using \cref{eq:task1:width_height} with the pooled feature maps, we get that the feature maps in the second layer are of size $250 \times 250$.
+
+\subsubsection*{g)}
+
+The number of parameters are given in \cref{tab:task1:parameters}, and the total number of parameters in the network is thus 390410. 
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    Layer & Parameters & Total \\
+    \hline
+    1 & $(5\cdot5\cdot3 +1)\cdot32$ & 2432 \\
+    2 & $(5\cdot5\cdot32+1)\cdot64$ & 51264 \\
+    3 & $(5\cdot5\cdot64+1)\cdot128$ & 204928 \\
+    4 & $(128\cdot4\cdot4+1)\cdot64$ & 131136 \\
+    5 & $(64+1)\cdot10$ & 650 \\
+    \hline
+     & & 390410 \\
+     \hline
+  \end{tabular}
+  \caption{Parameters in the network.}
+  \label{tab:task1:parameters}
+\end{table}

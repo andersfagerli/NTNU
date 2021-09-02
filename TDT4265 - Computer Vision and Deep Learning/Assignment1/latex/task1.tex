@@ -1,0 +1,71 @@
+\subsection*{Task 1}
+
+\subsubsection*{a)}
+
+For logistic regression, the cost function is given as
+\begin{equation*}
+  C^n(w) = -(y^n \text{ln}(\hat{y}^n)+(1-y^n)\text{ln}(1-\hat{y}^n)), \quad \hat{y}^n=f(x)=\frac{1}{1+e^{-w^\top x^n}}.
+\end{equation*}
+We take the partial derivative, and seperate the gradient into two terms,
+\begin{equation*}
+  \frac{\partial C^n(w)}{\partial w_i} = -y^n\frac{\partial}{\partial w_i}\Big[ \text{ln}(\hat{y}^n)\Big] - (1-y^n)\frac{\partial}{\partial w_i}\Big[ \text{ln}(1-\hat{y}^n) \Big].
+\end{equation*}
+
+Using the chain rule, the first term is derived as
+\begin{align*}
+  \frac{\partial}{\partial w_i}\Big[ \text{ln}(\hat{y}^n)\Big] &= \frac{1}{\hat{y}^n} \cdot \frac{\partial}{\partial w_i}\Big[\hat{y}^n  \Big] \\
+                                                                   &= \frac{1}{\hat{y}^n} \cdot x_i^n f(x^n) (1-f(x^n)) \\
+                                                                   &= \frac{1}{\hat{y}^n} \cdot x_i^n \hat{y}^n (1-\hat{y}^n) \\
+                                                                   &= x_i^n (1-\hat{y}^n).
+\end{align*}
+
+Similarly, the second term is derived as
+\begin{align*}
+  \frac{\partial}{\partial w_i}\Big[\text{ln}(1-\hat{y}^n)\Big]    &= \frac{1}{1-\hat{y}^n} \cdot \frac{\partial}{\partial w_i}\Big[1-\hat{y}^n  \Big] \\
+                                                                   &= -\frac{1}{1-\hat{y}^n} \cdot x_i^n f(x^n) (1-f(x^n)) \\
+                                                                   &= -\frac{1}{1-\hat{y}^n}  \cdot x_i^n \hat{y}^n (1-\hat{y}^n) \\
+                                                                   &= -x_i^n \hat{y}^n.
+\end{align*}
+
+In total, we then get
+\begin{align*}
+  \frac{\partial C^n(w)}{\partial w_i} &= -y^n x_i^n (1-\hat{y}^n) + (1-y^n) x_i^n \hat{y}^n \\
+                                       &= -y^n x_i^n + y^n x_i^n \hat{y}^n + x_i^n \hat{y}^n - y^n x_i^n \hat{y}^n \\
+                                       &= -(y^n - \hat{y}^n) x_i^n.
+\end{align*}
+
+
+\subsubsection*{b)}
+For softmax regression, the multi-class cross entropy cost is given as
+\begin{equation}\label{eq:softmax_entropy}
+  C^n(w) =-\sum_{k=1}^K y_k^n \text{ln}(\hat{y}_k^n), \quad \hat{y}_k^n = \frac{e^{w_k^\top x^n}}{\sum_{k'}^K e^{w_{k'}^\top x^n}}.
+\end{equation}
+
+Writing out the terms, this can be written as
+\begin{equation*}
+  C^n(w) =  -\sum_{k=1}^{K} y_k^n w_k^\top x^n + \sum_{k=1}^K y_k^n \text{ln}\left(\sum_{k'}^K e^{w_{k'}^\top x^n}\right).
+\end{equation*}
+
+The gradient can then for the softmax regression be split into two terms,
+\begin{equation*}
+  \frac{\partial C^n(w)}{\partial w_{kj}} = -\frac{\partial}{\partial w_{kj}} \left[ \sum_{k=1}^{K} y_k^n w_k^\top x^n \right] + \frac{\partial}{\partial w_{kj}} \left[ \sum_{k=1}^K y_k^n \text{ln}\left(\sum_{k'}^K e^{w_{k'}^\top x^n}\right)\right].
+\end{equation*}
+
+The first term is simplest, and gives
+\begin{equation*}
+  \frac{\partial}{\partial w_{kj}} \left[ \sum_{k=1}^{K} y_k^n w_k^\top x^n \right] = y_k^n x_j^n. 
+\end{equation*}
+
+For the second term, all $k' \neq k$ can be treated as constants, and disappear in the differentiation. The partial derivative is thus derived as 
+\begin{align*}
+  \frac{\partial}{\partial w_{kj}} \left[ \sum_{k=1}^K y_k^n \text{ln}\left(\sum_{k'}^K e^{w_{k'}^\top x^n}\right)\right] &= \sum_{k=1}^K y_k^n \frac{\partial}{\partial w_{kj}}\left[\text{ln}\left(\sum_{k'}^K e^{w_{k'}^\top x^n} \right)  \right] \\
+                                                                                                                          &= \frac{1}{\sum_{k'}^K e^{w_{k'}^\top x^n}} \cdot x_j^n e^{w_k^\top x^n} \sum_{k=1}^K y_k^n \\
+                                                                                                                          &= \hat{y}_k^n x_j^n \sum_{k=1}^{K} y_k^n, \quad\quad \sum_{k=1}^K y_k^n=1 \\
+                                                                                                                          &= \hat{y}_k^n x_j^n.
+\end{align*}
+
+In total, this gives the gradient
+\begin{equation*}
+  \frac{\partial C^n(w)}{\partial w_{kj}} = -x_j^n (y_k^n - \hat{y}_k^n)
+\end{equation*}
+

@@ -1,0 +1,36 @@
+MODEL:
+    NUM_CLASSES: 5
+    THRESHOLD: 0.4
+    BACKBONE:
+        NAME: 'resnet_rdd'
+        PRETRAINED: True
+        FREEZE: True
+        OUT_CHANNELS: [256, 512, 512, 512, 512, 512]
+        INPUT_CHANNELS: 3
+    PRIORS:
+        FEATURE_MAPS: [[38, 38], [19, 19], [10, 10], [5, 5], [3, 3], [1, 1]]
+        STRIDES: [[16, 16], [32, 32], [60, 60], [120, 120], [200, 200], [600, 600]]
+        MIN_SIZES: [[60, 60], [120, 120], [222, 222], [324, 324], [426, 426], [528, 528]]   # [0.1, 0.2,0.37,0.54,0.71,0.88]*[600,600]
+        MAX_SIZES: [[120, 120], [222, 222], [324, 324], [426, 426], [528, 528], [630, 630]] # [0.2,0.37,0.54,0.71,0.88,1.05]*[600,600]
+        ASPECT_RATIOS: [[2, 4], [2, 4], [2, 4], [2, 3], [2], [2]]
+        BOXES_PER_LOCATION: [6, 6, 6, 6, 4, 4]
+INPUT:
+    IMAGE_SIZE: [600, 600]
+    PIXEL_MEAN: [116.0692, 121.6318, 121.1739]
+    PIXEL_STD: [0.2754, 0.2829, 0.3048]
+DATASETS:
+    TRAIN: ("rdd2020_train",)
+    TEST: ("rdd2020_val", )
+SOLVER:
+    TYPE: "sgd"
+    MAX_ITER: 120000
+    BATCH_SIZE: 16
+    LR: 0.01
+    MOMENTUM: 0.9
+    WEIGHT_DECAY: 5e-3
+    GAMMA: 0.1
+    MULTISTEP_MILESTONES: [4000, 6000]
+OUTPUT_DIR: 'outputs/rdd2020'
+DATASET_DIR: "datasets"
+EVAL_STEP: 2000
+MODEL_SAVE_STEP: 2000

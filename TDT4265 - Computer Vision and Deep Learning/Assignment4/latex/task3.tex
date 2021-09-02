@@ -1,0 +1,25 @@
+\subsection*{Task 3}
+
+\subsubsection*{a)}
+
+The filtering operation is called \textbf{non-maximum suppression} (nms).
+
+\subsubsection*{b)}
+
+\textbf{False}, predictions from deeper layers detect larger objects.
+
+\subsubsection*{c)}
+
+Different aspect ratios are used to detect objects of varying shape, as the different classes often have different shapes, giving faster and more stable convergence towards the final prediction boxes.
+
+\subsubsection*{d)}
+
+The main difference between SSD and YOLO is that SSD uses multi-scale feature maps for detection, while YOLO uses a single scale feature map.
+
+\subsubsection*{e)}
+
+We place 6 anchors for each pixel in the $38\times38$ feature map, giving $38\cdot38\cdot6=8664$ anchor boxes in total for this feature map.
+
+\subsubsection*{f)}
+
+For the entire network we have $6\cdot(38\cdot38 + 19\cdot19 + 10\cdot10 + 5\cdot5 + 3\cdot3 + 1\cdot1)=11640$ anchor boxes.

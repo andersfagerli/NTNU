@@ -1,0 +1,75 @@
+\subsection*{Task 1}
+
+\subsubsection*{a)}
+
+The update rule for the hidden layer is
+
+\begin{equation}
+  w_{ji} := w_{ji} - \alpha \frac{\partial C}{\partial w_{ji}},
+  \label{eq:task1:update_hidden}
+\end{equation}
+where $\frac{\partial C}{\partial w_{ji}}$ can be rewritten using the chain rule as
+
+\begin{equation*}
+  \frac{\partial C}{\partial w_{ji}} = \sum_{k} \frac{\partial C}{\partial z_k} \frac{\partial z_k}{\partial a_j} \frac{\partial a_j}{\partial z_j} \frac{\partial z_j}{\partial w_{ji}}.
+\end{equation*}
+
+The individual terms are found as
+
+\begin{align*}
+  \frac{\partial C}{\partial z_k}       &= \delta_k, \\
+  \frac{\partial z_k}{\partial a_j}     &= \frac{\partial}{\partial a_j}\left[\sum_{j=0}^{J} w_{kj} a_j  \right] = w_{kj}, \\
+  \frac{\partial a_j}{\partial z_j}     &= \frac{\partial}{\partial z_j} f(z_j) = f'(z_j), \\
+  \frac{\partial z_j}{\partial w_{ji}}  &= \frac{\partial}{\partial w_{ji}}\left[\sum_{i=0}^{I} w_{ji} x_i  \right] = x_i,
+\end{align*}
+
+and by inserting back into \cref{eq:task1:update_hidden}, we get
+
+\begin{equation*}
+  w_{ji} := w_{ji} - \alpha f'(z_j) \left(\sum_k w_{kj} \delta_k \right) x_i.
+\end{equation*}
+
+By defining $\delta_j = f'(z_j) \sum_k w_{kj} \delta_k$, the update rule is finally written as
+
+\begin{equation*}
+  w_{ji} := w_{ji} - \alpha \delta_j x_i.
+\end{equation*}
+
+
+
+\subsubsection*{b)}
+
+Assuming we have $N$ data samples and $K$ classes, we can rewrite $\delta_j$ into matrix form as
+
+\begin{equation*}
+  \bm{\delta}_j = \bm{f}'(\bm{\mathrm{Z}}_j) \odot \bm{\delta}_k \bm{\mathrm{W}}_{kj}^{\top},
+\end{equation*}
+
+where $\odot$ is the Hadamard product, giving the update rule in matrix form as
+
+\begin{equation*}
+  \bm{\mathrm{W}}_{ji} := \bm{\mathrm{W}}_{ji} - \alpha \bm{\mathrm{X}}^\top \bm{\delta}_j,
+\end{equation*}
+
+where the dimensions of the matrices are given as
+
+\begin{align*}
+  \bm{\mathrm{Z}}_j &: (N \times J), \quad\,\,\,\,\, \bm{\delta}_k : (N \times K), \\ 
+  \bm{\mathrm{W}}_{kj} &: (J \times K), \quad \bm{\mathrm{W}}_{ji} : (I \times J), \\
+  \bm{\delta}_j &: (N \times J), \quad\,\,\,\,\,\, \bm{\mathrm{X}} : (N \times I).
+\end{align*}
+
+For the update rule from the hidden layer to the output layer, we have the gradient
+
+\begin{align*}
+    \frac{\partial C}{\partial w_{kj}}&= \frac{\partial C}{\partial z_k} \frac{\partial z_k}{\partial w_{kj}} \\
+                                      &= \delta_k a_j,
+\end{align*}
+
+which gives the update rule in matrix form as
+
+\begin{equation*}
+  \bm{\mathrm{W}}_{kj} := \bm{\mathrm{W}}_{kj} - \alpha \bm{\mathrm{A}}_j^\top \bm{\delta}_k,
+\end{equation*}
+
+where $\bm{\mathrm{A}}_j$ is of size $(N \times J)$.

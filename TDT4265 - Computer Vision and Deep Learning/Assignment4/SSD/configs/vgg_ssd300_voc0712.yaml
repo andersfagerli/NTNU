@@ -1,0 +1,18 @@
+MODEL:
+    NUM_CLASSES: 21
+INPUT:
+    IMAGE_SIZE: [300, 300]
+    PIXEL_STD: [0.003921569, 0.003921569, 0.003921569] # Set pixel std to 1/255 as VGG is pre-trained on images in range (roughly) [-127.5, 127.5]
+DATASETS:
+    TRAIN: ("voc_2007_trainval", "voc_2012_trainval")
+    TEST: ("voc_2007_test", )
+SOLVER:
+    MAX_ITER: 5000
+    GAMMA: 0.1
+    BATCH_SIZE: 16
+    LR: 5e-4
+  
+OUTPUT_DIR: 'outputs/vgg_VOC'
+EVAL_STEP: 2500
+MODEL_SAVE_STEP: 2500
+DATASET_DIR: "datasets/"

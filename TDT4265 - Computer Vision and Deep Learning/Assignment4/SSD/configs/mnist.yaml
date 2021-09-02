@@ -1,0 +1,19 @@
+MODEL:
+    NUM_CLASSES: 11
+    BACKBONE:
+        NAME: 'basic'
+        PRETRAINED: False
+        OUT_CHANNELS: [128, 256, 128, 128, 64, 64]
+        INPUT_CHANNELS: 3
+INPUT:
+    IMAGE_SIZE: [300, 300]
+DATASETS:
+    TRAIN: ("mnist_detection_train", "mnist_detection_val")
+    TEST: ("mnist_detection_val", )
+SOLVER:
+    MAX_ITER: 10000
+    GAMMA: 0.1
+    BATCH_SIZE: 16
+    LR: 2e-3
+OUTPUT_DIR: 'outputs/basic'
+DATASET_DIR: "datasets"

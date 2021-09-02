@@ -1,0 +1,8 @@
+yacs
+tqdm
+opencv-python
+vizer
+tensorboard
+numpy
+moviepy
+albumentations
